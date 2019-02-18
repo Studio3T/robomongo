@@ -619,7 +619,7 @@ namespace Robomongo
                 ssh->setPrivateKeyFile(QtUtils::toStdString(vconn.value("sshPrivateKey").toString()));
                 ssh->setPassphrase(QtUtils::toStdString(vconn.value("sshPassphrase").toString()));
 
-                int auth = vconn.value("sshAuthMethod").toInt();
+                int const auth = vconn.value("sshAuthMethod").toInt();
                 ssh->setEnabled(auth == 1 || auth == 2);
                 ssh->setAuthMethod(auth == 2 ? "publickey" : "password");
             }

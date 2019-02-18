@@ -598,7 +598,8 @@ namespace Robomongo
         _updateBar->setMovable(false);
 
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
-        VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
+        VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), 
+                       this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
         /* --- Temporarily disabling export/import feature
         // Export/Import Toolbar

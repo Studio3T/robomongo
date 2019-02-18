@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QDialogButtonBox>
 
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
@@ -17,7 +18,6 @@
 #include "robomongo/gui/dialogs/SSHTunnelTab.h"
 #include "robomongo/gui/dialogs/SSLTab.h"
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
-#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -77,9 +77,8 @@ namespace Robomongo
      */
     void ConnectionDialog::accept()
     {
-        if (validateAndApply()) {
+        if (validateAndApply())
             QDialog::accept();
-        }
     }
 
     bool ConnectionDialog::validateAndApply()
@@ -88,9 +87,7 @@ namespace Robomongo
         _advancedTab->accept();
 
         if (!_basicTab->accept() || !_sshTab->accept() || !_sslTab->accept())
-        {
             return false;
-        }
 
         return true;
     }

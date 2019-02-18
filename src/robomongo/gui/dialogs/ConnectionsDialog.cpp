@@ -333,7 +333,7 @@ namespace Robomongo
         // Ask user
         int const answer = QMessageBox::question(this,
             "Connections",
-            QString("Really delete \"%1\" connection?").arg(QtUtils::toQString(connSettings->getReadableName())),
+            QString("Are you sure to delete \"%1\" connection?").arg(QtUtils::toQString(connSettings->getReadableName())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer != QMessageBox::Yes)

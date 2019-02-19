@@ -51,26 +51,6 @@ function Base64ToHex(base64) {
     return hex;
 }
 
-
-function newUUID(uuid) {
-    var hex = uuid.replace(/[{}-]/g, ""); // remove extra characters
-    var base64 = HexToBase64(hex);
-    return new BinData(4, base64); // new subtype 4
-}
-
-// Store old UUID implementation (subtype 3)
-oldUUID = UUID;
-
-// Replace UUID (subtype 3) with newUUID (subtype 4)
-UUID = newUUID;
-
-// If user wants backward compatibility, he should execute
-// the following lines in order to restore previous meaning
-// of UUID() function:
-//
-//     UUID = oldUUID
-
-
 // Legacy UUID in unspecified encoding
 function LUUID(uuid) {
     var hex = uuid.replace(/[{}-]/g, ""); // remove extra characters

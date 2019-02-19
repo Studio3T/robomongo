@@ -58,6 +58,7 @@ set(SOURCES
     core/AppRegistry.cpp
     utils/StringOperations.cpp
     utils/common.cpp
+    utils/SimpleCrypt.cpp
 
     # Isolated Scope #3
     gui/GuiRegistry.cpp

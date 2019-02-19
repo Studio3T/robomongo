@@ -19,6 +19,7 @@
         <file>icons/loading.gif</file>
         <file>icons/loading_ticks_40x40.gif</file>
         <file>scripts/esprima.js</file>
+        <file>scripts/uuidhelpers.js</file>
         <file>icons/maximize.gif</file>
         <file>icons/undock.png</file>
         <file>icons/dock.png</file>

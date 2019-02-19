@@ -66,6 +66,7 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 
 \* Latest stable build  
 \** Support for CentOS temporarily dropped starting from version 1.1  
+\*** Windows install requires Visual C++ redistributable 2008 [https://www.microsoft.com/en-us/download/details.aspx?id=29](download)
 
 Download
 ========

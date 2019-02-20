@@ -51,11 +51,6 @@ SimpleCrypt::SimpleCrypt(quint64 key) :
     splitKey();
 }
 
-//void SimpleCrypt::encrypt(std::string passwd)
-//{
-//    encryptToString(89473829);
-//}
-
 void SimpleCrypt::setKey(quint64 key)
 {
     m_key = key;

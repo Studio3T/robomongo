@@ -11,7 +11,7 @@ GCC 5.3.0
 Clang 3.4 (or Apple XCode 5.1.1 Clang) or newer  
 ```
 
-2. Install CMake (3.2 or later)
+2. Install CMake (3.6.0 or later)
 3. Install [Scons](http://scons.org/tag/releases.html) (2.5 or later) 
 
 ```

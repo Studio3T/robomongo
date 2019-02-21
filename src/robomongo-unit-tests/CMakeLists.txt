@@ -57,17 +57,15 @@ elseif(SYSTEM_MACOSX) ############# MacOS
         ${SSL_LIBRARIES} -lresolv
     )
 # elseif(SYSTEM_LINUX) ############# LINUX  
-#     set(CMAKE_BUILD_TYPE_L ${CMAKE_BUILD_TYPE})
-#     string(TOLOWER ${CMAKE_BUILD_TYPE_L} CMAKE_BUILD_TYPE_L)
-#     set(OBJ_DIR 
-#         ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE_L}/src/robomongo/CMakeFiles/robomongo.dir
-#     )
-#     # todo: Getting openssl link errors when mongodb lib is linked
-#     target_link_libraries(robo_unit_tests
-#         gtest gtest_main #ssl crypto #mongodb 
-#         ${OBJ_DIR}/utils/StringOperations.cpp.o
-#         # ${OBJ_DIR}/core/HexUtils.cpp.o
-#     )
+#     set(OBJ_DIR ${CMAKE_BINARY_DIR}/src/robomongo/CMakeFiles/robomongo.dir/)
+#     message("--- OBJ_DIR: " ${OBJ_DIR})
+#     set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}/robomongo_automoc.cpp.o;")
+#     set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}/robomongo_automoc.dir/gui/resources/qrc_gui.cpp.o;")
+#     set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}/robomongo_automoc.dir/resources/qrc_robo.cpp.o;")    
+#     foreach(SRC_FILE ${ROBO_SOURCES})
+#         string(REPLACE ".cpp" ".cpp.o" OBJ_FILE ${SRC_FILE})
+#         set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}${OBJ_FILE};")        
+#     endforeach()
 endif()
 
 target_link_libraries(robo_unit_tests 

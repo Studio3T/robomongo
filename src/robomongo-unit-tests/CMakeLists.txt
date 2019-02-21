@@ -86,3 +86,19 @@ target_link_libraries(robo_unit_tests
 target_include_directories(robo_unit_tests
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src)
+
+# For Windows we need to install Qt DLLs
+if(SYSTEM_WINDOWS)
+    get_target_property(target_path Qt5::Core LOCATION)
+    get_filename_component(qt_bin_dir ${target_path} DIRECTORY)
+    set(QT_BIN_FILES "${QT_BIN_FILES}" ${qt_bin_dir}/Qt5Core${CMAKE_SHARED_LIBRARY_SUFFIX};)
+    set(QT_BIN_FILES "${QT_BIN_FILES}" ${qt_bin_dir}/Qt5Gui${CMAKE_SHARED_LIBRARY_SUFFIX};)
+    set(QT_BIN_FILES "${QT_BIN_FILES}" ${qt_bin_dir}/Qt5Network${CMAKE_SHARED_LIBRARY_SUFFIX};)
+    set(QT_BIN_FILES "${QT_BIN_FILES}" ${qt_bin_dir}/Qt5PrintSupport${CMAKE_SHARED_LIBRARY_SUFFIX};)
+    set(QT_BIN_FILES "${QT_BIN_FILES}" ${qt_bin_dir}/Qt5Widgets${CMAKE_SHARED_LIBRARY_SUFFIX};)
+    set(QT_BIN_FILES "${QT_BIN_FILES}" ${qt_bin_dir}/Qt5Xml${CMAKE_SHARED_LIBRARY_SUFFIX};)
+
+    get_target_property(TESTS_BIN_DIR robo_unit_tests BINARY_DIR)
+    file(COPY ${QT_BIN_FILES}
+        DESTINATION ${TESTS_BIN_DIR}/${CMAKE_BUILD_TYPE})
+endif()

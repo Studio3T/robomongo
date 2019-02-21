@@ -28,8 +28,6 @@ set(SOURCES
     core/EventBus.cpp
     core/KeyboardManager.cpp
     core/domain/MongoNamespace.cpp
-    core/domain/MongoUser.cpp
-    core/domain/MongoUser.cpp
     core/domain/MongoFunction.cpp
     core/domain/MongoUtils.cpp
     core/domain/MongoCollection.cpp

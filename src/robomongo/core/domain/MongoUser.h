@@ -2,21 +2,26 @@
 #include <mongo/bson/bsonobj.h>
 #include <mongo/bson/bsonelement.h>
 
+#include "robomongo/core/utils/BsonUtils.h"
+
 namespace Robomongo
 {
     class MongoUser
     {
     public:
         typedef std::vector<std::string> RoleType;
-        /**
-         * @brief Creates user from "system.users" document
-         */
-        explicit MongoUser(const float version, const mongo::BSONObj &obj);
 
-        /**
-         * @brief Creates new user with empty attributes
-         */
-        MongoUser(const float version);
+        // Creates user from "system.users" document
+        explicit MongoUser(const float version, const mongo::BSONObj &obj) :
+            _version(version), _readOnly(false)
+        {
+            // _id = obj.getField("_id"); // todo
+            _name = BsonUtils::getField<mongo::String>(obj, "user");
+        }
+
+        // Creates new user with empty attributes
+        MongoUser(const float version) :
+             _version(version), _readOnly(false), _role() {}
 
         std::string id() const { return _id; }
         std::string name() const { return _name; }
@@ -33,7 +38,7 @@ namespace Robomongo
         void setReadOnly(bool readonly) { _readOnly = readonly; }
 
         float version() const { return _version; }
-        static const float minimumSupportedVersion;
+        static constexpr float minimumSupportedVersion = 2.4f;
     private:
         float _version;
         std::string _name;

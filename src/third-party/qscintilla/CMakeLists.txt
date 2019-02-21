@@ -21,6 +21,18 @@ qt5_wrap_cpp(moc
     sources/Qt4Qt5/Qsci/qsciscintillabase.h
 )
 
+# Robo 1.3: To silence CMake warning: 
+#           "Policy CMP0071 is not set: Let AUTOMOC and AUTOUIC process GENERATED files."
+set(QSCI_SRC_DIR "sources/Qt4Qt5/Qsci/")
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qsciabstractapis.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qsciapis.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qscilexer.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qscilexercpp.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qscilexerjavascript.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qscimacro.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qsciscintilla.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${QSCI_SRC_DIR}/moc_qsciscintillabase.cpp PROPERTY SKIP_AUTOGEN ON)
+
 add_library(qscintilla
     ${moc}
     sources/lexlib/StyleContext.cpp

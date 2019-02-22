@@ -12,10 +12,17 @@
    }
 */
 
-TEST(RoboCrypt_BasicTests, encrypt_decrypt)
+TEST(RoboCrypt_CoreTests, encrypt_decrypt)
 {  
-    const std::string pwd {"abc"};
-    const std::string encryptedPwd = Robomongo::RoboCrypt::encrypt(pwd);
-    const std::string decryptedPwd = Robomongo::RoboCrypt::decrypt(encryptedPwd);
-    EXPECT_EQ(pwd, decryptedPwd);
+    auto const pwds = {
+        "Tyu_aBq",
+        "_?asdfghjkl;'piop[.,/",
+        ".?/`_@~!#$%^^&&*)_)_+=-",
+        "<>?/.,;'\|:][p{}\"]|"
+    };
+    for (auto const& pwd : pwds) {
+        const std::string encryptedPwd = Robomongo::RoboCrypt::encrypt(pwd);
+        const std::string decryptedPwd = Robomongo::RoboCrypt::decrypt(encryptedPwd);
+        EXPECT_EQ(pwd, decryptedPwd);
+    }
 }

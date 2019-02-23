@@ -33,7 +33,6 @@ set(SOURCES
     core/domain/MongoCollection.cpp
     core/domain/MongoCollectionInfo.cpp
     core/domain/MongoQueryInfo.cpp
-    core/domain/MongoShellResult.cpp
     core/domain/CursorPosition.cpp
     core/domain/ScriptInfo.cpp
     core/events/MongoEventsInfo.cpp

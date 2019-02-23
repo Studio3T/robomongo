@@ -5,6 +5,7 @@
 #include <QWidget>
 
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -78,8 +79,8 @@ namespace Robomongo
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
 
-            if (tabbedResults)
-                addTab(item, QString::number(i + 1));
+            if (tabbedResults)                
+                addTab(item, QString::fromStdString(shellResult.queryShort()));           
             else
                 _splitter->addWidget(item);
              
@@ -270,7 +271,7 @@ namespace Robomongo
                 "height: 15px;"
             "}"
             "QTabBar::tab {"
-                // "width: 15px;"
+                "width: 58px;"
                 // "background-color: yellow;"    
                 "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                 "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
@@ -299,7 +300,7 @@ namespace Robomongo
             "}"
 
             "QTabBar::tab:selected {"
-                "width: 28px;"
+                // "width: 40px;"
                 "margin-right: 1px;"
                 "margin-top: 1px;"
                 "border-color: #9B9B9B;" //
@@ -307,7 +308,7 @@ namespace Robomongo
             "}"
 
             "QTabBar::tab:!selected {"
-                "width: 28px;"  
+                // "width: 28px;"  
                 "margin-right: 1px;"   
                 "margin-top: 1px;"
                 // "margin-top: 2px;" // make non-selected tabs look smaller

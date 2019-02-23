@@ -25,7 +25,7 @@
 namespace Robomongo
 {
     OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, 
-                                                     const QString &text, double secs, 
+                                                     const QString &text, double secs, bool tabbedResults,
                                                      bool multipleResults, bool firstItem, bool lastItem, 
                                                      AggrInfo aggrInfo, QWidget *parent) :
         BaseClass(parent),
@@ -51,15 +51,15 @@ namespace Robomongo
         _viewMode(viewMode),
         _aggrInfo(aggrInfo)
     {
-        setup(secs, multipleResults, firstItem, lastItem);
+        setup(secs, tabbedResults, multipleResults, firstItem, lastItem);
     }
 
     OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, 
                                                      const QString &type, 
                                                      const std::vector<MongoDocumentPtr> &documents, 
                                                      const MongoQueryInfo &queryInfo, double secs, 
-                                                     bool multipleResults, bool firstItem, 
-                                                     bool lastItem, AggrInfo aggrInfo,
+                                                     bool tabbedResults, bool multipleResults, 
+                                                     bool firstItem, bool lastItem, AggrInfo aggrInfo,
                                                      QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
@@ -86,13 +86,14 @@ namespace Robomongo
         _viewMode(viewMode),
         _aggrInfo(aggrInfo)
     {
-        setup(secs, multipleResults, firstItem, lastItem);
+        setup(secs, tabbedResults, multipleResults, firstItem, lastItem);
     }
 
-    void OutputItemContentWidget::setup(double secs, bool multipleResults, bool firstItem, bool lastItem)
+    void OutputItemContentWidget::setup(double secs, bool tabbedResults, bool multipleResults, 
+                                        bool firstItem, bool lastItem)
     {      
         setContentsMargins(0, 0, 0, 0);
-        _header = new OutputItemHeaderWidget(this, multipleResults, firstItem, lastItem);
+        _header = new OutputItemHeaderWidget(this, tabbedResults, multipleResults, firstItem, lastItem);
 
         if (_queryInfo._info.isValid()) {
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));

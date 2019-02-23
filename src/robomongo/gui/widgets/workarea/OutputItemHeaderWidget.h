@@ -19,8 +19,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        OutputItemHeaderWidget(OutputItemContentWidget *output, bool multipleResults, bool firstItem, bool lastItem,
-                               QWidget *parent = nullptr);
+        OutputItemHeaderWidget(OutputItemContentWidget *output, bool multipleResults, bool tabbedResults,
+                               bool firstItem, bool lastItem, QWidget *parent = nullptr);
         PagingWidget *paging() const { return _paging; }
         void showText();
         void showTree();

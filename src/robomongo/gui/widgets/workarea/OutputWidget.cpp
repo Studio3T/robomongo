@@ -2,6 +2,7 @@
 
 #include <QHBoxLayout>
 #include <QSplitter>
+#include <QWidget>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -9,11 +10,12 @@
 
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/ProgressBarPopup.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 
 namespace Robomongo
 {
     OutputWidget::OutputWidget(QWidget *parent) :
-        QFrame(parent),
+        QTabWidget(parent),
         _splitter(new QSplitter)
     {
         _splitter->setOrientation(Qt::Vertical);
@@ -25,23 +27,33 @@ namespace Robomongo
         layout->setSpacing(0);
         layout->addWidget(_splitter);
         setLayout(layout);
+
+        setTabsClosable(true);
+        setElideMode(Qt::ElideRight);
+        setMovable(true);
+        setDocumentMode(true);
+        setStyleSheet(buildStyleSheet());
+        VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int))));
         
         _progressBarPopup = new ProgressBarPopup(this);
     }
 
     void OutputWidget::present(MongoShell *shell, const std::vector<MongoShellResult> &results)
     {
-        if (_prevResultsCount > 0) {
+        if (_prevResultsCount > 0)
             clearAllParts();
-        }
+        
         int const RESULTS_SIZE = _prevResultsCount = results.size();
         bool const multipleResults = (RESULTS_SIZE > 1);
-        
-        _outputItemContentWidgets.clear();
+        bool const tabbedResults = (RESULTS_SIZE > 2);
+        _splitter->setHidden(tabbedResults ? true : false);
+        _outputItemContentWidgets.clear();        
+
+        while (count() > 0)
+            removeTab(count()-1);
 
         for (int i = 0; i < RESULTS_SIZE; ++i) {
             MongoShellResult shellResult = results[i];
-
             double secs = shellResult.elapsedMs() / 1000.f;
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
             if (_prevViewModes.size()) {
@@ -56,16 +68,21 @@ namespace Robomongo
             if (shellResult.documents().size() > 0) {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.type()),
                                                    shellResult.documents(), shellResult.queryInfo(), secs, 
-                                                   multipleResults, firstItem, lastItem, 
+                                                   tabbedResults, multipleResults, firstItem, lastItem,
                                                    shellResult.aggrInfo(), this);
             } else {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), 
-                                                   secs, multipleResults, firstItem, lastItem, 
+                                                   secs, tabbedResults, multipleResults, firstItem, lastItem,
                                                    shellResult.aggrInfo(), this);
             }
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
-            _splitter->addWidget(item);
+
+            if (tabbedResults)
+                addTab(item, QString::number(i + 1));
+            else
+                _splitter->addWidget(item);
+             
             _outputItemContentWidgets.push_back(item);
         }
         
@@ -155,6 +172,11 @@ namespace Robomongo
         }
     }
 
+    void OutputWidget::tabCloseRequested(int index)
+    {
+        removeTab(index);
+    }
+
     void OutputWidget::restoreSize()
     {
         int count = _splitter->count();
@@ -208,6 +230,98 @@ namespace Robomongo
             widget->hide();
             delete widget;
         }
+    }
+
+    QString OutputWidget::buildStyleSheet()
+    {
+        QColor background = palette().window().color();
+        QColor gradientZero = QColor("#ffffff"); //Qt::white;//.lighter(103);
+        QColor gradientOne = background.lighter(104); //Qt::white;//.lighter(103);
+        QColor gradientTwo = background.lighter(108); //.lighter(103);
+        QColor selectedBorder = background.darker(103);
+
+        QString aga1 = gradientOne.name();
+        QString aga2 = gradientTwo.name();
+        QString aga3 = background.name();
+
+        QString styles = QString(
+#ifndef __APPLE__
+            "QTabBar::tab:first {"
+                // "margin-left: 4px;"
+            "}  "
+            "QTabBar::tab:last {"
+                // "margin-right: 1px;"
+            "}  "
+#endif
+            "QTabBar::close-button { "
+#ifdef __APPLE__           
+                "image: url(:/robomongo/icons/close_2_Mac_16x16.png);"
+#else      
+                "image: url(:/robomongo/icons/close_2_16x16.png);"
+#endif      
+                "width: 10px;"
+                "height: 10px;"
+                // "margin-left: 4px;"
+                // "background-color: red;"
+                "}"
+            "QTabBar::close-button:hover { "
+                "image: url(:/robomongo/icons/close_hover_16x16.png);"
+                "width: 15px;"
+                "height: 15px;"
+            "}"
+            "QTabBar::tab {"
+                // "width: 15px;"
+                // "background-color: yellow;"    
+                "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
+                "stop: 0.5 #E6E6E6, stop: 1.0 #E1E1E1);"
+                "border: 1px solid #C4C4C3;"
+                "border-bottom-color: #B8B7B6;" // #C2C7CB same as the pane color
+                "border-top-left-radius: 3px;"
+                "border-top-right-radius: 3px;"
+                "padding: 4px 0px 4px 4px;" // top r b l
+                // "margin-right: 1px;"
+#ifndef __APPLE__
+                "max-width: 200px;"
+                "margin: 0px;"
+                "margin-left: 1px;"
+                "margin-right: -3px;"  
+                    // it should be -(tab:first:margin-left + tab:last:margin-left) 
+                    // to fix incorrect text elidement                
+#endif
+            "}"
+            "QTabBar::tab:selected, QTabBar::tab:hover {"
+                "/* background: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,"
+                "stop: 0 %1, stop: 0.3 %2,"    //#fafafa, #f4f4f4
+                "stop: 0.6 %3, stop: 1.0 %4); */" //#e7e7e7, #fafafa
+                "background-color: white;"
+                // "background-color: yellow;"
+            "}"
+
+            "QTabBar::tab:selected {"
+                "width: 28px;"
+                "margin-right: 1px;"
+                "margin-top: 1px;"
+                "border-color: #9B9B9B;" //
+                "border-bottom-color: %4;" //#fafafa
+            "}"
+
+            "QTabBar::tab:!selected {"
+                "width: 28px;"  
+                "margin-right: 1px;"   
+                "margin-top: 1px;"
+                // "margin-top: 2px;" // make non-selected tabs look smaller
+            "}  "
+#ifndef __APPLE__
+            "QTabBar::tab:only-one {" 
+                //"margin-top: 2px; margin-left:4px;" 
+            "}"
+#endif
+        ).arg(gradientZero.name(), gradientOne.name(), gradientTwo.name(), "#ffffff");
+
+        QString aga = palette().window().color().name();
+
+        return styles;
     }
 
     void OutputWidget::tryToMakeAllPartsEqualInSize()

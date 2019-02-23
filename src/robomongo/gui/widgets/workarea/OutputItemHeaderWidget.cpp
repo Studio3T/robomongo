@@ -29,10 +29,12 @@ namespace
 namespace Robomongo
 {
 
-    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
-                                                   bool firstItem, bool lastItem, QWidget *parent) :
+    OutputItemHeaderWidget::OutputItemHeaderWidget(
+            OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
+            bool tabbedResults, bool firstItem, bool lastItem, QWidget *parent) :
         QFrame(parent),
-        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _multipleResults(multipleResults), 
+        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), 
+        _multipleResults(multipleResults), 
         _firstItem(firstItem), _lastItem(lastItem), _orientation(Qt::Vertical)
     {
         setContentsMargins(5, 0, 0, 0);
@@ -140,9 +142,8 @@ namespace Robomongo
         if (outputItemContentWidget->isTextModeSupported())
             layout->addWidget(_textButton, 0, Qt::AlignRight);
 
-        if (_multipleResults) {
+        if (_multipleResults)
             layout->addWidget(_maxButton, 0, Qt::AlignRight);
-        }
 
         layout->addSpacing(3);
         _verticalLine = createVerticalLine();
@@ -153,13 +154,15 @@ namespace Robomongo
         setLayout(layout);
 
         // Update dock/undock button visibility
-        if (_multipleResults) {
+        if (_multipleResults)
             updateDockButtonOnToggleOrientation();
-        }
         else {
             _verticalLine->setVisible(true);
             _dockUndockButton->setVisible(true);
         }
+      
+        if(tabbedResults)
+            setStyleSheet("background-color: white");
     }
 
     void OutputItemHeaderWidget::mouseDoubleClickEvent(QMouseEvent *)
@@ -251,9 +254,8 @@ namespace Robomongo
     void OutputItemHeaderWidget::maximizeMinimizePart()
     {
         // No maximize/minimize behaviour if there is only one query result
-        if (!_multipleResults) {
+        if (!_multipleResults)
             return;
-        }
 
         if (_maximized) {   // restoring original size
             emit restoredSize();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QFrame>
+#include <QTabWidget>
 QT_BEGIN_NAMESPACE
 class QSplitter;
 QT_END_NAMESPACE
@@ -14,7 +14,7 @@ namespace Robomongo
     class ProgressBarPopup;
     class MongoShell;
 
-    class OutputWidget : public QFrame
+    class OutputWidget : public QTabWidget
     {
         Q_OBJECT
 
@@ -45,11 +45,13 @@ namespace Robomongo
     private Q_SLOTS:
         void restoreSize();
         void maximizePart();
+        void tabCloseRequested(int);
     private:
         void clearAllParts();
+        QString buildStyleSheet();
+        void tryToMakeAllPartsEqualInSize();
         std::vector<ViewMode> _prevViewModes;
         int _prevResultsCount;
-        void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;
         std::vector<OutputItemContentWidget*> _outputItemContentWidgets;

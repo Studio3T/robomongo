@@ -113,9 +113,12 @@ namespace Robomongo
         _paging->hide();
 
         QHBoxLayout *layout = new QHBoxLayout();
+#ifdef __APPLE__
+        layout->setContentsMargins(2, 8, 5, 1);
+#else  
         layout->setContentsMargins(2, 0, 5, 1);
+#endif
         layout->setSpacing(0);
-
         layout->addWidget(_collectionIndicator);
         layout->addWidget(_timeIndicator);
         QSpacerItem *hSpacer = new QSpacerItem(2000, 24, QSizePolicy::Preferred, QSizePolicy::Minimum);

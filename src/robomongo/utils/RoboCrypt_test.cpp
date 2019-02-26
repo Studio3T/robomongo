@@ -17,8 +17,8 @@ TEST(RoboCrypt_CoreTests, encrypt_decrypt)
     auto const pwds = {
         "Tyu_aBq",
         "_?asdfghjkl;'piop[.,/",
-        ".?/`_@~!#$%^^&&*)_)_+=-",
-        "<>?/.,;'\|:][p{}\"]|"
+        ".?/`_@~!#$%^^&&*)_)_+=-",        
+        "<>?/.,;':][p{}|\""
     };
     for (auto const& pwd : pwds) {
         const std::string encryptedPwd = Robomongo::RoboCrypt::encrypt(pwd);

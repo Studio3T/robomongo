@@ -69,11 +69,11 @@ namespace Robomongo
             if (shellResult.documents().size() > 0) {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.type()),
                                                    shellResult.documents(), shellResult.queryInfo(), secs, 
-                                                   tabbedResults, multipleResults, firstItem, lastItem,
+                                                   multipleResults, tabbedResults, firstItem, lastItem,
                                                    shellResult.aggrInfo(), this);
             } else {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), 
-                                                   secs, tabbedResults, multipleResults, firstItem, lastItem,
+                                                   secs, multipleResults, tabbedResults, firstItem, lastItem,
                                                    shellResult.aggrInfo(), this);
             }
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));

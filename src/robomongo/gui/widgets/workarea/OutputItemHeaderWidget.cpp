@@ -80,7 +80,7 @@ namespace Robomongo
         _customButton->setCheckable(true);
 
         // Create maximize button only if there are multiple results
-        if (_multipleResults) {
+        if (_multipleResults && !tabbedResults) {
             _maxButton = new QPushButton;
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
             _maxButton->setToolTip("Maximize this output result (double-click on result's header)");

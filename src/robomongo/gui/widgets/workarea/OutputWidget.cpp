@@ -79,8 +79,10 @@ namespace Robomongo
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
 
-            if (tabbedResults)                
-                addTab(item, QString::fromStdString(shellResult.queryShort()));           
+            if (tabbedResults) {
+                addTab(item, QString::fromStdString(shellResult.statementShort()));
+                setTabToolTip(i, QString::fromStdString(shellResult.statement()));
+            }
             else
                 _splitter->addWidget(item);
              

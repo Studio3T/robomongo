@@ -369,10 +369,6 @@ namespace Robomongo
             ;
 
         _scope->exec(script, "(getresultinfo)", false, false, false);
-
-        std::size_t const LEN = statement.size() < 10 ? statement.size() : 10;
-        std::string shortQueryStr{ statement, 0, LEN };        
-        shortQueryStr.append((statement.size() > 10) ? ".." : "");
         bool const isQuery = _scope->getBoolean("__robomongoQuery");
         bool const isAggregate = _scope->getBoolean("__robomongoIsAggregate");
 
@@ -393,7 +389,7 @@ namespace Robomongo
 
             MongoQueryInfo const info{ CollectionInfo(serverAddress, dbName, collectionName),
                                        query, fields, limit, skip, batchSize, options, special };
-            return MongoShellResult(type, output, objects, info, shortQueryStr, elapsedms);
+            return MongoShellResult(type, output, objects, info, statement, elapsedms);
         }
         else if (isAggregate) {
             std::string const serverAddress = getString("__robomongoServerAddress");
@@ -410,9 +406,9 @@ namespace Robomongo
             int const resultIndex = aggrInfo.isValid ? aggrInfo.resultIndex : -1;
 
             AggrInfo const newAggrInfo { collectionName, skip, batchSize, origPipeline, options, resultIndex };
-            return MongoShellResult(type, output, objects, MongoQueryInfo(), shortQueryStr, elapsedms, newAggrInfo);
+            return MongoShellResult(type, output, objects, MongoQueryInfo(), statement, elapsedms, newAggrInfo);
         }
-        return MongoShellResult(type, output, objects, MongoQueryInfo(), shortQueryStr, elapsedms);
+        return MongoShellResult(type, output, objects, MongoQueryInfo(), statement, elapsedms);
     }
 
     MongoShellExecResult ScriptEngine::prepareExecResult(const std::vector<MongoShellResult> &results, 

@@ -13,13 +13,13 @@ namespace Robomongo
         MongoShellResult(
             const std::string &type, const std::string &response,
             const MongoDocumentPtrContainerType &documents,
-            const MongoQueryInfo &queryInfo, const std::string &queryShort,
+            const MongoQueryInfo &queryInfo, const std::string &statement,
             qint64 elapsedms, AggrInfo aggrInfo = AggrInfo()) :
             _type(type),
             _response(response),
             _documents(documents),
             _queryInfo(queryInfo),
-            _queryShort(queryShort),
+            _statement(statement),
             _elapsedms(elapsedms),
             _aggrInfo(aggrInfo)
         { }
@@ -28,7 +28,14 @@ namespace Robomongo
         std::string type() const { return _type; }
         MongoDocumentPtrContainerType documents() const { return _documents; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
-        std::string queryShort() const { return _queryShort; }
+        std::string statement() const { return _statement; }
+        std::string statementShort() const {
+            std::size_t const LEN = _statement.size() < 10 ? _statement.size() : 10;
+            std::string statementShort { _statement, 0, LEN };
+            statementShort.append((_statement.size() > 10) ? ".." : "");
+            return statementShort;
+        }
+
         qint64 elapsedMs() const { return _elapsedms; }
         AggrInfo const& aggrInfo() const { return _aggrInfo; }
 
@@ -37,7 +44,7 @@ namespace Robomongo
         std::string _response;
         MongoDocumentPtrContainerType _documents;
         MongoQueryInfo _queryInfo;
-        std::string _queryShort;
+        std::string const _statement;
         qint64 _elapsedms;
         AggrInfo _aggrInfo = AggrInfo();
     };

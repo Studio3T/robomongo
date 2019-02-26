@@ -32,7 +32,11 @@ namespace Robomongo
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);
         setMovable(true);
+#ifdef __APPLE__      
+        setDocumentMode(false);
+#else        
         setDocumentMode(true);
+#endif        
         setStyleSheet(buildStyleSheet());
         VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int))));
         
@@ -247,9 +251,16 @@ namespace Robomongo
         QString aga2 = gradientTwo.name();
         QString aga3 = background.name();
 
-        QString styles = QString(
 #ifdef __APPLE__      
+        QString styles = QString(
+            "QTabWidget::pane { background-color: white; }"   // This style disables default styling under Mac
+            "QTabWidget::tab-bar {"
+                "alignment: left;"
+                "border-top-left-radius: 2px;"
+                "border-top-right-radius: 2px;"
+            "}"
             "QTabBar::close-button { "
+                "margin-top: 2px;"              
                 "image: url(:/robomongo/icons/close_2_Mac_16x16.png);"
                 "width: 10px;"
                 "height: 10px;"
@@ -259,30 +270,22 @@ namespace Robomongo
                 "width: 15px;"
                 "height: 15px;"
             "}"
+            "QTabBar::tab:selected { "
+                "background: white; /*#E1E1E1*/; "
+                "color: #282828;"
+            "} "
             "QTabBar::tab {"
-                "height: 18px;"    
-                "margin-right: 1px;"   
-                "margin-top: 1px;"                    
-                "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
-                "stop: 0.5 #E6E6E6, stop: 1.0 #E1E1E1);"
-                "border: 1px solid #C4C4C3;"
-                "border-bottom-color: #B8B7B6;" // #C2C7CB same as the pane color
-                "border-top-left-radius: 3px;"
-                "border-top-right-radius: 3px;"
-                "padding: 4px 0px 5px 0px;" // top r b l
+                "color: #505050;"
+                "font-size: 11px;"
+                "background: %1;"
+                "border-top-left-radius: 2px;"
+                "border-top-right-radius: 2px;"
+                "border-right: 1px solid #aaaaaa;"
+                "padding: 8px 0px 5px 0px;" // top r b l
             "}"
-            "QTabBar::tab:selected, QTabBar::tab:hover {"
-                "/* background: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,"
-                                "stop: 0 %1, stop: 0.3 %2,"    //#fafafa, #f4f4f4
-                                "stop: 0.6 %3, stop: 1.0 %4); */" //#e7e7e7, #fafafa
-                "background-color: white;"
-            "}"
-            "QTabBar::tab:selected {"
-                "border-color: #9B9B9B;" //
-                "border-bottom-color: %4;" //#fafafa
-            "}"
-#else            
+        ).arg(QWidget::palette().color(QWidget::backgroundRole()).darker(114).name());
+#else // Wind and Linux
+        QString styles = QString(
             "QTabBar::close-button { "
                 "image: url(:/robomongo/icons/close_2_16x16.png);"
                 "width: 10px;"
@@ -321,10 +324,8 @@ namespace Robomongo
             "QTabBar::tab:!selected {"
                 "margin-top: 2px;" // make non-selected tabs look smaller
             "}"
-#endif            
         ).arg(gradientZero.name(), gradientOne.name(), gradientTwo.name(), "#ffffff");
-
-        QString aga = palette().window().color().name();
+#endif            
 
         return styles;
     }

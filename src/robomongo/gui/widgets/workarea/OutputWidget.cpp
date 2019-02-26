@@ -261,11 +261,11 @@ namespace Robomongo
                 "height: 15px;"
             "}"
             "QTabBar::tab {"
-                "width: 58px;"
                 #ifdef __APPLE__
-                    "height: 18px;"                
+                    "height: 18px;"    
                 #else
-                // "background-color: yellow;"    
+                    "width: 58px;"
+                #endif
                 "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                 "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
                 "stop: 0.5 #E6E6E6, stop: 1.0 #E1E1E1);"

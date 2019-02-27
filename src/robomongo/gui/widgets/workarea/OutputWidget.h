@@ -47,6 +47,7 @@ namespace Robomongo
         void maximizePart();
         void tabCloseRequested(int);
     private:
+        void mouseReleaseEvent(QMouseEvent *event);
         void clearAllParts();
         QString buildStyleSheet();
         void tryToMakeAllPartsEqualInSize();

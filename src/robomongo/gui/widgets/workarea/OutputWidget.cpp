@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QWidget>
+#include <QMouseEvent>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoShell.h"
@@ -226,6 +227,16 @@ namespace Robomongo
     Qt::Orientation OutputWidget::getOrientation() const
     {
         return _splitter->orientation();
+    }
+
+    void OutputWidget::mouseReleaseEvent(QMouseEvent * event)
+    {
+        if (event->button() != Qt::MidButton)
+            return;
+
+        int const tabIndex = tabBar()->tabAt(event->pos());
+        removeTab(tabIndex);
+        QTabWidget::mouseReleaseEvent(event);
     }
 
     void OutputWidget::clearAllParts()

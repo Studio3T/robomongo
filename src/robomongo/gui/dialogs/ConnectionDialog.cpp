@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDialogButtonBox>
+#include <QDesktopWidget>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -68,8 +69,13 @@ namespace Robomongo
         _basicTab->setFocus();
         adjustSize();
 
-        // Set minimum width - adjustment after adding SSLTab
-        setMinimumWidth(550);
+#ifdef _WIN32
+        if (QApplication::desktop()->devicePixelRatio() > 1) // Hi-DPI Screen
+            setMinimumHeight(330);    // Win
+#else
+        setMinimumHeight(500);  // MacOS    
+        setMinimumWidth(600);   // MacOS
+#endif
     }
 
     /**

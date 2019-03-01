@@ -131,7 +131,9 @@ namespace Robomongo
         gridLayout->addWidget(_caFileLabel,                     2, 0);
         gridLayout->addWidget(_caFilePathLineEdit,              2, 1);
         gridLayout->addWidget(_caFileBrowseButton,              2, 2);        
-        gridLayout->addWidget(new QLabel(""),                   3, 0);        
+#ifdef _WIN32
+        gridLayout->addWidget(new QLabel(""),                   3, 0);
+#endif
         // PEM File Section
         gridLayout->addWidget(_usePemFileCheckBox,              4, 0, Qt::AlignTop);
         gridLayout->addWidget(_pemFileInfoStr,                  4, 1, 1, 2);
@@ -142,7 +144,9 @@ namespace Robomongo
         gridLayout->addWidget(_pemPassLineEdit,                 6, 1);
         gridLayout->addWidget(_pemPassShowButton,               6, 2);
         gridLayout->addWidget(_askPemPassCheckBox,              7, 1, 1, 2);
+#ifdef _WIN32
         gridLayout->addWidget(new QLabel(""),                   8, 0);        
+#endif
         // Advanced section
         gridLayout->addWidget(_useAdvancedOptionsCheckBox,      9, 0, Qt::AlignTop);
         gridLayout->addWidget(_crlFileLabel,                    10, 0);
@@ -150,15 +154,10 @@ namespace Robomongo
         gridLayout->addWidget(_crlFileBrowseButton,             10, 2);
         gridLayout->addWidget(_allowInvalidHostnamesLabel,      11, 0);
         gridLayout->addWidget(_allowInvalidHostnamesComboBox,   11, 1, Qt::AlignLeft);
-        gridLayout->addWidget(new QLabel(""),                   12, 0);   
 
-        QLabel* spacingAfterFirstRow = new QLabel("");
-        spacingAfterFirstRow->setFixedHeight(5);
-
-        QVBoxLayout *mainLayout = new QVBoxLayout;
+        auto mainLayout = new QVBoxLayout;
         mainLayout->setAlignment(Qt::AlignTop);
         mainLayout->addWidget(_useSslCheckBox);
-        mainLayout->addWidget(spacingAfterFirstRow);
         mainLayout->addLayout(gridLayout);
         setLayout(mainLayout);
 
@@ -246,10 +245,6 @@ namespace Robomongo
         _caFileLabel->setVisible(isCaSigned);
         _caFilePathLineEdit->setVisible(isCaSigned);
         _caFileBrowseButton->setVisible(isCaSigned);
-        if (!isCaSigned)
-        {
-            setMinimumHeight(330);
-        }
     }
 
     void SSLTab::on_usePemFileCheckBox_toggle(bool isChecked)
@@ -262,10 +257,6 @@ namespace Robomongo
         _pemPassLineEdit->setVisible(isChecked);
         _pemPassShowButton->setVisible(isChecked);
         _askPemPassCheckBox->setVisible(isChecked);
-        if(isChecked)
-        {
-            setMinimumHeight(440);
-        }
     }
 
     void SSLTab::on_useAdvancedOptionsCheckBox_toggle(bool isChecked)
@@ -275,10 +266,6 @@ namespace Robomongo
         _crlFileBrowseButton->setVisible(isChecked);
         _allowInvalidHostnamesLabel->setVisible(isChecked);
         _allowInvalidHostnamesComboBox->setVisible(isChecked);
-        if(isChecked)
-        {
-            setMinimumHeight(500);
-        }
     }
 
     void SSLTab::on_caFileBrowseButton_clicked()

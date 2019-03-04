@@ -39,6 +39,8 @@ namespace Robomongo
         */
         bool sslEnabled() const;
 
+        void enableSslBasic();
+
     private Q_SLOTS :
         
         /**

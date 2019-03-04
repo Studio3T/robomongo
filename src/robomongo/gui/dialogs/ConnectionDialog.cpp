@@ -87,9 +87,19 @@ namespace Robomongo
             QDialog::accept();
     }
 
-    void ConnectionDialog::setAuthTab(QString const db, QString const username, QString const pwd)
+    void ConnectionDialog::setAuthTab(QString const& db, QString const& username, QString const& pwd)
     {
         _authTab->setAuthTab(db, username, pwd);
+    }
+
+    void ConnectionDialog::enableSslBasic()
+    {
+        _sslTab->enableSslBasic();
+    }
+
+    void ConnectionDialog::setDefaultDb(QString const& defaultDb)
+    {
+        _advancedTab->setDefaultDb(defaultDb);
     }
 
     bool ConnectionDialog::validateAndApply()

@@ -207,6 +207,12 @@ namespace Robomongo
         return _useSslCheckBox->isChecked(); 
     }
 
+    void SSLTab::enableSslBasic()
+    {
+        _useSslCheckBox->setChecked(true);
+        _authMethodComboBox->setCurrentIndex(0);
+    }
+
     void SSLTab::useSslCheckBoxStateChange(int state)
     {
         bool isChecked = static_cast<bool>(state);

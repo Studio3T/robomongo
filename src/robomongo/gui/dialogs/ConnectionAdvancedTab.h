@@ -19,6 +19,7 @@ namespace Robomongo
     public:
         ConnectionAdvancedTab(ConnectionSettings *settings);
         void accept();
+        void setDefaultDb(const QString& defaultDb);
 
     /* --- Disabling unfinished export URI connection string feature
     private Q_SLOTS :

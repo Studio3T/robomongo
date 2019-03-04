@@ -308,12 +308,12 @@ namespace Robomongo
 
         item->setText(0, str);
     }
+
     void ConnectionBasicTab::on_srvButton_clicked()
     {
-        // auto const statusWithMongoURI = mongo::MongoURI::parse(_srvEdit->text().toStdString());
-        auto const statusWithMongoURI = mongo::MongoURI::parse(
-            "mongodb+srv://admin:admin@cluster0-v3dwc.mongodb.net/test");
-
+        QString srvStr = _srvEdit->text().simplified();
+        srvStr.replace(" ", "");
+        auto const statusWithMongoURI = mongo::MongoURI::parse(srvStr.toStdString());
         if (!statusWithMongoURI.isOK()) {
             QMessageBox errorBox;
             errorBox.critical(this, "Error", ("MongoDB SRV:\n" + statusWithMongoURI.getStatus().toString()).c_str());
@@ -321,24 +321,29 @@ namespace Robomongo
             // errorBox.adjustSize();
             return;
         }
-                
         auto const mongoUri = statusWithMongoURI.getValue();
         auto const db = QString::fromStdString(mongoUri.getDatabase());        
         auto const user = QString::fromStdString(mongoUri.getUser());
         auto const pwd = QString::fromStdString(mongoUri.getPassword());
         auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());
 
-        // Conn. Basic Tab
+        // Basic (this) Tab
         _members->clear();
         for (auto const& hostAndPort : mongoUri.getServers()) {
+            auto host = QString::fromStdString(hostAndPort.host());
+            host.endsWith('.') ? host.remove(host.size()-1, 1) : "no-op";
+            auto const newHostAndPort = host + ':' + QString::number(hostAndPort.port());
             auto item = new QTreeWidgetItem;
-            item->setText(0, QString::fromStdString(hostAndPort.toString()));
+            item->setText(0, newHostAndPort);
             item->setFlags(item->flags() | Qt::ItemIsEditable);
             _members->addTopLevelItem(item);
         }
         _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));
-
         // Auth Tab
         _connectionDialog->setAuthTab(authDb, user, pwd);
+        // SSL Tab
+        _connectionDialog->enableSslBasic();
+        // Advanced Tab
+        _connectionDialog->setDefaultDb(db);
     }
 }

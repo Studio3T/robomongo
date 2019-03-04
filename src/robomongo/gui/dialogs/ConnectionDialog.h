@@ -26,7 +26,9 @@ namespace Robomongo
         ConnectionDialog(ConnectionSettings *connection);
         
         ConnectionSettings *const connection() const { return _connection; }        
-        void setAuthTab(QString const db, QString const username, QString const pwd);
+        void setAuthTab(QString const& db, QString const& username, QString const& pwd);
+        void enableSslBasic();
+        void setDefaultDb(QString const& defaultDb);
 
     public Q_SLOTS:
         /**

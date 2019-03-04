@@ -87,6 +87,11 @@ namespace Robomongo
         _settings->setDefaultDatabase(QtUtils::toStdString(_defaultDatabaseName->text()));
     }
 
+    void ConnectionAdvancedTab::setDefaultDb(const QString& defaultDb)
+    {
+        _defaultDatabaseName->setText(defaultDb);
+    }
+
     /* --- Disabling unfinished export URI connection string feature
     void ConnectionAdvancedTab::on_generateButton_clicked()
     {

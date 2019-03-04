@@ -29,22 +29,13 @@ namespace Robomongo
     ConnectionAdvancedTab::ConnectionAdvancedTab(ConnectionSettings *settings) :
         _settings(settings)
     {
-        QLabel *defaultDatabaseDescriptionLabel = new QLabel(
-            "Database, that will be default (<code>db</code> shell variable will point to this database). "
-            "By default, default database will be the one you authenticate on, or <code>test</code> otherwise. "
-            "Leave this field empty, if you want default behavior.");
-        defaultDatabaseDescriptionLabel->setWordWrap(true);
-        defaultDatabaseDescriptionLabel->setContentsMargins(0, -2, 0, 20);
-
-        _defaultDatabaseName = new QLineEdit(QtUtils::toQString(_settings->defaultDatabase()));
-
         /* --- Disabling unfinished export URI connection string feature
         _uriString = new QLineEdit;
         _uriString->setReadOnly(true);
 
         _includePasswordCheckBox = new QCheckBox("Include passwords");
-        VERIFY(connect(_includePasswordCheckBox, SIGNAL(toggled(bool)), 
-                       this, SLOT(on_includePasswordsCheckBox_toggle(bool))));
+        VERIFY(connect(_includePasswordCheckBox, SIGNAL(toggled(bool)),
+        this, SLOT(on_includePasswordsCheckBox_toggle(bool))));
 
         auto generateButton = new QPushButton("Generate");
         generateButton->setFixedWidth(70);
@@ -62,9 +53,25 @@ namespace Robomongo
         hlay->addWidget(_copyButton, Qt::AlignLeft);
         */
 
+        auto defaultDatabaseDescriptionLabel = new QLabel(
+            "Database, that will be default (<code>db</code> shell variable will point to this database). "
+            "By default, default database will be the one you authenticate on, or <code>test</code> otherwise. "
+            "Leave this field empty, if you want default behavior.");
+        defaultDatabaseDescriptionLabel->setWordWrap(true);
+        defaultDatabaseDescriptionLabel->setContentsMargins(0, -2, 0, 20);
+        _defaultDatabaseName = new QLineEdit(QtUtils::toQString(_settings->defaultDatabase()));
+        auto defaultDbLabel = new QLabel("Default Database:");
+#ifdef _WIN32
+        defaultDbLabel->setMaximumWidth(88); // Win
+#elif __APPLE__
+        defaultDbLabel->setMaximumWidth(110); // MacOS
+#else
+        defaultDbLabel->setMaximumWidth(140); // Linux
+#endif
+
         auto mainLayout = new QGridLayout;
         mainLayout->setAlignment(Qt::AlignTop);
-        mainLayout->addWidget(new QLabel("Default Database:"),          1, 0);
+        mainLayout->addWidget(defaultDbLabel,                           1, 0);
         mainLayout->addWidget(_defaultDatabaseName,                     1, 1, 1, 2);
         mainLayout->addWidget(defaultDatabaseDescriptionLabel,          2, 1, 1, 2);
         /* --- Disabling unfinished export URI connection string feature

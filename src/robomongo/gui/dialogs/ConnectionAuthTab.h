@@ -20,6 +20,7 @@ namespace Robomongo
     public:
         ConnectionAuthTab(ConnectionSettings *settings);
         void accept();
+        void setAuthTab(QString const db, QString const username, QString const pwd);
 
     private Q_SLOTS:
         void toggleEchoMode();

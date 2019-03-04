@@ -105,6 +105,14 @@ namespace Robomongo
         _settings->addCredential(credential);
     }
 
+    void ConnectionAuthTab::setAuthTab(QString const db, QString const username, QString const pwd)
+    {
+        _useAuth->setChecked(true);
+        _databaseName->setText(db);
+        _userName->setText(username);
+        _userPassword->setText(pwd);
+    }
+
     void ConnectionAuthTab::toggleEchoMode()
     {
         bool isPassword = _userPassword->echoMode() == QLineEdit::Password;

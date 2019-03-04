@@ -49,7 +49,7 @@ namespace Robomongo
 
         QTabWidget *tabWidget = new QTabWidget;
                 
-        _basicTab    = new ConnectionBasicTab(_connection);
+        _basicTab    = new ConnectionBasicTab(_connection, this);
         _authTab     = new ConnectionAuthTab(_connection);
         _advancedTab = new ConnectionAdvancedTab(_connection);
         _sshTab      = new SshTunnelTab(_connection);
@@ -85,6 +85,11 @@ namespace Robomongo
     {
         if (validateAndApply())
             QDialog::accept();
+    }
+
+    void ConnectionDialog::setAuthTab(QString const db, QString const username, QString const pwd)
+    {
+        _authTab->setAuthTab(db, username, pwd);
     }
 
     bool ConnectionDialog::validateAndApply()

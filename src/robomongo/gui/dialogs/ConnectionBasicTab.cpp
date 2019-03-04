@@ -18,6 +18,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
+#include "robomongo/gui/dialogs/ConnectionDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/GuiConstants.h"
 
@@ -25,8 +26,8 @@
 
 namespace Robomongo
 {
-    ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
-        _settings(settings)
+    ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings, ConnectionDialog *connectionDialog) :
+        _settings(settings), _connectionDialog(connectionDialog)
     {
         _typeLabel = new QLabel("Type:");
         _connectionType = new QComboBox;
@@ -108,11 +109,11 @@ namespace Robomongo
 
         _srvLabel = new QLabel("MongoDB SRV: "); // DNS Seedlist Connection String 
         _srvEdit = new QLineEdit(QString::fromStdString(_settings->replicaSetSettings()->setNameUserEntered()));
-        auto srvButton = new QPushButton("Import");
-        srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        srvButton->setMaximumWidth(50);
-        VERIFY(connect(srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
-        auto srvText = new QLabel("MongoDB SRV Connection String: "); // DNS Seedlist Connection String 
+        _srvButton = new QPushButton("Import");
+        _srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _srvButton->setMaximumWidth(50);
+        VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
+        auto srvText = new QLabel("MongoDB SRV Connection String: "); // todo: DNS Seedlist Connection String 
 
         auto connectionLayout = new QGridLayout;
         connectionLayout->setVerticalSpacing(12);
@@ -133,7 +134,7 @@ namespace Robomongo
         connectionLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
         connectionLayout->addWidget(_srvLabel,                      10, 0);
         connectionLayout->addWidget(_srvEdit,                       10, 1);
-        connectionLayout->addWidget(srvButton,                      10, 3, Qt::AlignRight);
+        connectionLayout->addWidget(_srvButton,                      10, 3, Qt::AlignRight);
 
         auto mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
@@ -224,6 +225,9 @@ namespace Robomongo
         _minusPlusButtonBox->setVisible(isReplica);
         _setNameLabel->setVisible(isReplica);
         _setNameEdit->setVisible(isReplica);
+        _srvLabel->setVisible(isReplica);
+        _srvEdit->setVisible(isReplica);
+        _srvButton->setVisible(isReplica);
             
         // Direct Connection
         _addressLabel->setVisible(!isReplica);
@@ -306,15 +310,35 @@ namespace Robomongo
     }
     void ConnectionBasicTab::on_srvButton_clicked()
     {
-        auto xx = _srvEdit->text().toStdString();
-        // auto xx = "mongodb+srv://cluster0-v3dwc.mongodb.net/test";
-        auto res = mongo::MongoURI::parse(xx);
-        if (!res.isOK())
-            return;
-                
-        auto mongoUri = res.getValue();
-        mongoUri.getServers();
+        // auto const statusWithMongoURI = mongo::MongoURI::parse(_srvEdit->text().toStdString());
+        auto const statusWithMongoURI = mongo::MongoURI::parse(
+            "mongodb+srv://admin:admin@cluster0-v3dwc.mongodb.net/test");
 
-        // ... todo
+        if (!statusWithMongoURI.isOK()) {
+            QMessageBox errorBox;
+            errorBox.critical(this, "Error", ("MongoDB SRV:\n" + statusWithMongoURI.getStatus().toString()).c_str());
+            errorBox.show();
+            // errorBox.adjustSize();
+            return;
+        }
+                
+        auto const mongoUri = statusWithMongoURI.getValue();
+        auto const db = QString::fromStdString(mongoUri.getDatabase());        
+        auto const user = QString::fromStdString(mongoUri.getUser());
+        auto const pwd = QString::fromStdString(mongoUri.getPassword());
+        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());
+
+        // Conn. Basic Tab
+        _members->clear();
+        for (auto const& hostAndPort : mongoUri.getServers()) {
+            auto item = new QTreeWidgetItem;
+            item->setText(0, QString::fromStdString(hostAndPort.toString()));
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            _members->addTopLevelItem(item);
+        }
+        _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));
+
+        // Auth Tab
+        _connectionDialog->setAuthTab(authDb, user, pwd);
     }
 }

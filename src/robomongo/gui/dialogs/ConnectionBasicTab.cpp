@@ -102,18 +102,27 @@ namespace Robomongo
         _minusPlusButtonBox->addButton(_removeButton, QDialogButtonBox::NoRole);
         _minusPlusButtonBox->addButton(_addButton, QDialogButtonBox::NoRole);
 #endif
-
         _setNameLabel = new QLabel("Set Name:<br><i><font color=\"gray\">(Optional)</font></i>");
         _setNameEdit = new QLineEdit(QString::fromStdString(_settings->replicaSetSettings()->setNameUserEntered()));
         auto _optionalLabel = new QLabel("<i><font color=\"gray\">(Optional)</font></i>");
 
-        _srvLabel = new QLabel("MongoDB SRV: "); // DNS Seedlist Connection String 
-        _srvEdit = new QLineEdit(QString::fromStdString(_settings->replicaSetSettings()->setNameUserEntered()));
+        _srvLabel = new QLabel("MongoDB SRV: ");
+        _srvEdit = new QLineEdit();
         _srvButton = new QPushButton("Import");
+#ifdef _WIN32
         _srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
         _srvButton->setMaximumWidth(50);
+#else   // MacOS
+        _srvButton->setMaximumHeight(HighDpiConstants::MACOS_HIGH_DPI_BUTTON_HEIGHT);   
+        _srvButton->setMaximumWidth(80);
+#endif        
         VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
-        auto srvText = new QLabel("MongoDB SRV Connection String: "); // todo: DNS Seedlist Connection String 
+        auto srvLayout = new QHBoxLayout; 
+        srvLayout->addWidget(_srvEdit);
+#ifdef _WIN32
+        srvLayout->addWidget(new QLabel(""));
+#endif
+        srvLayout->addWidget(_srvButton, Qt::AlignRight);
 
         auto connectionLayout = new QGridLayout;
         connectionLayout->setVerticalSpacing(12);
@@ -132,9 +141,8 @@ namespace Robomongo
         connectionLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
         connectionLayout->addWidget(_setNameLabel,                  9, 0,  Qt::AlignTop);
         connectionLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
-        connectionLayout->addWidget(_srvLabel,                      10, 0);
-        connectionLayout->addWidget(_srvEdit,                       10, 1);
-        connectionLayout->addWidget(_srvButton,                      10, 3, Qt::AlignRight);
+        connectionLayout->addWidget(_srvLabel,                     10, 0);
+        connectionLayout->addLayout(srvLayout,                     10, 1, 1, 3, Qt::AlignRight);
 
         auto mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);

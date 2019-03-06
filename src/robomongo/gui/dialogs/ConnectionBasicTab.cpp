@@ -73,7 +73,7 @@ namespace Robomongo
                 }
             }
             // To fix strange MAC alignment issue
-#ifndef _WIN32
+#ifdef __APPLE__
             auto lineHeight = _members->fontMetrics().height();
             _members->setFixedHeight(lineHeight * 8);
 #endif
@@ -119,7 +119,7 @@ namespace Robomongo
         VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
         auto srvLayout = new QHBoxLayout; 
         srvLayout->addWidget(_srvEdit);
-#ifdef _WIN32
+#ifndef __APPLE__
         srvLayout->addWidget(new QLabel(""));
 #endif
         srvLayout->addWidget(_srvButton, Qt::AlignRight);

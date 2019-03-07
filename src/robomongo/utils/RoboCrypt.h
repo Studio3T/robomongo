@@ -1,14 +1,13 @@
 #include "SimpleCrypt.h"
 
 #include <string>
-#include <QString>
 
 namespace Robomongo {
 
     class RoboCrypt {
     public: 
         static SimpleCrypt& simpleCrypter() {
-            static SimpleCrypt simpleCrypt(quint64(0x449d327fe8693558));
+            static SimpleCrypt simpleCrypt(_KEY);
             return simpleCrypt;
         }
 
@@ -19,5 +18,12 @@ namespace Robomongo {
         static std::string decrypt(std::string cryptedPasswd) {
             return simpleCrypter().decryptToString(QString::fromStdString(cryptedPasswd)).toStdString();
         }
+
+        // Read key from key file otherwise create a new key and save it into file
+        static void initKey();
+
+    private:
+        static long long _KEY;
     };
+
 }

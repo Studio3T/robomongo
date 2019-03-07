@@ -21,6 +21,7 @@
 #include "robomongo/gui/AppStyle.h"
 #include "robomongo/utils/common.h"
 #include "robomongo/utils/qzip/qzipreader_p.h"
+#include "robomongo/utils/RoboCrypt.h"
 
 namespace Robomongo
 {
@@ -101,8 +102,9 @@ namespace Robomongo
         _textFontPointSize(-1),
         _mongoTimeoutSec(10),
         _shellTimeoutSec(15),
-        _imported(false)
+        _imported(false)        
     {
+        RoboCrypt::initKey();
         if (!load()) {  // if load fails (probably due to non-existing config. file or directory)
             save();     // create empty settings file
             load();     // try loading again for the purpose of import from previous Robomongo versions

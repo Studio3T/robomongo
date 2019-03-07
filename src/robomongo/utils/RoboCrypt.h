@@ -2,9 +2,12 @@
 
 #include <string>
 
-namespace Robomongo {
+#include <mongo/logger/log_severity.h>
 
-    class RoboCrypt {
+namespace Robomongo {
+    
+    class RoboCrypt {    
+        using LogAndSeverity = std::pair<std::string, mongo::logger::LogSeverity>;
     public: 
         static SimpleCrypt& simpleCrypter() {
             static SimpleCrypt simpleCrypt(_KEY);
@@ -22,8 +25,13 @@ namespace Robomongo {
         // Read key from key file otherwise create a new key and save it into file
         static void initKey();
 
+        static std::vector<LogAndSeverity> const& roboCryptLogs() {
+            return _roboCryptLogs;
+        }
+
     private:
         static long long _KEY;
+        static std::vector<LogAndSeverity> _roboCryptLogs;
     };
 
 }

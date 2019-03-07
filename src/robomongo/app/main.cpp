@@ -16,11 +16,12 @@
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/utils/Logger.h"       
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 #include "robomongo/gui/dialogs/EulaDialog.h"
 #include "robomongo/ssh/ssh.h"
-
+#include "robomongo/utils/RoboCrypt.h"       
 
 int main(int argc, char *argv[], char** envp)
 {
@@ -110,6 +111,9 @@ int main(int argc, char *argv[], char** envp)
     // Application main window
     Robomongo::MainWindow mainWindow;
     mainWindow.show();
+
+    for(auto const& msgAndSeverity : Robomongo::RoboCrypt::roboCryptLogs())
+        Robomongo::LOG_MSG(msgAndSeverity.first, msgAndSeverity.second);
 
     int rc = app.exec();
     rbm_ssh_cleanup();

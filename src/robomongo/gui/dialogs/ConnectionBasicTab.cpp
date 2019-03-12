@@ -115,7 +115,7 @@ namespace Robomongo
         _srvButton->setMaximumWidth(60);
 #else   // MacOS
         _srvButton->setMaximumHeight(HighDpiConstants::MACOS_HIGH_DPI_BUTTON_HEIGHT);   
-        _srvButton->setMaximumWidth(80);
+        _srvButton->setMaximumWidth(90);
 #endif        
         VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
 
@@ -148,10 +148,6 @@ namespace Robomongo
 
         _connectionName->setFocus();
         on_ConnectionTypeChange(_connectionType->currentIndex());        
-        
-#ifndef _WIN32
-        setMaximumHeight(340);  // MacOS
-#endif
     }
 
     bool ConnectionBasicTab::accept()

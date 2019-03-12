@@ -107,6 +107,9 @@ namespace Robomongo
         auto _optionalLabel = new QLabel("<i><font color=\"gray\">(Optional)</font></i>");
 
         auto fakeSpacer = new QLabel("");
+        auto hline = new QFrame();
+        hline->setFrameShape(QFrame::HLine);
+        hline->setFrameShadow(QFrame::Sunken);
         _srvEdit = new QLineEdit();
         _srvEdit->setPlaceholderText("Import connection details from MongoDB SRV connection string");
         _srvButton = new QPushButton("From SRV");
@@ -119,32 +122,39 @@ namespace Robomongo
 #endif        
         VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
 
-        auto connectionLayout = new QGridLayout;
-        connectionLayout->setVerticalSpacing(8);
-        connectionLayout->setAlignment(Qt::AlignTop);
-        connectionLayout->addWidget(_typeLabel,                     1, 0);
-        connectionLayout->addWidget(_connectionType,                1, 1, 1, 3);
-        connectionLayout->addWidget(_nameLabel,                     3, 0);
-        connectionLayout->addWidget(_connectionName,                3, 1, 1, 3);
-        connectionLayout->addWidget(_addressLabel,                  5, 0);
-        connectionLayout->addWidget(_serverAddress,                 5, 1);
-        connectionLayout->addWidget(_colon,                         5, 2);
-        connectionLayout->addWidget(_serverPort,                    5, 3);
-        connectionLayout->addWidget(_addInfoLabel,                  6, 1, 1, 3);
-        connectionLayout->addWidget(_membersLabel,                  7, 0, Qt::AlignTop);
-        connectionLayout->addWidget(_members,                       7, 1, 1, 3);
-        connectionLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
-        connectionLayout->addWidget(_setNameLabel,                  9, 0,  Qt::AlignTop);
-        connectionLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
-        connectionLayout->addWidget(fakeSpacer,                    10, 0);
-        connectionLayout->addWidget(_srvButton,                    13, 0);
-        connectionLayout->addWidget(_srvEdit,                      13, 1, 1, 3);
+        auto connLayout = new QGridLayout;
+        connLayout->setVerticalSpacing(8);
+        connLayout->setAlignment(Qt::AlignTop);
+        connLayout->addWidget(_typeLabel,                     1, 0);
+        connLayout->addWidget(_connectionType,                1, 1, 1, 3);
+        connLayout->addWidget(_nameLabel,                     3, 0);
+        connLayout->addWidget(_connectionName,                3, 1, 1, 3);
+        connLayout->addWidget(_addressLabel,                  5, 0);
+        connLayout->addWidget(_serverAddress,                 5, 1);
+        connLayout->addWidget(_colon,                         5, 2);
+        connLayout->addWidget(_serverPort,                    5, 3);
+        connLayout->addWidget(_addInfoLabel,                  6, 1, 1, 3);
+        connLayout->addWidget(_membersLabel,                  7, 0, Qt::AlignTop);
+        connLayout->addWidget(_members,                       7, 1, 1, 3);
+        connLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
+        connLayout->addWidget(_setNameLabel,                  9, 0,  Qt::AlignTop);
+        connLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
+        connLayout->addWidget(fakeSpacer,                    10, 0);
+        connLayout->addWidget(hline,                         11, 0, 1, 4);
+        connLayout->addWidget(_srvButton,                    13, 0);
+        connLayout->addWidget(_srvEdit,                      13, 1, 1, 3);
 
-        connectionLayout->setRowStretch(10, 1);
+        connLayout->setRowStretch(10, 1);        
+#ifdef __APPLE__
+        connLayout->setRowMinimumHeight(11, 20);
+#endif
 
         auto mainLayout = new QVBoxLayout;
-        mainLayout->addLayout(connectionLayout);
+        mainLayout->addLayout(connLayout);
         setLayout(mainLayout);
+#ifdef __APPLE__
+        mainLayout->setContentsMargins(-1, -1, -1, 10);
+#endif
 
         _connectionName->setFocus();
         on_ConnectionTypeChange(_connectionType->currentIndex());        

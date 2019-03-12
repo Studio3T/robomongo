@@ -106,26 +106,21 @@ namespace Robomongo
         _setNameEdit = new QLineEdit(QString::fromStdString(_settings->replicaSetSettings()->setNameUserEntered()));
         auto _optionalLabel = new QLabel("<i><font color=\"gray\">(Optional)</font></i>");
 
-        _srvLabel = new QLabel("MongoDB SRV: ");
+        auto fakeSpacer = new QLabel("");
         _srvEdit = new QLineEdit();
-        _srvButton = new QPushButton("Import");
+        _srvEdit->setPlaceholderText("Import connection details from MongoDB SRV connection string");
+        _srvButton = new QPushButton("From SRV");
 #ifdef _WIN32
         _srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _srvButton->setMaximumWidth(50);
+        _srvButton->setMaximumWidth(60);
 #else   // MacOS
         _srvButton->setMaximumHeight(HighDpiConstants::MACOS_HIGH_DPI_BUTTON_HEIGHT);   
         _srvButton->setMaximumWidth(80);
 #endif        
         VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
-        auto srvLayout = new QHBoxLayout; 
-        srvLayout->addWidget(_srvEdit);
-#ifndef __APPLE__
-        srvLayout->addWidget(new QLabel(""));
-#endif
-        srvLayout->addWidget(_srvButton, Qt::AlignRight);
 
         auto connectionLayout = new QGridLayout;
-        connectionLayout->setVerticalSpacing(12);
+        connectionLayout->setVerticalSpacing(8);
         connectionLayout->setAlignment(Qt::AlignTop);
         connectionLayout->addWidget(_typeLabel,                     1, 0);
         connectionLayout->addWidget(_connectionType,                1, 1, 1, 3);
@@ -141,8 +136,11 @@ namespace Robomongo
         connectionLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
         connectionLayout->addWidget(_setNameLabel,                  9, 0,  Qt::AlignTop);
         connectionLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
-        connectionLayout->addWidget(_srvLabel,                     10, 0);
-        connectionLayout->addLayout(srvLayout,                     10, 1, 1, 3, Qt::AlignRight);
+        connectionLayout->addWidget(fakeSpacer,                    10, 0);
+        connectionLayout->addWidget(_srvButton,                    13, 0);
+        connectionLayout->addWidget(_srvEdit,                      13, 1, 1, 3);
+
+        connectionLayout->setRowStretch(10, 1);
 
         auto mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
@@ -150,11 +148,8 @@ namespace Robomongo
 
         _connectionName->setFocus();
         on_ConnectionTypeChange(_connectionType->currentIndex());        
-
-#ifdef _WIN32        
-        if(QApplication::desktop()->devicePixelRatio() > 1) // Hi-DPI Screen
-            setFixedHeight(250);
-#else
+        
+#ifndef _WIN32
         setMaximumHeight(340);  // MacOS
 #endif
     }
@@ -233,9 +228,6 @@ namespace Robomongo
         _minusPlusButtonBox->setVisible(isReplica);
         _setNameLabel->setVisible(isReplica);
         _setNameEdit->setVisible(isReplica);
-        _srvLabel->setVisible(isReplica);
-        _srvEdit->setVisible(isReplica);
-        _srvButton->setVisible(isReplica);
             
         // Direct Connection
         _addressLabel->setVisible(!isReplica);
@@ -337,6 +329,7 @@ namespace Robomongo
 
         // Basic (this) Tab
         _members->clear();
+        _connectionType->setCurrentIndex(1);    // Switch to Replica Set
         for (auto const& hostAndPort : mongoUri.getServers()) {
             auto host = QString::fromStdString(hostAndPort.host());
             host.endsWith('.') ? host.remove(host.size()-1, 1) : "no-op";
@@ -346,12 +339,9 @@ namespace Robomongo
             item->setFlags(item->flags() | Qt::ItemIsEditable);
             _members->addTopLevelItem(item);
         }
-        _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));
-        // Auth Tab
-        _connectionDialog->setAuthTab(authDb, user, pwd);
-        // SSL Tab
-        _connectionDialog->enableSslBasic();
-        // Advanced Tab
-        _connectionDialog->setDefaultDb(db);
+        _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));        
+        _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab        
+        _connectionDialog->enableSslBasic();    // SSL Tab        
+        _connectionDialog->setDefaultDb(db);    // Advanced Tab
     }
 }

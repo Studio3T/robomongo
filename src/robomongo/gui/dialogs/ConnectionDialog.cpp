@@ -71,7 +71,7 @@ namespace Robomongo
 
 #ifdef _WIN32
         if (QApplication::desktop()->devicePixelRatio() > 1) // Hi-DPI Screen
-            setMinimumHeight(330);    // Win
+            setMinimumHeight(300);    // Win
 #else
         setMinimumHeight(460);  // MacOS    
         setMinimumWidth(600);   // MacOS

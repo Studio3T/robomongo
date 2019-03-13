@@ -45,7 +45,7 @@ int main(int argc, char *argv[], char** envp)
     // Initialization routine for MongoDB shell
     mongo::runGlobalInitializersOrDie(argc, argv, envp);
     mongo::setGlobalServiceContext(mongo::ServiceContext::make());
-    // Mongo-Todo: This should use a TransportLayerManager or TransportLayerFactory
+    // Todo from mongo repo: This should use a TransportLayerManager or TransportLayerFactory
     auto serviceContext = mongo::getGlobalServiceContext();
     mongo::transport::TransportLayerASIO::Options opts;
     opts.enableIPv6 = mongo::shellGlobalParams.enableIPv6;

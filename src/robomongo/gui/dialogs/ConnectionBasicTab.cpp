@@ -324,7 +324,6 @@ namespace Robomongo
             QMessageBox errorBox;
             errorBox.critical(this, "Error", ("MongoDB SRV:\n" + statusWithMongoURI.getStatus().toString()).c_str());
             errorBox.show();
-            // errorBox.adjustSize();
             return;
         }
         auto const mongoUri = statusWithMongoURI.getValue();

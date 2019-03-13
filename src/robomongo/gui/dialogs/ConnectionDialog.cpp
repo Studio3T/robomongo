@@ -7,7 +7,6 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDialogButtonBox>
-#include <QDesktopWidget>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"

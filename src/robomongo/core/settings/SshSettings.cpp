@@ -40,7 +40,7 @@ namespace Robomongo
         setPort(map.value("port").toInt());
         setUserName(QtUtils::toStdString(map.value("userName").toString()));
 
-        // From Robo 1.3 "userPasswordEncrypted" is used instead of "userPassword" 
+        // From version Robo 1.3 "userPasswordEncrypted" is used instead of "userPassword" 
         if (map.contains("userPassword")) // Robo 1.2 and below
             setUserPassword((map.value("userPassword").toString().toStdString()));
         else if (map.contains("userPasswordEncrypted")) // From Robo 1.3

@@ -260,7 +260,7 @@ namespace Robomongo
             // If we do not have databases, it means that we are unable to
             // execute "listdatabases" command and we have nothing to show.
             if (dbNames.size() == 0)
-                throw std::runtime_error("Failed to execute \"listdatabases\" command."/*, 0*/);
+                throw std::runtime_error("Failed to execute \"listdatabases\" command.");
 
             if (!_connSettings->isReplicaSet())
                 init(); // Init MongoWorker for single server (for replica set connections early init is used)
@@ -930,7 +930,7 @@ namespace Robomongo
                 auto const cmd = "db.system.js.save(" + event->function().toBson().toString() + ')';
                 MongoShellExecResult const& result = _scriptEngine->exec(cmd, event->database());
                 if (result.error())
-                    throw std::runtime_error(result.errorMessage()/*, 0*/);
+                    throw std::runtime_error(result.errorMessage());
             }
             else {
                 boost::scoped_ptr<MongoClient> client(getClient());
@@ -961,7 +961,7 @@ namespace Robomongo
                 auto const cmd = "db.system.js.remove( { _id : \"" + event->functionName() + "\" } )";
                 MongoShellExecResult const& result = _scriptEngine->exec(cmd, event->database());
                 if (result.error())
-                    throw std::runtime_error(result.errorMessage()/*, 0*/);
+                    throw std::runtime_error(result.errorMessage());
             }
             else {
                 boost::scoped_ptr<MongoClient> client(getClient());

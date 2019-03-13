@@ -99,6 +99,9 @@ namespace Robomongo
         _shellTimeoutSec(15),
         _imported(false)        
     {
+        if (!QDir().mkpath(ConfigDir))
+            LOG_MSG("ERROR: Could not create settings path: " + ConfigDir, mongo::logger::LogSeverity::Error());
+
         RoboCrypt::initKey();
         if (!load()) {  // if load fails (probably due to non-existing config. file or directory)
             save();     // create empty settings file
@@ -143,12 +146,7 @@ namespace Robomongo
      */
     bool SettingsManager::save()
     {
-        QVariantMap map = convertToMap();
-
-        if (!QDir().mkpath(ConfigDir)) {
-            LOG_MSG("ERROR: Could not create settings path: " + ConfigDir, mongo::logger::LogSeverity::Error());
-            return false;
-        }
+        QVariantMap const& map = convertToMap();
 
         QFile f(ConfigFilePath);
         if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {

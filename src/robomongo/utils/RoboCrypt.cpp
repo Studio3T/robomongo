@@ -26,13 +26,13 @@ namespace Robomongo {
 
         const auto KEY_FILE = QString("%1/.3T/robo-3t/robo3t.key").arg(QDir::homePath()).toStdString();
         QString fileContent;
-        QFileInfo fileInfo{ QString::fromStdString(KEY_FILE) };
+        QFileInfo const fileInfo{ QString::fromStdString(KEY_FILE) };
         if (fileInfo.exists() && fileInfo.isFile()) {   // a) Read existing key from file
-            QFile keyFile(QString::fromStdString(KEY_FILE));
+            QFile keyFile{ QString::fromStdString(KEY_FILE) };
             if (!keyFile.open(QIODevice::ReadOnly))
                 addToRoboCryptLogs("RoboCrypt: Failed to open key file: " + KEY_FILE, MongoSeverity::Error());
 
-            QTextStream in(&keyFile);
+            QTextStream in{ &keyFile };
             fileContent = in.readAll();
             if(fileContent.isEmpty())
                 addToRoboCryptLogs("RoboCrypt: Key file is empty: " + KEY_FILE, MongoSeverity::Error());
@@ -43,13 +43,13 @@ namespace Robomongo {
             addToRoboCryptLogs("RoboCrypt: No key found, generating a new key and saving it into file", 
                                 MongoSeverity::Warning());
             // Generate a new key
-            std::random_device rd;
-            std::mt19937_64 e2{ rd() };
+            std::random_device randomDevice;
+            std::mt19937_64 engine{ randomDevice() };
             std::uniform_int_distribution<long long int> dist{ std::llround(std::pow(2,61)), 
                                                                std::llround(std::pow(2,62)) };
-            _KEY = dist(e2);
+            _KEY = dist(engine);
             // Save the key into file
-            QFile file(QString::fromStdString(KEY_FILE));
+            QFile file{ QString::fromStdString(KEY_FILE) };
             if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
                 addToRoboCryptLogs("RoboCrypt: Failed to save the key into file: " + KEY_FILE, MongoSeverity::Error());
                             

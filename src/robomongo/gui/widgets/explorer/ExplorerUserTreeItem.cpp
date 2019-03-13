@@ -25,7 +25,7 @@ namespace
     std::string buildToolTip(const Robomongo::MongoUser &user)
     {
         char buff[2048] = {0};
-        sprintf(buff, tooltipTemplate, user.name().c_str(), user.id().c_str());
+        sprintf(buff, tooltipTemplate, user.name().c_str());
         return buff;
     }
 }

@@ -79,13 +79,13 @@ namespace Robomongo
         utils::setCurrentText(_userSourceComboBox, QtUtils::toQString(user.userSource()));
 
         QGridLayout *gridRoles = new QGridLayout();
-        MongoUser::RoleType userRoles = user.role();
+        MongoUser::RolesVector userRoles = user.roles();
         for (unsigned i = 0; i<RolesCount; ++i)
         {
             int row = i%3;
             int col = i/3;
             _rolesArray[i] = new QCheckBox(rolesText[i], this);
-            MongoUser::RoleType::const_iterator it = std::find(userRoles.begin(), userRoles.end(), rolesText[i]);
+            MongoUser::RolesVector::const_iterator it = std::find(userRoles.begin(), userRoles.end(), rolesText[i]);
             _rolesArray[i]->setChecked(it!= userRoles.end());
             gridRoles->addWidget(_rolesArray[i], row, col);
         }
@@ -213,13 +213,13 @@ namespace Robomongo
             _user.setPassword(pass);
             _user.setUserSource(userSource);
 
-            MongoUser::RoleType roles;
+            MongoUser::RolesVector roles;
             for (unsigned i = 0; i < RolesCount; ++i) {
                 if (_rolesArray[i]->isChecked()) {
                     roles.push_back(rolesText[i]);
                 }
             }
-            _user.setRole(roles);
+            _user.setRoles(roles);
         }
 
         QDialog::accept();

@@ -496,7 +496,9 @@ namespace Robomongo {
             if ((mainWindow = qobject_cast<MainWindow*>(wid)))
                 break;
         }
-        mainWindow->hideQueryWidgetProgressBar();
+
+        if(mainWindow)
+            mainWindow->hideQueryWidgetProgressBar();
     }
 
 }   // namespace Robomongo

@@ -69,10 +69,7 @@ namespace Robomongo
         _basicTab->setFocus();
         adjustSize();
 
-#ifdef _WIN32
-        if (QApplication::desktop()->devicePixelRatio() > 1) // Hi-DPI Screen
-            setMinimumHeight(300);    // Win
-#else
+#ifdef __APPLE__
         setMinimumWidth(660);   // MacOS & Linux
 #endif
     }

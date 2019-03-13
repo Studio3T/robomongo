@@ -50,32 +50,27 @@ namespace Robomongo
     */
     const QString SchemaVersion = "2.0";
 
+    const auto CONFIG_FILE_0_8_5 = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_1_0_RC1 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_1_1_0_BETA = QString("%1/.3T/robomongo/1.1.0-Beta/robomongo.json").arg(QDir::homePath());
+
     /**
     * @brief Robomongo config. files of old versions
     */
-    const auto CONFIG_FILE_0_8_5 = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_0_9 = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_0_RC1 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
-    // Change of path due to re-branding to 3T
-    const auto CONFIG_FILE_1_0_0 = QString("%1/.3T/robomongo/1.0.0/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_1_0_BETA = QString("%1/.3T/robomongo/1.1.0-Beta/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_1_1 = QString("%1/.3T/robo-3t/1.1.1/robo3t.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_2_0_BETA = QString("%1/.3T/robo-3t/1.2.0/robo3t.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_2_1 = QString("%1/.3T/robo-3t/1.2.1/robo3t.json").arg(QDir::homePath());
-
     // Important Note: In order to import connections from the latest version found, config. file path of an 
     //                 old version must be defined (i.e. CONFIG_FILE_1_0_0 seen above) and placed into the 
     //                 vector initializer list below in order.
     std::vector<QString> const SettingsManager::_configFilesOfOldVersions
     {
-        CONFIG_FILE_1_2_1,
-        CONFIG_FILE_1_2_0_BETA,
-        CONFIG_FILE_1_1_1,
-        CONFIG_FILE_1_1_0_BETA,
-        CONFIG_FILE_1_0_0,
-        CONFIG_FILE_1_0_RC1,
-        CONFIG_FILE_0_9,
-        CONFIG_FILE_0_8_5,
+        QString("%1/.3T/robo-3t/1.3.0/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_3_0_BETA
+        QString("%1/.3T/robo-3t/1.2.1/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_2_1
+        QString("%1/.3T/robo-3t/1.2.0/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_2_0_BETA
+        QString("%1/.3T/robo-3t/1.1.1/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_1_1
+        CONFIG_FILE_1_1_0_BETA,                                                     // CONFIG_FILE_1_1_0_BETA 
+        QString("%1/.3T/robomongo/1.0.0/robomongo.json").arg(QDir::homePath()),     // CONFIG_FILE_1_0_0     
+        CONFIG_FILE_1_0_RC1,                                                        // CONFIG_FILE_1_0_RC1
+        QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath()),   // CONFIG_FILE_0_9
+        CONFIG_FILE_0_8_5                                                           // CONFIG_FILE_0_8_5
     };
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;

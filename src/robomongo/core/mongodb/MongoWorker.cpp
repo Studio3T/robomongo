@@ -708,7 +708,6 @@ namespace Robomongo
         std::string dbname = event->database();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            //remove_if(dbname.begin(), dbname.end(), isspace);
             client->createDatabase(dbname);
 
             // Insert to list of created database. Read docs for this hashset in the header

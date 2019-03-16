@@ -70,10 +70,10 @@ namespace Robomongo
         std::string _host;  // domain or IPv4/v6
         int _port;
         std::string _userName;
-        std::string _userPassword;
+        std::string _userPassword;      // clear text password (decrypted)
         std::string _privateKeyFile;
         std::string _publicKeyFile;
-        std::string _passphrase;
+        std::string _passphrase;        // clear text passphrase (decrypted)
         std::string _authMethod; // "password" or "publickey"
 
         // Should we ask user about password or passphrase

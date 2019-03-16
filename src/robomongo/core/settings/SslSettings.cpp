@@ -1,6 +1,7 @@
 #include "robomongo/core/settings/SslSettings.h"
 
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/utils/RoboCrypt.h"
 
 namespace Robomongo
 {
@@ -23,7 +24,8 @@ namespace Robomongo
         map.insert("caFile", QtUtils::toQString(caFile()));
         map.insert("usePemFile", usePemFile());
         map.insert("pemKeyFile", QtUtils::toQString(pemKeyFile()));
-        map.insert("pemPassPhrase", QtUtils::toQString(pemPassPhrase()));
+        map.insert("pemPassPhraseEncrypted", pemPassPhrase().empty() ? "" :
+                                             QtUtils::toQString(RoboCrypt::encrypt(pemPassPhrase())));
         map.insert("useAdvancedOptions", useAdvancedOptions());
         map.insert("crlFile", QtUtils::toQString(crlFile()));
         map.insert("allowInvalidHostnames", allowInvalidHostnames());
@@ -39,7 +41,13 @@ namespace Robomongo
         setCaFile(QtUtils::toStdString(map.value("caFile").toString()));
         setUsePemFile(map.value("usePemFile").toBool());
         setPemKeyFile(QtUtils::toStdString(map.value("pemKeyFile").toString()));
-        setPemPassPhrase(QtUtils::toStdString(map.value("pemPassPhrase").toString()));
+        
+        // From version Robo 1.3 "pemPassPhraseEncrypted" is used instead of "pemPassPhrase" in config. file
+        if (map.contains("pemPassPhrase")) // Robo 1.2 and below
+            setPemPassPhrase((map.value("pemPassPhrase").toString().toStdString()));
+        else if (map.contains("pemPassPhraseEncrypted")) // From Robo 1.3
+            setPemPassPhrase(RoboCrypt::decrypt((map.value("pemPassPhraseEncrypted").toString().toStdString())));
+
         setUseAdvancedOptions(map.value("useAdvancedOptions").toBool());
         setCrlFile(QtUtils::toStdString(map.value("crlFile").toString()));
         setAllowInvalidHostnames(map.value("allowInvalidHostnames").toBool());

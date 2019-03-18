@@ -5,6 +5,7 @@ About Robo 3T
 
 From version 1.3, Robo 3T embeds the **MongoDB 4.0** shell (including support for SCRAM-SHA-256 auth and MongoDB SRV connection strings).
 
+**MongoDB shell history:**   
 From version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.  
 From version 0.9, Robo 3T embeds the **MongoDB 3.2** shell (including SCRAM-SHA-1 auth and support for WiredTiger storage engine).  
 From version 0.8.x, Robo 3T embeds the **MongoDB 2.4.0** shell.  

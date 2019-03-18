@@ -1,147 +1,158 @@
 
 Latest Version: 
-Robo 3T 1.2.1 (19 Feb, 2018)
-http://blog.robomongo.org/robo-3t-1-2
+Robo 3T 1.3.1 (TBD, 2019)
+http://blog.robomongo.org/robo-3t-1-3
 https://robomongo.org/download
 
-Robo 3T 1.2.1:
-  Major Features: 
+  New Features:
+	- Biggest change in this version is Mongo Shell version upgrade from 3.4 to 4.0.5.
+	- Support for importing from DNS SRV based MongoDB connection strings
+	- Query results windows now supports tabbed output #1591 #1403
+	- Adding support for SCRAM-SHA-256 auth mechanism #1569
+	- Support for Ubuntu 18.04 and Mac 10.14.
+	- Support for creating version 4 UUID #1554
+
+  Improvements
+    - Encrypted passwords are used in config. file instead of clear text passwords 
+	- Showing much better error reason string from Mongo drivers for connection failures
+
+  Fixes:
+	- Broken create/edit/view user features fixed and updated #638 #1041
+	- Attempt to fix #1547: Crash when right click on existing results plus a new long running query
+	- Fix for application crash when adding index with invalid JSON
+	- 'Repair Database' in Robo3T needs a confirm dialog box #1568
+	- Robo 3T the input space causes connection failure #1551
+	- Crash when loading results + right click #1547
+	- Attempt to fix major connection problems seen with the second edit/add/remove document
+	  operation after MongoDB 4.0 upgrade #1603
+	- Attempt to fix #1581: For CRUD ops showing progress bar and disabling context menu while 
+	  waiting for edit op to finish
+	- Fixing UI issue where Functions folder freezing with "Functions..." when fails to refresh
+	- Fix for #1529: Pagination does not work when the aggregation queries have dotted fields
+
+Robo 3T 1.3.0 Beta (16 Feb, 2019)
+Details: https://github.com/Studio3T/robomongo/releases/tag/v1.3.0-beta
+
+Robo 3T 1.2.1 (19 Feb, 2018)   
+http://blog.robomongo.org/robo-3t-1-2
+    
+  Fixes:
+    - Aggregate query results are not pagaeble 
+    - Big double numbers are showing incorrectly #1447
+    - Editing a document from a projection causes data loss (override) (#881)
+    - Error: Resources temporarily unavailable. Error when starting up SSH session: -8 #1426
+    - robo3t 1.1 failed to start on Ubuntu 17.04 #1385
+    - Robo 3T is not opening on MacOS High Sierra (#1412)
+    - Cannot load list of indexes #1454
+    - Robo 3T is not buildable on latest MacOS High Sierra
+	
+  Improvements 
+    - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
+    - Auto switch to HTTP from HTTPS if the program crashes due to HTTPS related operations 
+    - Improvements for Robo 3T is crashing constantly on High Sierra #1412
+    - PR: Improved query time formatting (#1358) #1455
+            
+Robo 3T 1.2.0 Beta (18 Dec, 2017)   
+https://github.com/Studio3T/robomongo/releases/tag/v1.2.0-beta
+    
+  Improvements & Fixes:
+    - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
+    - Fix for "Cannot load list of indexes #1454"
+    - Improvements for Robo 3T is crashing constantly on High Sierra #1412
+    - PR: Improved query time formatting (#1358) #1455
+    - Fix for "Robo 3T is not buildable on latest MacOS vesion High Sierra"
+    - Fix attempt for "Error: Resources temporarily unavailable. Error when starting up SSH session: -8 #1426"
+    - Fix for "robo3t 1.1 failed to start on Ubuntu 17.04 #1385"      
+      
+Robo 3T 1.1 (13 June, 2017)
+http://blog.robomongo.org/robomongo-1-1/
+
+  New Features:
     - MongoDB 3.4 support
-    - Replica set support.
+    - New NumberDecimal (Decimal128) data type support
     - ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)
+    - Re-naming from Robomongo to Robo 3T
+
+  Improvements & Fixes:
+    - Stability Improvements: Fix included to prevent a crash on MACOS Sierra
+    - Shell timeout is configurable on UI now 'Options->Change Shell Timeout'
+    - Fix for Robomongo Shell Timeout Issue (silently, prematurely finishing long lasting scripts) 
+    - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
+    - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
+              
+Robomongo 1.1 Beta (12 May, 2017)   
+https://github.com/Studio3T/robomongo/releases/tag/v1.1.0-beta
+    
+  New Features:
+    - MongoDB 3.4 Support 
+    - New NumberDecimal (Decimal128) data type support
+    - ECMAScript 2015 (Modernized JavaScript Implementation aka ES6) Support  
+      
+  Improvements:
+    - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
+    - Tool Chain Improvements: Modern C++14 features are enabled 
+
+Robomongo 1.0 (21 Apr, 2017)
+http://blog.robomongo.org/robomongo-1-0
+    
+  New Features:
     - Update Notifications Bar
     - Welcome Tab
-    - New operation logging for almost all operations.
+    - Welcome Wizard
 
-  Major Fixes/Improvements:
-    - Fix for Robomongo Shell Timeout Issue (silently, prematurely finishing long lasting scripts) 
-    - New NumberDecimal (Decimal128) data type support
-    - Aggregate query results are pagaeble now
-    - Fix for Big double numbers are showing incorrectly #1447
-    - Fix for Editing a document from a projection causes data loss (override) (#881)
-    - Improved error handling (no double error windows) for almost all operations.
+  Improvements:
+    - Replica set name configurable on UI
+    - Configuration file system location change
+    - "About Robomongo" dialog changes
+  
+  Fixes:
+    - Fix to avoid the same set name problem (https://github.com/Studio3T/robomongo/issues/1302)
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
-
-  * What's new in Robo 3T 1.2.1 (19 Feb, 2018)   
-    http://blog.robomongo.org/robo-3t-1-2
-    
-    Fixes:
-      - Aggregate query results are not pagaeble 
-      - Big double numbers are showing incorrectly #1447
-      - Editing a document from a projection causes data loss (override) (#881)
-      - Error: Resources temporarily unavailable. Error when starting up SSH session: -8 #1426
-      - robo3t 1.1 failed to start on Ubuntu 17.04 #1385
-      - Robo 3T is not opening on MacOS High Sierra (#1412)
-      - Cannot load list of indexes #1454
-      - Robo 3T is not buildable on latest MacOS High Sierra
-    Improvements 
-      - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
-      - Auto switch to HTTP from HTTPS if the program crashes due to HTTPS related operations 
-      - Improvements for Robo 3T is crashing constantly on High Sierra #1412
-      - PR: Improved query time formatting (#1358) #1455
-            
-  * What's new in Robo 3T 1.2.0 Beta (18 Dec, 2017)   
-    https://github.com/Studio3T/robomongo/releases/tag/v1.2.0-beta
-    
-    Improvements & Fixes:
-      - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
-      - Fix for "Cannot load list of indexes #1454"
-      - Improvements for Robo 3T is crashing constantly on High Sierra #1412
-      - PR: Improved query time formatting (#1358) #1455
-      - Fix for "Robo 3T is not buildable on latest MacOS vesion High Sierra"
-      - Fix attempt for "Error: Resources temporarily unavailable. Error when starting up SSH session: -8 #1426"
-      - Fix for "robo3t 1.1 failed to start on Ubuntu 17.04 #1385"      
-      
-  * What's new in Robo 3T 1.1 (13 June, 2017)
-    http://blog.robomongo.org/robomongo-1-1/
-
-    New Features:
-      - MongoDB 3.4 support
-      - New NumberDecimal (Decimal128) data type support
-      - ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)
-      - Re-naming from Robomongo to Robo 3T
-
-    Improvements & Fixes:
-      - Stability Improvements: Fix included to prevent a crash on MACOS Sierra
-      - Shell timeout is configurable on UI now 'Options->Change Shell Timeout'
-      - Fix for Robomongo Shell Timeout Issue (silently, prematurely finishing long lasting scripts) 
-      - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
-      - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
-                
-  * What's new in Robomongo 1.1 Beta (12 May, 2017)   
-    https://github.com/Studio3T/robomongo/releases/tag/v1.1.0-beta
-    
-    New Features:
-      - MongoDB 3.4 Support 
-      - New NumberDecimal (Decimal128) data type support
-      - ECMAScript 2015 (Modernized JavaScript Implementation aka ES6) Support  
-        
-    Improvements:
-      - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
-      - Tool Chain Improvements: Modern C++14 features are enabled 
-
-  * What's new in Robomongo 1.0 (21 Apr, 2017)
-    http://blog.robomongo.org/robomongo-1-0
-    
-    New Features:
-      - Update Notifications Bar
-      - Welcome Tab
-      - Welcome Wizard
-
-    Improvements:
-      - Replica set name configurable on UI
-      - Configuration file system location change
-      - "About Robomongo" dialog changes
-    
-    Fixes:
-      - Fix to avoid the same set name problem (https://github.com/Studio3T/robomongo/issues/1302)
-      - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
-      - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
-      - Time zone shown as "000:00" when UTC +00:00 is used as local timezone(https://github.com/Studio3T/robomongo/issues/1309)
+    - Time zone shown as "000:00" when UTC +00:00 is used as local timezone(https://github.com/Studio3T/robomongo/issues/1309)
   
-  * What's new in Robomongo 1.0-RC1 (1 Feb, 2017)
-    http://blog.robomongo.org/robomongo-1-rc1/
+Robomongo 1.0-RC1 (1 Feb, 2017)
+http://blog.robomongo.org/robomongo-1-rc1/
     
-    New Features:
-      - Replica set support.
-      - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.  
-      - New operation logging for almost all operations.
+  New Features:
+    - Replica set support.
+    - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.  
+    - New operation logging for almost all operations.
 
-    Improvements:
-      - Improved error handling (no double error windows) for all fail and success conditions for the following operations:
-          . Create, Drop Database
-          . Create, Edit User
-          . Create, Drop, Duplicate, Rename Collection
-          . Insert Document
-          . Remove document, Delete document, Remove all documents (triggered both from explorer and from result widget)
-          . Refresh Users
-          . Refresh Functions
-          . Refresh Collections
-          . Connection establish & refresh server fail and success cases.
-      - Windows size is saved and restored for Edit, View and Insert Document dialogs.
-      - Connections are automatically imported from the latest Robomongo version.
-      - Better error reporting/handling and logging have been added for the operations below:
-          . Create, Drop Function
-          . Drop User
-      - More informative and adjusted log level prefix strings haven added for log window. (Error, Warn, Info etc..).
-      - After a new connection is created, now the focus goes to the newly created connection (end of list) instead of the 
-        beginning of connections list. And when Robomongo is opened, the focus goes to the end of the connection list instead 
-        of beginning. 
-      - Error messages added and error handling for 'remove document', 'remove all documents' operations triggered explorer 
-        and single or multi 'delete document' from results window have been re-implemented and improved.
-      - Relevant errors are shown for the following cases now:        
-          . Drop attempt of non-existing collection.
-          . Duplicating a collection with a collection name which already exists finishes silently.
-    
-    Fixes:
-      - Fix for the problem where the connections list comes empty if the Robomongo config file or it's directory do not exist.
-      - Fix for the problem where 'in-progress bar' widget was not centered on main window for "Update Documents/Remove Documents" 
-        operations. https://github.com/paralect/robomongo/issues/1256
-      - Fix for two problems where the operations 'insert or update documents' in one tab was causing auto reloading of other 
-        unrelated tabs and also multiple error windows to popup. https://github.com/paralect/robomongo/issues/1236
-      - Fix for the problem where the operations 'remove document', 'remove all documents' triggered explorer and single or 
-        multi 'delete document' from results window were causing auto reloading of other unrelated tabs.
+  Improvements:
+    - Improved error handling (no double error windows) for all fail and success conditions for the following operations:
+      . Create, Drop Database
+      . Create, Edit User
+      . Create, Drop, Duplicate, Rename Collection
+      . Insert Document
+      . Remove document, Delete document, Remove all documents (triggered both from explorer and from result widget)
+      . Refresh Users
+      . Refresh Functions
+      . Refresh Collections
+      . Connection establish & refresh server fail and success cases.
+    - Windows size is saved and restored for Edit, View and Insert Document dialogs.
+    - Connections are automatically imported from the latest Robomongo version.
+    - Better error reporting/handling and logging have been added for the operations below:
+      . Create, Drop Function
+      . Drop User
+    - More informative and adjusted log level prefix strings haven added for log window. (Error, Warn, Info etc..).
+    - After a new connection is created, now the focus goes to the newly created connection (end of list) instead of the 
+      beginning of connections list. And when Robomongo is opened, the focus goes to the end of the connection list instead 
+      of beginning. 
+    - Error messages added and error handling for 'remove document', 'remove all documents' operations triggered explorer 
+      and single or multi 'delete document' from results window have been re-implemented and improved.
+    - Relevant errors are shown for the following cases now:        
+      . Drop attempt of non-existing collection.
+      . Duplicating a collection with a collection name which already exists finishes silently.
+  
+  Fixes:
+    - Fix for the problem where the connections list comes empty if the Robomongo config file or it's directory do not exist.
+    - Fix for the problem where 'in-progress bar' widget was not centered on main window for "Update Documents/Remove Documents" 
+      operations. https://github.com/paralect/robomongo/issues/1256
+    - Fix for two problems where the operations 'insert or update documents' in one tab was causing auto reloading of other 
+      unrelated tabs and also multiple error windows to popup. https://github.com/paralect/robomongo/issues/1236
+    - Fix for the problem where the operations 'remove document', 'remove all documents' triggered explorer and single or 
+      multi 'delete document' from results window were causing auto reloading of other unrelated tabs.
         
       
 Robomongo 0.9:

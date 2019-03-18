@@ -3,34 +3,38 @@ About Robo 3T
 
 [Robo 3T](http://www.robomongo.org) (formerly Robomongo *) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robo 3T embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
-Starting from version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.
+Starting from version 1.3, Robo 3T embeds the **MongoDB 4.0** shell (including support for SCRAM-SHA-256 auth and MongoDB SRV connection strings)
 
-Starting from version 0.9, Robo 3T is compatibile with MongoDB 3.x (including SCRAM-SHA-1 auth and support for WiredTiger storage engine). Robo 3T 0.9 embeds the **MongoDB 3.2** shell.
+From version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.
+From version 0.9, Robo 3T is compatibile with MongoDB 3.x (including SCRAM-SHA-1 auth and support for WiredTiger storage engine). Robo 3T 0.9 embeds the **MongoDB 3.2** shell.
 
 Robo 3T 0.8.x embeds the **MongoDB 2.4.0** shell.
 
 \* [Robomongo has been acquired by 3T](https://studio3t.com/press/3t-software-labs-acquires-robomongo-the-most-widely-used-mongodb-tool/)
 
-What's new in latest Robo 3T 1.2?
+What's new in latest Robo 3T 1.3?
 ====================================
 
-Fixes:  
-  - Aggregate query results are not pagaeble [#1058](https://github.com/Studio3T/robomongo/issues/1058)      
-  - Big double numbers are showing incorrectly [#1447](https://github.com/Studio3T/robomongo/issues/1447)  
-  - Editing a document from a projection causes data loss (override) [#881](https://github.com/Studio3T/robomongo/issues/881)
-  - SSH: Resources temporarily unavailable. Error when starting up SSH session [#1189](https://github.com/Studio3T/robomongo/issues/1189#issuecomment-353279070)
-  - robo3t 1.1 failed to start on Ubuntu 17.04 [#1385](https://github.com/Studio3T/robomongo/issues/1385)
-  - Robo 3T is not opening on MacOS High Sierra [#1412](https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002)
-  - Cannot load list of indexes [#1454](https://github.com/Studio3T/robomongo/issues/1454)
-  - Robo 3T is not buildable on latest MacOS High Sierra  
+New Features:  
+  - Mongo Shell upgrade from version 3.4 to 4.0.5  
+  - Support for importing from MongoDB SRV connection strings   
+  - Query results window now supports tabbed output ([#1591](https://github.com/Studio3T/robomongo/issues/1591),  [#1403](https://github.com/Studio3T/robomongo/issues/1403))
+  - Adding support for SCRAM-SHA-256 auth mechanism ([#1569](https://github.com/Studio3T/robomongo/issues/1569))  
+  - Support for creating version 4 UUID ([#1554](https://github.com/Studio3T/robomongo/issues/1554))  
+  - Support for Ubuntu 18.04 and Mac 10.14 ([#731](https://github.com/Studio3T/robomongo/issues/731))  
   
-Improvements 
-  - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
-  - Auto switch to HTTP from HTTPS if the program crashes due to HTTPS related operations 
-  - Improvements for Robo 3T is crashing constantly on High Sierra [#1412](https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002)
-  - PR: Improved query time formatting (#1358) [#1455](https://github.com/Studio3T/robomongo/issues/1455)
+Bug Fixes:  
+  - 'Create/Edit/View User' features fixed and updated #638 #1041  
+  - Pagination does not work when the aggregation queries have dotted fields #1529   
+  - Fix for application crash when adding index with invalid JSON  
+  - 'Repair Database' in Robo3T needs a confirm dialog box #1568  
+  - Robo 3T the input space causes connection failure #1551  
+  - Crash on right click when loading results #1547  
+  - Attempt to fix #1581: For CRUD ops showing progress bar and disabling context menu while waiting for edit op to finish  
+  - Fixing UI issue where Functions folder freezing with "Functions..." when fails to refresh  
+  - Attempt to fix #1547: Crash when right click on existing results plus a new long running query  
 
-Blog:     http://blog.robomongo.org/robo-3t-1-2/  
+Blog:     http://blog.robomongo.org/robo-3t-1-3/  
 Download: https://robomongo.org/download  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
@@ -43,10 +47,10 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 
 | MongoDB Versions      |
 | :-------------------- |
+| 4.0                   |
 | 3.4                   |
 | 3.2                   |
 | 3.0                   |
-| 2.6                   |
 
 | MongoDB Cloud Platforms|
 | :------------ |
@@ -59,9 +63,9 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 
 | Windows                |   Mac                            | Linux                       |        
 |:---------------------- | :--------------------------------| :---------------------------|
-| Windows 64-bit 10      |  Mac OS X 10.13 (High Sierra)    | Linux Ubuntu 17.10 64-bit*  |
-  Windows 64-bit 8.1     |  Mac OS X 10.12 (Sierra)         | Linux Ubuntu 16.04 64-bit*  |
-| Windows 64-bit 7       |  Mac OS X 10.11 (El Capitan)     | Linux CentOS 7 64-bit* **   |
+| Windows 64-bit 10      |  Mac OS X 10.14 (Mojave)     	  | Linux Ubuntu 18.04 64-bit*  |
+  Windows 64-bit 8.1     |  Mac OS X 10.13 (High Sierra)    | Linux Ubuntu 16.04 64-bit*  |
+| Windows 64-bit 7       |  Mac OS X 10.12 (Sierra)         | Linux CentOS 7 64-bit* **   |
 |                        |                                  | Linux CentOS 6 64-bit*  **  |
 
 \* Latest stable build  
@@ -70,9 +74,9 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 Download
 ========
 
-You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
+You can download tested installer packages for macOS, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robo 3T 1.2**](http://blog.robomongo.org/robo-3t-1-2/).
+The latest stable release is currently [**Robo 3T 1.3**](http://blog.robomongo.org/robo-3t-1-3/).
 
 Support
 =======
@@ -123,7 +127,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright 2014-2018 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
+Copyright 2014-2019 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

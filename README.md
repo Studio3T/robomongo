@@ -3,12 +3,11 @@ About Robo 3T
 
 [Robo 3T](http://www.robomongo.org) (formerly Robomongo *) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robo 3T embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
-Starting from version 1.3, Robo 3T embeds the **MongoDB 4.0** shell (including support for SCRAM-SHA-256 auth and MongoDB SRV connection strings)
+From version 1.3, Robo 3T embeds the **MongoDB 4.0** shell (including support for SCRAM-SHA-256 auth and MongoDB SRV connection strings).
 
-From version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.
-From version 0.9, Robo 3T is compatibile with MongoDB 3.x (including SCRAM-SHA-1 auth and support for WiredTiger storage engine). Robo 3T 0.9 embeds the **MongoDB 3.2** shell.
-
-Robo 3T 0.8.x embeds the **MongoDB 2.4.0** shell.
+From version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.  
+From version 0.9, Robo 3T embeds the **MongoDB 3.2** shell (including SCRAM-SHA-1 auth and support for WiredTiger storage engine).  
+From version 0.8.x, Robo 3T embeds the **MongoDB 2.4.0** shell.  
 
 \* [Robomongo has been acquired by 3T](https://studio3t.com/press/3t-software-labs-acquires-robomongo-the-most-widely-used-mongodb-tool/)
 

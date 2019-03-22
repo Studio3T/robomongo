@@ -114,7 +114,7 @@ namespace Robomongo
     QString const Rss_LastModifiedDateKey("wtRssLastModifiedDate");
 
     auto const TEXT_TO_TAB_RATIO = 0.6; 
-    auto const IMAGE_TO_TAB_RATIO = 0.5;
+    auto const IMAGE_TO_TAB_RATIO = 0.25;
     auto const BLOG_TO_TAB_RATIO = 0.28;
 
 /* ------------------------------------- Welcome Tab --------------------------------------- */
@@ -472,7 +472,7 @@ namespace Robomongo
         _whatsNewHeader->setText(WhatsNew.arg(leftOfStr));
         _whatsNewText->setText(rightOfStr);
         auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TEXT_TO_TAB_RATIO;
-        _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
+        _whatsNewText->setMaximumWidth(SIXTY_PERCENT_OF_TAB);
         adjustSize();
     }
     

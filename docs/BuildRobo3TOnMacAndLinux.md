@@ -23,19 +23,19 @@ python setup.py install
 
   ```sh
 Example installation for MAC OSX and Ubuntu:
-    Go to http://download.qt.io/archive/qt/5.9/5.9.3/
+    Go to http://download.qt.io/archive/qt/5.x/5.x.y/
     Download, run and install 
-      qt-opensource-mac-x64-clang-5.9.3.dmg (for MAC OSX) 
-      qt-opensource-linux-x64-5.9.0.run (for Linux)
+      qt-opensource-mac-x64-clang-5.x.y.dmg (for MAC OSX) 
+      qt-opensource-linux-x64-5.x.y.run (for Linux)
     After successful installation you should have 
-      /path/to/qt-5.9.3/5.7/clang_64 (for MAC OSX)
-      /path/to/qt-5.9.3/5.7/gcc_64 (for Linux)
+      /path/to/qt-5.x.y/5.x/clang_64 (for MAC OSX)
+      /path/to/qt-5.x.y/5.x/gcc_64 (for Linux)
 
 More information for installing on Ubuntu:
 https://wiki.qt.io/Install_Qt_5_on_Ubuntu
 ```
 
-5. Download and Build OpenSSL (1.0.2o) - (explained below in section B) 
+5. Download and Build OpenSSL - (explained below in section B) 
 
 B. Building Robo 3T and Dependencies
 -------------
@@ -73,12 +73,12 @@ cp libssl* libcrypto* lib/
 
 #### Step 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and checkout to `roboshell-v4.0.4` branch:
+Clone Robo 3T Shell and make sure you are on `roboshell-v4.0` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git branch // make sure it is "roboshell-v4.0.4"
+  $ git branch   // should be "roboshell-v4.0"
   ```
 
 Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to a set of 
@@ -91,15 +91,23 @@ directories:
 Separate directories by semicolon `;` (not colon):
 
     // MAC OSX example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.x/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.xx"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.y/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.xy"
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.x/5.x.x/gcc_64/;/home/<user>/robomongo-shell;/home/<user>/Downloads/openssl-1.0.xx"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.y/5.x.y/gcc_64/;/home/<user>/robomongo-shell;/home/<user>/Downloads/openssl-1.0.xy"
 
 Install pip requirements
 
 ```
-   // macOS / Linux assuming python = python 2.7
-   pip install --user -r etc/pip/dev-requirements.txt
+// macOS / Linux assuming python = python 2.7
+pip install --user -r etc/pip/dev-requirements.txt
+```
+
+```
+// For ubuntu, the followings might be needed
+sudo aptitude install libcurl-dev
+
+sudo pip install Typing
+sudo pip install Cheetah
 ```
 
 Build Robo 3T Shell (in release mode by default):

@@ -99,12 +99,12 @@ https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
 
 #### 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and checkout to roboshell-v4.0.4 branch:
+Clone Robo 3T Shell and make sure to be at `roboshell-v4.0` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git branch // roboshell-v4.0.4
+  $ git branch  // roboshell-v4.0
   ```
 
 Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shell and Robo 3T build scripts, needs to be set according to the following directories:
@@ -115,10 +115,27 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shel
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.2o"
-
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.2o"  
 
 Open '**a new**' VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
+
+
+**Note:**  
+The followings might also be needed: 
+
+```
+// 1st error
+ImportError: No module named typing
+// Solution: 
+pip install Typing
+pip install Cheetah
+
+// 2nd error: shell: cheetah module not found
+// Solution: 
+copy C:\Users\<user>\AppData\Roaming\Python\Python27\site-packages
+to C:\Python27\Lib\site-packages 
+
+```
 
 Build shell in release mode:
 

@@ -78,21 +78,36 @@ namespace Robomongo
 
         std::stringstream ss;
         auto hostAndPort = serverAddr.empty() ? _connection->hostAndPort().toString() : serverAddr;
-        ss << "db = connect('" << hostAndPort << "/" << connectDatabase;
+        ss << "db = connect('" << hostAndPort << "/" << connectDatabase << "')\n";
 
 //        v0.9
 //        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
-
-        if (!_connection->hasEnabledPrimaryCredential())
-            ss << "')";
-        else
-            ss << "', '"
-               << _connection->primaryCredential()->userName() << "', '"
-               << _connection->primaryCredential()->userPassword() << "')";
-
         {
             mongo::shell_utils::_dbConnect = ss.str();
-            mongo::shell_utils::_dbAuth = "(function() { \nDB.prototype._defaultGssapiServiceName = \"mongodb\";\n}())";
+            std::stringstream authStringStream;
+            authStringStream << "(function() {\n";
+            if (!_connection->primaryCredential()->mechanism().empty()) {
+                authStringStream << "DB.prototype._defaultAuthenticationMechanism = \""
+                                 << _connection->primaryCredential()->mechanism() << "\";\n";
+            }
+            authStringStream << "DB.prototype._defaultGssapiServiceName = \"mongodb\";\n";
+            authStringStream << "var username = \"" << _connection->primaryCredential()->userName() << "\";\n";
+            authStringStream << "var password = \"" << _connection->primaryCredential()->userPassword() << "\";\n";
+            if (_connection->primaryCredential()->databaseName().empty()) {
+                authStringStream << "var authDb = db;\n";
+            } else {
+                authStringStream << "var authDb = db.getSiblingDB(\""
+                                 << _connection->primaryCredential()->databaseName() << "\");\n";
+            }
+            authStringStream << "authDb.auth({ user: username";
+            authStringStream << ", pwd: password";
+            if (_connection->primaryCredential()->mechanism() == "PLAIN") {
+                authStringStream << ", digestPassword: false";
+            }
+            authStringStream << ", mechanism: \"" << _connection->primaryCredential()->mechanism() << "\" });\n";
+            authStringStream << "}())";
+
+            mongo::shell_utils::_dbAuth = authStringStream.str();
 
             // v0.9
             // mongo::isShell = true;

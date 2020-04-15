@@ -11,7 +11,7 @@ namespace Robomongo
             const std::string &name = std::string(),
             const std::string &request = std::string(),
             bool isUnique = false,
-            bool isBackGround = false,
+            bool isBackGround = true,
             bool isDropDuplicates = false,
             bool isSparce = false,
             int expireAfter = -1,

@@ -9,7 +9,7 @@
 #include <QSettings>
 #include <Qsci/qscilexerjavascript.h>
 
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"

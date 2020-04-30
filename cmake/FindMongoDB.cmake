@@ -41,38 +41,46 @@ set(MongoDB_DEFINITIONS
     BOOST_THREAD_DONT_PROVIDE_INTERRUPTIONS
     BOOST_THREAD_HAS_BUG
     MONGO_CONFIG_HAVE_HEADER_UNISTD_H
+    # Suppress "warning C4996: std::allocator..." from third_party\abseil-cpp-master
+	_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 
+    # Suppress "warning C4996: std::iterator..." from third_party\mozjs-60
+    _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
 )
 
 # Set common compiler include directories
+set(MOZJS_VER mozjs-60)
 set(MongoDB_INCLUDE_DIRS
-    ${MongoDB_DIR}/src
-    ${MongoDB_DIR}/src/third_party/boost-1.60.0
-    ${MongoDB_DIR}/src/third_party/mozjs-45/include
-    ${MongoDB_DIR}/src/third_party/mozjs-45/mongo_sources
-    ${MongoDB_DIR}/src/third_party/pcre-8.41
+    ${MongoDB_DIR}/src    
+    ${MongoDB_DIR}/src/third_party/abseil-cpp-master/abseil-cpp
+    ${MongoDB_DIR}/src/third_party/boost-1.70.0    
+    ${MongoDB_DIR}/src/third_party/fmt/dist/include
+    ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/include
+    ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/mongo_sources
+    ${MongoDB_DIR}/src/third_party/pcre-8.42
+    ${MongoDB_DIR}/src/third_party/SafeInt
     ${MongoDB_BUILD_DIR}
 )
 
 if(SYSTEM_LINUX)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART linux)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/linux/include)
+        ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/platform/x86_64/linux/include)
 elseif(SYSTEM_WINDOWS)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART windows)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/windows/include)
+        ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/platform/x86_64/windows/include)
 elseif(SYSTEM_MACOSX)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART macosx)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/macOS/include)
+        ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/platform/x86_64/macOS/include)
 elseif(SYSTEM_FREEBSD)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART freebsd)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/freebsd/include)
+        ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/platform/x86_64/freebsd/include)
 elseif(SYSTEM_OPENBSD)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART openbsd)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/openbsd/include)
+        ${MongoDB_DIR}/src/third_party/${MOZJS_VER}/platform/x86_64/openbsd/include)
 endif()
 
 # Read list of object files
@@ -86,15 +94,26 @@ string(STRIP "${MongoDB_RELATIVE_LIBS}" MongoDB_RELATIVE_LIBS)
 # Convert string to list
 string(REPLACE " " ";" MongoDB_RELATIVE_LIBS ${MongoDB_RELATIVE_LIBS})
 
+# todo: Find better/permanent solution
+# Robo 1.4: Added as workaround fix for build error: 
+# fatal error LNK1170: line in command file contains 131071 or more characters
+set(MongoDB_OBJECTS_DIR_ENV $ENV{MongoDB_OBJECTS})
+if(MongoDB_OBJECTS_DIR_ENV)
+  set(MongoDB_OBJECTS_DIR ${MongoDB_OBJECTS_DIR_ENV})
+else()
+  set(MongoDB_OBJECTS_DIR ${MongoDB_DIR})
+endif()
+
 # Convert to absolute path
 foreach(lib ${MongoDB_RELATIVE_LIBS})
-  list(APPEND MongoDB_LIBS ${MongoDB_DIR}/${lib})
+  list(APPEND MongoDB_LIBS ${MongoDB_OBJECTS_DIR}/${lib})
 endforeach()
 
 if(SYSTEM_WINDOWS)
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/Crypt32.Lib)
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/Secur32.Lib)  
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/Dnsapi.lib) 
+  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/winhttp.lib)   
 elseif(SYSTEM_LINUX)  
   list(APPEND MongoDB_LIBS /lib/x86_64-linux-gnu/libresolv.so.2) 
 endif()

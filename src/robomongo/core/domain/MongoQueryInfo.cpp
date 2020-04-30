@@ -1,6 +1,6 @@
 #include "robomongo/core/domain/MongoQueryInfo.h"
 
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 
 namespace Robomongo
 {

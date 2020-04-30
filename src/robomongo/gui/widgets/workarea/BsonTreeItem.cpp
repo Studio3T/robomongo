@@ -1,10 +1,10 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 
 using namespace mongo;
 namespace
 {
-    struct removeIfFound : public std::unary_function<const Robomongo::BsonTreeItem*, bool> 
+    struct removeIfFound
     {
         removeIfFound(Robomongo::BsonTreeItem *item) :_whatSearch(item) {}
         bool operator()(const Robomongo::BsonTreeItem* item) const

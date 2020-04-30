@@ -186,6 +186,10 @@ target_compile_definitions(robomongo
         PROJECT_QT_VERSION="${Qt5Core_VERSION}"
         PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
 
+# Suppress "warning C4477: 'sprintf'..." from robomongo\shell\db\ptimeutil.cpp
+# Suppress "warning C4291: ...no matching operator delete found" from third_party\mozjs-60
+set_target_properties(robomongo PROPERTIES COMPILE_FLAGS "/wd4477 /wd4291")
+
 if(SYSTEM_WINDOWS)
     # Create Windows Resource file
     set(windows_icon "${CMAKE_SOURCE_DIR}/install/windows/robomongo.ico")

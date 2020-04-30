@@ -151,10 +151,11 @@ namespace Robomongo
 
     std::vector<MongoFunction> MongoClient::getFunctions(const std::string &dbName)
     {
-        MongoNamespace ns(dbName, "system.js");
+        // MongoNamespace ns(dbName, "system.js");
         std::vector<MongoFunction> functions;
 
-        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query().sort("_id")));
+        std::unique_ptr<mongo::DBClientCursor> cursor(
+            _dbclient->query(mongo::NamespaceString(dbName, "system.js"), mongo::Query().sort("_id")));
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
@@ -463,7 +464,7 @@ namespace Robomongo
 
     void MongoClient::duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName)
     {
-        MongoNamespace sourceCollection(ns);
+        MongoNamespace srcNameSpace(ns);
         MongoNamespace newCollection(ns.databaseName(), newCollectionName);
 
         if (!_dbclient->exists(newCollection.toString())) {
@@ -483,7 +484,9 @@ namespace Robomongo
             throw std::runtime_error("Collection with same name already exists.");
         }
 
-        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(sourceCollection.toString(), mongo::Query()));
+        std::unique_ptr<mongo::DBClientCursor> cursor {
+			_dbclient->query(mongo::NamespaceString(srcNameSpace.databaseName(), srcNameSpace.collectionName()), mongo::Query()) 
+		};
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
@@ -501,7 +504,10 @@ namespace Robomongo
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());
 
-        std::unique_ptr<mongo::DBClientCursor> cursor(fromServ->query(from.toString(), mongo::Query()));
+        std::unique_ptr<mongo::DBClientCursor> cursor{fromServ->query(
+            mongo::NamespaceString(from.databaseName(), from.collectionName()),
+            mongo::Query()) 
+		};
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
@@ -572,8 +578,10 @@ namespace Robomongo
             return docs;
 
         std::unique_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
-            ns.toString(), info._query, info._limit, info._skip,
-            info._fields.nFields() ? &info._fields : 0, info._options, info._batchSize);
+			mongo::NamespaceString(ns.databaseName(), ns.collectionName()),          
+			info._query, info._limit, info._skip, info._fields.nFields() ? &info._fields : 0, 
+			info._options, info._batchSize
+		);
 
         // DBClientBase::query may return nullptr
         if (!cursor)

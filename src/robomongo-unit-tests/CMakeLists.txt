@@ -31,7 +31,6 @@ list(FILTER ROBO_SOURCES EXCLUDE REGEX "main.cpp")
 
 if(SYSTEM_WINDOWS) ############# Windows 
     set(OBJ_DIR ${CMAKE_BINARY_DIR}/src/robomongo/robomongo.dir/${CMAKE_BUILD_TYPE}/)
-    set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}robomongo_automoc.obj;")
     set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}qrc_gui.obj;")
     set(ROBO_OBJ_FILES "${ROBO_OBJ_FILES}${OBJ_DIR}qrc_robo.obj;")
     foreach(SRC_FILE ${ROBO_SOURCES})

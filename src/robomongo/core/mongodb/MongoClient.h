@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 #include <mongo/bson/bsonobj.h>
 
 #include "robomongo/core/Core.h"

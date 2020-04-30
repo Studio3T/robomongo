@@ -1,9 +1,9 @@
 #include "robomongo/core/utils/BsonUtils.h"
 
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 //#include <mongo/bson/bsonobjiterator.h>
 #include "mongo/util/base64.h"
-#include "mongo/util/stringutils.h"
+#include "mongo/util/str.h"
 
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -122,7 +122,7 @@ namespace Robomongo
 
             std::stringstream s;
             if ( includeFieldNames && !isArray)
-                s << '"' << escape( elem.fieldName() ) << "\" : ";
+                s << '"' << mongo::str::escape(elem.fieldName()) << "\" : ";
 
             switch ( t ) {
             case Undefined:
@@ -130,7 +130,8 @@ namespace Robomongo
                 break;
             case mongo::String:
             case Symbol:
-                s << '"' << escape( std::string(elem.valuestr(), elem.valuestrsize()-1) ) << '"';
+                s << '"' << mongo::str::escape(std::string(elem.valuestr(), elem.valuestrsize() - 1))
+                  << '"';
                 break;
             case NumberLong:
                 s << "NumberLong(" << elem._numberLong() << ")";
@@ -301,11 +302,11 @@ namespace Robomongo
                 }
             case RegEx:
                 if ( format == Strict ) {
-                    s << "{ \"$regex\" : \"" << escape( elem.regex() );
+                    s << "{ \"$regex\" : \"" << mongo::str::escape(elem.regex());
                     s << "\", \"$options\" : \"" << elem.regexFlags() << "\" }";
                 }
                 else {
-                    s << "/" << escape( elem.regex() , true ) << "/";
+                    s << "/" << mongo::str::escape(elem.regex(), true) << "/";
                     // FIXME Worry about alpha order?
                     for ( const char *f = elem.regexFlags(); *f; ++f ) {
                         switch ( *f ) {

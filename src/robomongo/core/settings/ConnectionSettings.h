@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <QVariantMap>
 
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 #include <mongo/client/mongo_uri.h>
 #include <mongo/util/net/hostandport.h>
 

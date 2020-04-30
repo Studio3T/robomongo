@@ -1105,14 +1105,17 @@ namespace Robomongo
 
         // refreshAll() takes long time, in order to do first establish connection request much faster
         // refreshAll() will be by-passed first and it will/must be done after a successful connection.
-        if (refresh)
-            repSetMonitor->startOrContinueRefresh().refreshAll();
+		// todo 1.4
+        //if (refresh)
+        //    repSetMonitor->startOrContinueRefresh().refreshAll();
 
         setName = repSetMonitor->getName();
         auto const primaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
         auto primaryWithStatus = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(2000)); // todo
-        if (primaryWithStatus.isOK())
-            primary = primaryWithStatus.getValue();
+
+		// todo 1.4
+        //if (primaryWithStatus.isOK())
+        //    primary = primaryWithStatus.getValue();
 
         QStringList servers;
         // i.e. setNameAndMembers: "repset/localhost:27017,localhost:27018,localhost:27019"
@@ -1127,7 +1130,7 @@ namespace Robomongo
             membersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
         }
 
-        return ReplicaSet(setName, primary, membersAndHealths, primaryWithStatus.getStatus().reason());
+        return ReplicaSet(setName, primary, membersAndHealths/*, primaryWithStatus.getStatus().reason()*/); // todo 1.4
     }
 
     std::string MongoWorker::connectAndGetReplicaSetName() const

@@ -24,7 +24,7 @@
 
 #include <mongo/shell/shell_utils.h>
 #include <mongo/base/string_data.h>
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 #include <pcrecpp.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -91,8 +91,8 @@ namespace Robomongo
                << _connection->primaryCredential()->userPassword() << "')";
 
         {
-            mongo::shell_utils::_dbConnect = ss.str();
-            mongo::shell_utils::_dbAuth = "(function() { \nDB.prototype._defaultGssapiServiceName = \"mongodb\";\n}())";
+            //mongo::shell_utils::_dbConnect = ss.str();
+            //mongo::shell_utils::_dbAuth = "(function() { \nDB.prototype._defaultGssapiServiceName = \"mongodb\";\n}())";
 
             // v0.9
             // mongo::isShell = true;

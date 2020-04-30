@@ -11,7 +11,7 @@
 #include <QDockWidget>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
-#include <mongo/client/dbclientinterface.h>
+#include <mongo/client/dbclient_base.h>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"

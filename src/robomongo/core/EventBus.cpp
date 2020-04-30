@@ -13,7 +13,7 @@
 
 namespace
 {
-    struct RemoveIfReciver : public std::unary_function<const Robomongo::EventBus::SubscribersType&, bool>
+    struct RemoveIfReciver
     {
         RemoveIfReciver(QObject *receiver) : _receiver(receiver) {}
 
@@ -28,7 +28,7 @@ namespace
         QObject *_receiver;
     };
 
-    struct FindIfReciver : public std::unary_function<const Robomongo::EventBus::SubscribersType&, bool>
+    struct FindIfReciver
     {
         FindIfReciver(QThread *thread) : _thread(thread) {}
         bool operator()(const Robomongo::EventBus::DispatchersType &item) const {

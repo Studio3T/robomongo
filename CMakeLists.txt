@@ -6,13 +6,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # Project version
 set(PROJECT_VERSION_MAJOR "1")
-set(PROJECT_VERSION_MINOR "3")
-set(PROJECT_VERSION_PATCH "1")
+set(PROJECT_VERSION_MINOR "4")
+set(PROJECT_VERSION_PATCH "0")
 set(PROJECT_VERSION_BUILD "")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${PROJECT_VERSION_BUILD}")
 
-# Enable C++14 features 
-set(CMAKE_CXX_STANDARD 14)
+# Enable C++17 features 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Modules
@@ -52,7 +52,8 @@ add_subdirectory(src/third-party/qjson)
 add_subdirectory(src/third-party/qscintilla)
 add_subdirectory(${GOOGLE_TEST_DIR})
 add_subdirectory(src/robomongo)
-add_subdirectory(src/robomongo-unit-tests)
+# todo: Enable unit tests
+# add_subdirectory(src/robomongo-unit-tests) # Disabled in Robo 1.4 due to too many link errors
 
 # Show configuration summary
 include(RobomongoConfigurationSummary)

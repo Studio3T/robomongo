@@ -186,10 +186,6 @@ target_compile_definitions(robomongo
         PROJECT_QT_VERSION="${Qt5Core_VERSION}"
         PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
 
-# Suppress "warning C4477: 'sprintf'..." from robomongo\shell\db\ptimeutil.cpp
-# Suppress "warning C4291: ...no matching operator delete found" from third_party\mozjs-60
-set_target_properties(robomongo PROPERTIES COMPILE_FLAGS "/wd4477 /wd4291")
-
 if(SYSTEM_WINDOWS)
     # Create Windows Resource file
     set(windows_icon "${CMAKE_SOURCE_DIR}/install/windows/robomongo.ico")
@@ -199,18 +195,17 @@ if(SYSTEM_WINDOWS)
     unset(windows_icon)
 
     # Add additional source file to "robomongo" target
-    target_sources(robomongo
-        PRIVATE
-            "${CMAKE_BINARY_DIR}/winres.rc")
+    target_sources(robomongo PRIVATE "${CMAKE_BINARY_DIR}/winres.rc")
 
     # Rename output name for Windows
-    set_target_properties(robomongo PROPERTIES
-        OUTPUT_NAME "robo3t")
+    set_target_properties(robomongo PROPERTIES OUTPUT_NAME "robo3t")
+
+    # Suppress "warning C4477: 'sprintf'..." from robomongo\shell\db\ptimeutil.cpp
+    # Suppress "warning C4291: ...no matching operator delete found" from third_party\mozjs-60
+    set_target_properties(robomongo PROPERTIES COMPILE_FLAGS "/wd4477 /wd4291")
 
     # Seems that we do not need to do this with recent versions of Qt
-    target_link_libraries(robomongo
-        PRIVATE
-            Qt5::WinMain)
+    target_link_libraries(robomongo PRIVATE Qt5::WinMain)
 
 elseif(SYSTEM_MACOSX)
     set_target_properties(robomongo PROPERTIES

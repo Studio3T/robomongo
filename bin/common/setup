@@ -44,6 +44,6 @@ if [ "$(uname -s)" == "Darwin" ]; then
     #     variable.  If both the command-line option is specified and the
     #     environment variable is set, the command-line option will take precedence.
     #
-    export MACOSX_DEPLOYMENT_TARGET=10.9
+    export MACOSX_DEPLOYMENT_TARGET=10.13
 fi
 

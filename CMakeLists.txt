@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.8.0)
 project(Robomongo)
 
 # Where to look first for CMake modules, before "${CMAKE_ROOT}/Modules" is checked
@@ -37,7 +37,7 @@ find_package(MongoDB REQUIRED)
 find_package(OpenSSL REQUIRED)
 
 if (SYSTEM_MACOSX)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.11)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
     find_package(Qt5MacExtras REQUIRED)
 endif()
 

@@ -781,7 +781,20 @@ Status JParse::array(StringData fieldName, BSONObjBuilder& builder, bool subObje
  * have the same behavior.  XXX: this may not be desired. */
 Status JParse::constructor(StringData fieldName, BSONObjBuilder& builder) {
     if (readToken("Date")) {
+// Robo 1.4: Disabling warning "-Wunused-result", this file comes from mongo code
+#if defined(__clang__) 
+#pragma clang diagnostic push    
+#pragma clang diagnostic ignored "-Wunused-result"
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic push    
+#pragma GCC diagnostic ignored "-Wunused-result"
+#endif         
         date(fieldName, builder);
+#if defined(__clang__) 
+#pragma clang diagnostic pop
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic pop
+#endif         
     } else {
         return parseError("\"new\" keyword not followed by Date constructor");
     }

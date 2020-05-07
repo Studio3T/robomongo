@@ -100,7 +100,19 @@ namespace miutil
         unsigned short year = d.year();
         char buf[64] = {0};
 
+#if defined(__clang__) 
+#pragma clang diagnostic push    
+#pragma clang diagnostic ignored "-Wformat"
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic push    
+#pragma GCC diagnostic ignored "-Wformat"
+#endif         
         sprintf( buf, "%s, %02d %s %04d %02d:%02d:%02d GMT", day, d.day().as_number(), mon, year, t.hours(), t.minutes(), t.seconds() );
+#if defined(__clang__) 
+#pragma clang diagnostic pop
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic pop
+#endif         
 
         return buf;
     }
@@ -201,9 +213,21 @@ namespace miutil
         boost::posix_time::time_duration t( pt.time_of_day() );
 
         if( !isLocalFormat ){
+#if defined(__clang__) 
+#pragma clang diagnostic push    
+#pragma clang diagnostic ignored "-Wformat"
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic push    
+#pragma GCC diagnostic ignored "-Wformat"
+#endif                    
             sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
                 static_cast<int>(d.year()), d.month().as_number(), d.day().as_number(), sep,
                 t.hours(), t.minutes(), t.seconds(), (static_cast<int>(t.total_milliseconds()))%1000 );
+#if defined(__clang__) 
+#pragma clang diagnostic pop
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic pop
+#endif                         
         }
         else{
             boost::posix_time::ptime timeP(d, t);
@@ -233,10 +257,23 @@ namespace miutil
             t = timeP.time_of_day();
 
             char utc_buff[8]={0};
+
+#if defined(__clang__) 
+#pragma clang diagnostic push    
+#pragma clang diagnostic ignored "-Wformat"
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic push    
+#pragma GCC diagnostic ignored "-Wformat"
+#endif              
             sprintf(utc_buff, (diffT.hours() >= 0) ? "+%02d:%02d" : "%03d:%02d", diffT.hours(), abs(diffM));
             sprintf(buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d",
                 static_cast<int>(d.year()), d.month().as_number(), d.day().as_number(), sep,
                 t.hours(), t.minutes(), t.seconds(), (static_cast<int>(t.total_milliseconds()))%1000);
+#if defined(__clang__) 
+#pragma clang diagnostic pop
+#elif defined(__GNUG__)  // gcc
+#pragma GCC diagnostic pop
+#endif                         
             strcat(buf, utc_buff);
         }
 

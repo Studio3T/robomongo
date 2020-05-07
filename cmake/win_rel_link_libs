@@ -1,3 +1,0 @@
-DbgHelp.lib Iphlpapi.lib Psapi.lib advapi32.lib bcrypt.lib crypt32.lib dnsapi.lib 
-kernel32.lib shell32.lib pdh.lib version.lib winmm.lib ws2_32.lib secur32.lib winmm.lib 
-/PDB:build\opt\mongo\mongo.pdb /DEBUG

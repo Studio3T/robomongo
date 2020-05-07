@@ -110,14 +110,11 @@ foreach(lib ${MongoDB_RELATIVE_LIBS})
 endforeach()
 
 if(SYSTEM_WINDOWS)
-  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/Crypt32.Lib)
-  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/Secur32.Lib)  
-  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/Dnsapi.lib) 
-  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/$ENV{WindowsSDKLibVersion}/um/x64/winhttp.lib)   
+  list(APPEND MongoDB_LIBS Crypt32.lib Secur32.lib Dnsapi.lib winhttp.lib) 
 elseif(SYSTEM_MACOSX)
-  list(APPEND MongoDB_LIBS /usr/lib/libcurl.dylib) 
+  list(APPEND MongoDB_LIBS -lcurl) 
 elseif(SYSTEM_LINUX)  
-  list(APPEND MongoDB_LIBS /lib/x86_64-linux-gnu/libresolv.so.2) 
+  list(APPEND MongoDB_LIBS -lresolv -lcurl) 
 endif()
 
 # Get MongoDB repository recent tag

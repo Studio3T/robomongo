@@ -4,15 +4,35 @@ Building Robo 3T (Mac OS X and Linux)
 A. Prerequisites
 -------------
 
-1. Modern Compiler   
-A modern and complete C++11 compiler. One of the following is required:  
+1. Modern Compiler
+A modern and complete C++17 compiler:  
 ```
-GCC 5.3.0  
-Clang 3.4 (or Apple XCode 5.1.1 Clang) or newer  
+GCC 8.0 or newer
+Clang 7 (or Apple XCode 10 Clang) or newer
+On Linux and macOS, the libcurl library and header is required. MacOS includes libcurl.
+  Fedora/RHEL - dnf install libcurl-devel
+  Ubuntu/Debian - apt-get install libcurl-dev
+Python 3.7
 ```
 
-2. Install CMake (3.6.0 or later)
-3. Install [Scons](http://scons.org/tag/releases.html) (2.5 or later) 
+For details see: https://github.com/mongodb/mongo/wiki/Build-Mongodb-From-Source  
+
+2. Install CMake (3.10.0 or later) 
+
+Example:  
+```
+sudo apt-get install build-essential
+// or 
+wget http://www.cmake.org/files/v3.10/cmake-3.10.0.tar.gz
+tar xf cmake-3.10.0.tar.gz
+cd cmake-3.10.0
+./configure // macos: env CC=gcc ./bootstrap
+make
+sudo make install
+(sudo make uninstall)
+```
+
+3. Install [Scons](http://scons.org/tag/releases.html) (3.1.2 or later) 
 
 ```
 cd scons-**
@@ -73,12 +93,12 @@ cp libssl* libcrypto* lib/
 
 #### Step 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and make sure you are on `roboshell-v4.0` branch:
+Clone Robo 3T Shell and make sure you are on latest branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git branch   // should be "roboshell-v4.0"
+  $ git branch   // "roboshell-v4.2"
   ```
 
 Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to a set of 
@@ -98,16 +118,16 @@ Separate directories by semicolon `;` (not colon):
 Install pip requirements
 
 ```
-// macOS / Linux assuming python = python 2.7
-pip install --user -r etc/pip/dev-requirements.txt
+// macOS / Linux assuming python = python 3.7
+pip3 install --user -r etc/pip/dev-requirements.txt
 ```
 
 ```
 // For ubuntu, the followings might be needed
 sudo aptitude install libcurl-dev
 
-sudo pip install Typing
-sudo pip install Cheetah
+sudo pip3 install Typing
+sudo pip3 install Cheetah
 ```
 
 Build Robo 3T Shell (in release mode by default):
@@ -115,16 +135,6 @@ Build Robo 3T Shell (in release mode by default):
   ```sh
   $ bin/build
   ```
-
-Known Issues & Solutions about building: 
-```
-// macOS / Linux assuming python = python 2.7
-pip install --user -r etc/pip/dev-requirements.txt
-pip install typing
-
-Also see:
-https://github.com/mongodb/mongo/wiki/Build-Mongodb-From-Source
-```
 
 Build Robo 3T Shell in debug mode:
 
@@ -186,7 +196,7 @@ Create package for your OS in `build/release/package` folder:
 **Important Notes**
 - For macOS builds, it might be needed to patch QScintilla with `QScintilla-2.9.3-xcode8.patch` found at robomongo repository's root.
 
-- For Ubuntu 16.04 builds, it has been reported that Robo 3T /bin/configure step might fail and installing mesa-common-dev package solves it. Details: https://github.com/paralect/robomongo/issues/1268 
+- For Ubuntu 16.04 builds, it has been reported that Robo 3T /bin/configure step might fail and installing `mesa-common-dev` package solves it. Details: https://github.com/paralect/robomongo/issues/1268 
 
 - For Centos builds, Robo 3T /bin/configure step might fail due to error: `failed to find gl/gl.h`. In this case, the following packages must be installed:
 

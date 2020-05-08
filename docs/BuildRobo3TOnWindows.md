@@ -26,23 +26,23 @@ A. Prerequisites
     $ eval `ssh-agent`       # starts ssh agent
     $ ssh-add ~/.ssh/mykey   # add your key (which can be in any folder)
   
-#### 1. Visual Studio 2015 (i.e. MSVC14) Update 2 or newer
+#### 1. Visual Studio 2017 version 15.9 or newer (complete C++17 compiler)
 
- We use Visual Studio 2015 Update 3, and recommend to use this version to save
+ We use Visual Studio 2017 version 15.9.22, and recommend to use this version to save
  time for Qt compilation. Currently prebuilt binaries for Qt are available 
  from official Qt site. But you can use any newer version and compile Qt library
  yourself.
 
-#### 2. ActivePython 2.7 
+#### 2. ActivePython 3.7.4
    
  Download ActivePython from http://www.activestate.com/activepython/downloads
    
  Download MSI x64 version. Use default settings in installation wizard. 
  This installer will add path to `python.exe` to your `PATH` variable.
 
-#### 3. SCons 2.3.5 or newer
+#### 3. SCons 3.1.2 or newer
 
-We use SCons 2.5.0.
+We use SCons 3.1.2
 
  Download Scons from http://scons.org/tag/releases.html
    
@@ -55,7 +55,7 @@ We use SCons 2.5.0.
  This command will make `scons` command accessible from Command Prompt
 
 #### 4. CMake 
-We use CMake 3.6.0-rc3
+We use CMake 3.10.0
  Download CMake from https://cmake.org/download
  
  Use installer package, it will allow you to configure your PATH variable and `cmake`
@@ -99,12 +99,12 @@ https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
 
 #### 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and make sure to be at `roboshell-v4.0` branch:
+Clone Robo 3T Shell and make sure to be at `roboshell-v4.2` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git branch  // roboshell-v4.0
+  $ git branch  // roboshell-v4.2
   ```
 
 Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shell and Robo 3T build scripts, needs to be set according to the following directories:
@@ -117,11 +117,15 @@ Separate directories by semicolon `;` (not colon). You can do this in Command Pr
 
     > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.2o"  
 
-Open '**a new**' VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
+Open '**a new**' VS2017 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
 
 **Note:**  
-The followings might also be needed: 
+
+Run 
+`pip3 install --user -r ../etc/pip/dev-requirements.txt`  
+
+If you have this type of errors:  
 
 ```
 // 1st error
@@ -167,7 +171,7 @@ Clone Robo 3T:
   $ git clone https://github.com/paralect/robomongo.git
   ```
   
-Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo` folder.
+Open VS2017 x64 Native Tools Command Prompt and navigate to `robomongo` folder.
  
 Run configuration step:
     
@@ -176,15 +180,14 @@ Run configuration step:
 And finally, build Robo 3T:
     
     > bin\build 
-  
-  ```
-  // Scons error on Windows: cheetah module not found
-    copy C:\Users\<user>\AppData\Roaming\Python\Python27\site-packages
-    to C:\Python27\Lib\site-packages 
-    // Also 
-    pip install Typing
-    pip install Cheetah
-  ```  
+
+```
+// For fatal error LNK1170: line in command file contains 131071 or more characters
+Workaround Solution: 
+1. copy robo-shell 'build' folder to E:/
+2. Create env. var.: MongoDB_OBJECTS E:/
+3. Open a new command prompt and re-build
+```
 
 **Run Robo 3T**
 

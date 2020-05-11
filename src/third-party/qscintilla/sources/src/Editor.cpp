@@ -275,7 +275,11 @@ void Editor::SetRepresentations() {
 		for (int k=0x80; k < 0x100; k++) {
 			char hiByte[2] = {  static_cast<char>(k), 0 };
 			char hexits[4];
-			sprintf(hexits, "x%2X", k);
+// Robo 1.4
+#pragma GCC diagnostic push    
+#pragma GCC diagnostic ignored "-Wformat-overflow"
+			sprintf(hexits, "x%2X", k); 
+#pragma GCC diagnostic pop
 			reprs.SetRepresentation(hiByte, hexits);
 		}
 	}

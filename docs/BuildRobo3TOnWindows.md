@@ -182,11 +182,12 @@ And finally, build Robo 3T:
     > bin\build 
 
 ```
-// For fatal error LNK1170: line in command file contains 131071 or more characters
-Workaround Solution: 
-1. copy robo-shell 'build' folder to E:/
-2. Create env. var.: MongoDB_OBJECTS E:/
-3. Open a new command prompt and re-build
+// If you see fatal error LNK1170: line in command file contains 131071 or more characters
+Solution: 
+1. Create environment variable MongoDB_OBJECTS, set a short path e.g. "C:/"
+2. Open a new VS2017 x64 Native Tools Command Prompt and build Robo 3T Shell 
+3. Robo 3T Shell build script will copy the object files into MongoDB_OBJECTS directory
+4. Build Robo 3T again (clean build might be needed)
 ```
 
 **Run Robo 3T**

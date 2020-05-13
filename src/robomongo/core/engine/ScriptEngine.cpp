@@ -91,8 +91,7 @@ namespace Robomongo
                << _connection->primaryCredential()->userPassword() << "')";
 
         {
-            //mongo::shell_utils::_dbConnect = ss.str();
-            //mongo::shell_utils::_dbAuth = "(function() { \nDB.prototype._defaultGssapiServiceName = \"mongodb\";\n}())";
+            mongo::shell_utils::dbConnect = ss.str();
 
             // v0.9
             // mongo::isShell = true;

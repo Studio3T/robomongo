@@ -44,7 +44,6 @@ namespace Robomongo
 
     App::~App()
     {
-        std::for_each(_shells.begin(), _shells.end(), stdutils::default_delete<MongoShell*>());
         std::for_each(_servers.begin(), _servers.end(), stdutils::default_delete<MongoServer*>());
     }
 
@@ -177,12 +176,12 @@ namespace Robomongo
         if (!serverClone || !server)
             return;
 
-        MongoShell *shell = new MongoShell(serverClone, scriptInfo);
+        auto shell = std::make_unique<MongoShell>(serverClone, scriptInfo);
         // Connection between explorer's server and tab's MongoShells
-        _bus->subscribe(server, ReplicaSetRefreshed::Type, shell); 
-        _shells.push_back(shell);
-        _bus->publish(new OpeningShellEvent(this, shell));
+        _bus->subscribe(server, ReplicaSetRefreshed::Type, shell.get()); 
+        _bus->publish(new OpeningShellEvent(this, shell.get()));
         shell->execute();
+        _shells.push_back(move(shell));
         return;
     }
 
@@ -192,15 +191,16 @@ namespace Robomongo
      */
     void App::closeShell(MongoShell *shell)
     {
+        auto const itr = std::find_if(_shells.begin(), _shells.end(), 
+            [&](auto const& el) { return el.get() == shell; }
+        );
+        
         // Do nothing, if this shell not owned by this App.
-        MongoShellsContainerType::iterator it =
-            std::find_if(_shells.begin(), _shells.end(), [&](MongoShell* el) { return (el == shell); });        
-        if (it == _shells.end())
+        if (itr == _shells.end())
             return;
 
-        _shells.erase(it);
+        _shells.erase(itr);
         closeServer(shell->server());
-        delete shell;
     }
 
     MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, 

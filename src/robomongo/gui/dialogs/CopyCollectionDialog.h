@@ -27,7 +27,7 @@ namespace Robomongo
         void updateDatabaseComboBox(int index);
         MongoDatabase *selectedDatabase();
     private:
-        App::MongoServersContainerType _servers;
+        App::MongoServersVector _servers;
         const QString _currentServerName;
         const QString _currentDatabase;
         QComboBox *_serverComboBox;

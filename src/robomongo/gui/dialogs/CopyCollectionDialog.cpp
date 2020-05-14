@@ -26,9 +26,9 @@ namespace Robomongo
         _currentServerName(serverName),
         _currentDatabase(database)
     {
-        App::MongoServersContainerType servers = AppRegistry::instance().app()->getServers();
+        App::MongoServersVector servers = AppRegistry::instance().app()->getServers();
         QSet<QString> uniqueConnectionsNames;
-        for (App::MongoServersContainerType::const_iterator it = servers.begin(); it != servers.end(); ++it) {
+        for (App::MongoServersVector::const_iterator it = servers.begin(); it != servers.end(); ++it) {
              MongoServer *server = *it;
              if (server->isConnected()) {
                  _servers.push_back(server);
@@ -101,7 +101,7 @@ namespace Robomongo
         _databaseComboBox->clear();
         const QString &curentServerName = _serverComboBox->currentText();
         MongoServer *server = NULL;
-        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
+        for (App::MongoServersVector::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
             MongoServer *ser = *it;
             if (curentServerName == QtUtils::toQString(ser->connectionRecord()->connectionName())) {
                 server = ser;

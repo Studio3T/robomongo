@@ -38,8 +38,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef std::vector<MongoServer*> MongoServersContainerType;
-        typedef std::vector<MongoShell*> MongoShellsContainerType;
+        typedef std::vector<MongoServer*> MongoServersVector;
         App(EventBus *const bus);
         ~App();
 
@@ -75,7 +74,7 @@ namespace Robomongo
         */
         void openShell(MongoServer* server, ConnectionSettings* connSettings, const ScriptInfo &scriptInfo);
 
-        MongoServersContainerType getServers() const { return _servers; };
+        MongoServersVector getServers() const { return _servers; };
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.
@@ -106,12 +105,12 @@ namespace Robomongo
         /**
          * MongoServers, owned by this App.
          */
-        MongoServersContainerType _servers;
+        MongoServersVector _servers;
 
         /**
          * MongoShells, owned by this App.
          */
-        MongoShellsContainerType _shells;
+        std::vector<std::unique_ptr<MongoShell>> _shells;
 
         EventBus *const _bus;
 

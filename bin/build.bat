@@ -13,3 +13,8 @@ if %ERRORLEVEL% neq 0 (exit /b 1)
 rem Run build
 cd "%BUILD_DIR%"
 cmake --build . --config %BUILD_TYPE%
+
+rem Install debug *.dll files
+if "%BUILD_TYPE%" == "Debug" (
+  call "%BIN_DIR%\install_debug_dlls.bat" %*
+)

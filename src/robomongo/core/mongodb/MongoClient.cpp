@@ -149,9 +149,8 @@ namespace Robomongo
         }
     }
 
-    std::vector<MongoFunction> MongoClient::getFunctions(const std::string &dbName)
+    std::vector<MongoFunction> MongoClient::getFunctions(const std::string &dbName) const
     {
-        // MongoNamespace ns(dbName, "system.js");
         std::vector<MongoFunction> functions;
 
         std::unique_ptr<mongo::DBClientCursor> cursor(

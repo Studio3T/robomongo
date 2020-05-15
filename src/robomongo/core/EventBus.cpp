@@ -32,9 +32,9 @@ namespace
     {
         FindIfReciver(QThread *thread) : _thread(thread) {}
         bool operator()(const Robomongo::EventBus::DispatchersType &item) const {
-            if (item.first == _thread) {
+            if (item.first == _thread) 
                 return true;
-            }
+            
             return false;
         }
         QThread *_thread;

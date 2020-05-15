@@ -463,8 +463,7 @@ namespace Robomongo
 
     void MongoClient::duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName)
     {
-        MongoNamespace srcNameSpace(ns);
-        MongoNamespace newCollection(ns.databaseName(), newCollectionName);
+        MongoNamespace const newCollection(ns.databaseName(), newCollectionName);
 
         if (!_dbclient->exists(newCollection.toString())) {
             mongo::BSONObj result;
@@ -484,7 +483,7 @@ namespace Robomongo
         }
 
         std::unique_ptr<mongo::DBClientCursor> cursor {
-			_dbclient->query(mongo::NamespaceString(srcNameSpace.databaseName(), srcNameSpace.collectionName()), mongo::Query()) 
+			_dbclient->query(mongo::NamespaceString(ns.databaseName(), ns.collectionName()), mongo::Query()) 
 		};
 
         // Cursor may be NULL, it means we have connectivity problem

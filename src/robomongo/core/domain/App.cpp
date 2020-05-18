@@ -199,8 +199,8 @@ namespace Robomongo
         if (itr == _shells.end())
             return;
 
-        _shells.erase(itr);
         closeServer(shell->server());
+        _shells.erase(itr);
     }
 
     MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, 

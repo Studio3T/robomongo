@@ -46,7 +46,7 @@ namespace Robomongo
             LOG_MSG("Shell timeout value changed from " + currentShellTimeout->text() + " to " +
                 QString::number(settingsManager->shellTimeoutSec()) + subStr, mongo::logger::LogSeverity::Info());
 
-            for (auto server : AppRegistry::instance().app()->getServers())
+            for (auto const& server : AppRegistry::instance().app()->getServers())
                 server->changeWorkerShellTimeout(std::abs(newShellTimeout->text().toInt()));
         }
     }

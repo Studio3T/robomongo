@@ -38,9 +38,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef std::vector<MongoServer*> MongoServersVector;
         App(EventBus *const bus);
-        ~App();
 
         /**
          * @brief Creates and opens new server connection.
@@ -62,19 +60,20 @@ namespace Robomongo
         void openShell(MongoCollection *collection, const QString &filePathToSave = QString());
 
         void openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
-                              bool execute = true, const QString &shellName = QString(),
-                              const CursorPosition &cursorPosition = CursorPosition(), const QString &file = QString());
+                       bool execute = true, const QString &shellName = QString(),
+                       const CursorPosition &cursorPosition = CursorPosition(), const QString &file = QString());
 
         void openShell(MongoDatabase *database, const QString &script,
-                              bool execute = true, const QString &shellName = QString(),
-                              const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
+                       bool execute = true, const QString &shellName = QString(),
+                       const CursorPosition &cursorPosition = CursorPosition(), 
+                       const QString &filePathToSave = QString());
 
         /**
         * @brief Open new shell using explorer's MongoServer (ExplorerServerTreeItem's _server)
         */
         void openShell(MongoServer* server, ConnectionSettings* connSettings, const ScriptInfo &scriptInfo);
 
-        MongoServersVector getServers() const { return _servers; };
+        auto const& getServers() const { return _servers; };
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.
@@ -82,7 +81,8 @@ namespace Robomongo
          */
         void closeShell(MongoShell *shell);
 
-        void fireConnectionFailedEvent(int serverHandle, ConnectionType type, std::string errormsg, ConnectionFailedEvent::Reason reason);
+        void fireConnectionFailedEvent(int serverHandle, ConnectionType type, std::string errormsg, 
+            ConnectionFailedEvent::Reason reason);
 
         int getLastServerHandle() const { return _lastServerHandle; };
 
@@ -92,8 +92,10 @@ namespace Robomongo
         void handle(LogEvent *event);
 
     private:
-        MongoServer *openServerInternal(ConnectionSettings* connSettings, ConnectionType type);
-        MongoServer *continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, int localport = 0);
+        std::unique_ptr<MongoServer> openServerInternal(ConnectionSettings* connSettings, ConnectionType type);
+        
+        std::unique_ptr<MongoServer> 
+        continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, int localport = 0);
 
         /**
         * @brief Create prompt dialog to enter SSL PEM key passphrase and save passphrase into SSL settings
@@ -105,7 +107,7 @@ namespace Robomongo
         /**
          * MongoServers, owned by this App.
          */
-        MongoServersVector _servers;
+        std::vector<std::unique_ptr<MongoServer>> _servers;
 
         /**
          * MongoShells, owned by this App.

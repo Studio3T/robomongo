@@ -42,13 +42,68 @@ namespace Robomongo
         _bus->subscribe(this, LogEvent::Type);
     }
 
-    App::~App()
+    std::unique_ptr<MongoServer>
+    App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type,
+                            int localport)
     {
-        std::for_each(_servers.begin(), _servers.end(), stdutils::default_delete<MongoServer*>());
+        ConnectionSettings* connSettingsClone = connSettings->clone();
+
+        // Modify connection settings when SSH tunnel is used
+        if ((type == ConnectionPrimary || type == ConnectionTest)
+            && connSettingsClone->sshSettings()->enabled()) {
+            connSettingsClone->setServerHost("127.0.0.1");
+            connSettingsClone->setServerPort(localport);
+        }
+
+        auto server{ std::make_unique<MongoServer>(serverHandle, connSettingsClone, type) };
+        server->runWorkerThread();
+
+        auto replicaSetStr = QString::fromStdString(connSettings->connectionName()) + " [Replica Set]";
+        replicaSetStr = (connSettings->replicaSetSettings()->members().size() > 0)
+            ? replicaSetStr + QString::fromStdString(connSettings->replicaSetSettings()->members()[0])
+            : replicaSetStr + "";
+
+        QString serverAddress = connSettings->isReplicaSet()
+            ? replicaSetStr
+            : QString::fromStdString(connSettings->getFullAddress());
+
+        LOG_MSG(QString("Connecting to %1...").arg(serverAddress), mongo::logger::LogSeverity::Info());
+        server->tryConnect();
+        return server;
     }
 
-    bool App::openServer(ConnectionSettings *connection, ConnectionType type) {
+    /**
+    * Creates and opens new server connection.
+    * @param connection: ConnectionSettings, that will be owned by MongoServer.
+    * @param visible: should this server be visible in UI (explorer) or not.
+    */
+    std::unique_ptr<MongoServer> 
+    App::openServerInternal(ConnectionSettings* connSettings, ConnectionType type) 
+    {
+        ++_lastServerHandle;
 
+        if (type == ConnectionPrimary)
+            _bus->publish(new ConnectingEvent(this));
+
+        // When connection is SECONDARY or do not have
+        // ssh settings enabled, continue without SSH Tunnel
+        if (type == ConnectionSecondary || !connSettings->sshSettings()->enabled()) {
+            return continueOpenServer(_lastServerHandle, connSettings, type);
+        }
+
+        // Open SSH channel and only after that open connection
+        LOG_MSG(QString("Creating SSH tunnel to %1:%2...")
+            .arg(QtUtils::toQString(connSettings->sshSettings()->host()))
+            .arg(connSettings->sshSettings()->port()), mongo::logger::LogSeverity::Info());
+
+        ConnectionSettings* settingsCopy = connSettings->clone();
+        SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
+        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, _lastServerHandle, sshWorker, settingsCopy, type));
+        return nullptr;
+    }
+
+    bool App::openServer(ConnectionSettings *connection, ConnectionType type) 
+    {
         SshSettings *ssh = connection->sshSettings();
 
         if (ssh->enabled() && ssh->askPassword() &&
@@ -96,36 +151,8 @@ namespace Robomongo
             }
         }
 
-        openServerInternal(connection, type);
+        _servers.push_back(move(openServerInternal(connection, type)));
         return true;
-    }
-
-    /**
-     * Creates and opens new server connection.
-     * @param connection: ConnectionSettings, that will be owned by MongoServer.
-     * @param visible: should this server be visible in UI (explorer) or not.
-     */
-    MongoServer *App::openServerInternal(ConnectionSettings* connSettings, ConnectionType type) {
-        ++_lastServerHandle;
-
-        if (type == ConnectionPrimary)
-            _bus->publish(new ConnectingEvent(this));
-
-        // When connection is SECONDARY or do not have
-        // ssh settings enabled, continue without SSH Tunnel
-        if (type == ConnectionSecondary || !connSettings->sshSettings()->enabled()) {
-            return continueOpenServer(_lastServerHandle, connSettings, type);
-        }
-
-        // Open SSH channel and only after that open connection
-        LOG_MSG(QString("Creating SSH tunnel to %1:%2...")
-            .arg(QtUtils::toQString(connSettings->sshSettings()->host()))
-            .arg(connSettings->sshSettings()->port()), mongo::logger::LogSeverity::Info());
-
-        ConnectionSettings* settingsCopy = connSettings->clone();
-        SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
-        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, _lastServerHandle, sshWorker, settingsCopy, type));
-        return NULL;
     }
 
     /**
@@ -134,8 +161,8 @@ namespace Robomongo
      */
     void App::closeServer(MongoServer *server)
     {
-        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<MongoServer*>(server)), 
-                       _servers.end());
+        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), 
+            [&](auto const& el) { return el.get() == server; }), _servers.end());
     }
 
     void App::openShell(MongoCollection *collection, const QString &filePathToSave)
@@ -144,20 +171,23 @@ namespace Robomongo
         auto const& dbname = collection->database()->name();
         connection->setDefaultDatabase(dbname);
         QString const& script = detail::buildCollectionQuery(collection->name(), "find({})");
-        openShell(collection->database()->server(), connection, ScriptInfo(script, true, dbname, CursorPosition(0, -2),
-                                                                           QtUtils::toQString(dbname), filePathToSave));
+        openShell(collection->database()->server(), connection, 
+            ScriptInfo(script, true, dbname, CursorPosition(0, -2), QtUtils::toQString(dbname), filePathToSave)
+        );
     }
 
     void App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
-                               bool execute, const QString &shellName,
-                               const CursorPosition &cursorPosition, const QString &filePathToSave)
+                        bool execute, const QString &shellName,
+                        const CursorPosition &cursorPosition, const QString &filePathToSave)
     {
         ConnectionSettings *connection = server->connectionRecord();
 
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
 
-        openShell(server, connection, ScriptInfo(script, execute, dbName, cursorPosition, shellName, filePathToSave));
+        openShell(server, connection, 
+            ScriptInfo(script, execute, dbName, cursorPosition, shellName, filePathToSave)
+        );
     }
 
     void App::openShell(MongoDatabase *database, const QString &script,
@@ -172,11 +202,12 @@ namespace Robomongo
 
     void App::openShell(MongoServer* server, ConnectionSettings* connection, const ScriptInfo &scriptInfo)
     {
-        MongoServer *serverClone = openServerInternal(connection, ConnectionSecondary);
+        auto serverClone{ openServerInternal(connection, ConnectionSecondary) };
         if (!serverClone || !server)
             return;
 
-        auto shell = std::make_unique<MongoShell>(serverClone, scriptInfo);
+        auto shell{ std::make_unique<MongoShell>(serverClone.get(), scriptInfo) };
+        _servers.push_back(move(serverClone));
         // Connection between explorer's server and tab's MongoShells
         _bus->subscribe(server, ReplicaSetRefreshed::Type, shell.get()); 
         _bus->publish(new OpeningShellEvent(this, shell.get()));
@@ -203,37 +234,6 @@ namespace Robomongo
         _shells.erase(itr);
     }
 
-    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, 
-                                         int localport) 
-    {
-        ConnectionSettings* connSettingsClone = connSettings->clone();
-
-        // Modify connection settings when SSH tunnel is used
-        if ((type == ConnectionPrimary || type == ConnectionTest)
-            && connSettingsClone->sshSettings()->enabled()) {
-            connSettingsClone->setServerHost("127.0.0.1");
-            connSettingsClone->setServerPort(localport);
-        }
-
-        MongoServer *server = new MongoServer(serverHandle, connSettingsClone, type);
-        _servers.push_back(server);
-
-        server->runWorkerThread();
-
-        auto replicaSetStr = QString::fromStdString(connSettings->connectionName()) + " [Replica Set]";
-        replicaSetStr = (connSettings->replicaSetSettings()->members().size() > 0) 
-                        ? replicaSetStr + QString::fromStdString(connSettings->replicaSetSettings()->members()[0])
-                        : replicaSetStr + "";
-        
-        QString serverAddress = connSettings->isReplicaSet()
-                                ? replicaSetStr
-                                : QString::fromStdString(connSettings->getFullAddress());
-
-        LOG_MSG(QString("Connecting to %1...").arg(serverAddress), mongo::logger::LogSeverity::Info());
-        server->tryConnect();
-        return server;
-    }
-
     void App::handle(EstablishSshConnectionResponse *event) {
         if (event->isError()) {
             _bus->publish(new ConnectionFailedEvent(
@@ -244,7 +244,9 @@ namespace Robomongo
 
         LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
 
-        continueOpenServer(event->serverHandle, event->settings, event->connectionType, event->localport);
+        _servers.push_back(move(
+            continueOpenServer(event->serverHandle, event->settings, event->connectionType, event->localport)
+        ));
         _bus->send(event->worker, new ListenSshConnectionRequest(this, event->serverHandle, event->connectionType));
     }
 
@@ -262,8 +264,10 @@ namespace Robomongo
 
     void App::handle(ListenSshConnectionResponse *event) {
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->serverHandle, event->connectionType, event->error().errorMessage(),
-                ConnectionFailedEvent::SshChannel));
+            _bus->publish(
+                new ConnectionFailedEvent(this, event->serverHandle, event->connectionType, 
+                    event->error().errorMessage(), ConnectionFailedEvent::SshChannel)
+            );
             return;
         }
 

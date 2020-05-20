@@ -39,6 +39,7 @@ namespace Robomongo
 
     public:
         App(EventBus *const bus);
+        ~App();
 
         /**
          * @brief Creates and opens new server connection.

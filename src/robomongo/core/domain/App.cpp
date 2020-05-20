@@ -35,6 +35,9 @@ namespace Robomongo
         }
     }
 
+    App::~App()
+    {}
+
     App::App(EventBus *const bus) : QObject(),
         _bus(bus), _lastServerHandle(0) {
         _bus->subscribe(this, EstablishSshConnectionResponse::Type);

@@ -1110,27 +1110,29 @@ namespace Robomongo
         //    repSetMonitor->startOrContinueRefresh().refreshAll();
 
         setName = repSetMonitor->getName();
-        auto const primaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
-        auto primaryWithStatus = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(2000)); // todo
+        auto const readPrimaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
+        auto const primaryFuture = 
+            repSetMonitor->getHostOrRefresh(readPrimaryOnly, mongo::Milliseconds(2000)); // todo 1.4
 
 		// todo 1.4
-        //if (primaryWithStatus.isOK())
-        //    primary = primaryWithStatus.getValue();
+        auto const& primaryStatus{ primaryFuture.waitNoThrow() };
+        if (primaryStatus.isOK())
+            primary = primaryFuture.get();
 
         QStringList servers;
         // i.e. setNameAndMembers: "repset/localhost:27017,localhost:27018,localhost:27019"
-        auto setNameAndMembers = QString::fromStdString(repSetMonitor->getServerAddress());
-        QStringList result = setNameAndMembers.split("/");
+        QString const setNameAndMembers = QString::fromStdString(repSetMonitor->getServerAddress());
+        QStringList const result = setNameAndMembers.split("/");
         if (result.size() > 1) 
             servers = result[1].split(",");
 
         // Save address and health of replica members
         for (QString const& server : servers) {
-            auto hostAndPort = mongo::HostAndPort(mongo::StringData(server.toStdString()));
+            auto const hostAndPort = mongo::HostAndPort(mongo::StringData(server.toStdString()));
             membersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
         }
 
-        return ReplicaSet(setName, primary, membersAndHealths/*, primaryWithStatus.getStatus().reason()*/); // todo 1.4
+        return ReplicaSet(setName, primary, membersAndHealths, primaryStatus.reason()); // todo 1.4
     }
 
     std::string MongoWorker::connectAndGetReplicaSetName() const

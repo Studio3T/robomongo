@@ -117,8 +117,9 @@ namespace Robomongo
             _timerId = startTimer(pingTimeMs);
             _dbAutocompleteCacheTimerId = startTimer(30000);
         } catch (const std::exception &ex) {
-            LOG_MSG("Failed to initialize MongoWorker. " + std::string(ex.what()), 
-                     mongo::logger::LogSeverity::Error());
+            auto const error = "Failed to initialize MongoWorker, " + std::string(ex.what());
+            LOG_MSG(error, mongo::logger::LogSeverity::Error());
+            throw std::runtime_error(error);
         }
     }
 

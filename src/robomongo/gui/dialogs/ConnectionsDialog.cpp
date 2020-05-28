@@ -78,7 +78,7 @@ namespace Robomongo
             setText(2, _connection->isReplicaSet() ? "Replica Set" : "");
             
             if (_connection->sslSettings()->sslEnabled())
-                setText(2, text(2) + (text(2).isEmpty() ? "SSL" : ", SSL"));
+                setText(2, text(2) + (text(2).isEmpty() ? "TLS" : ", TLS"));
 
             if (_connection->sshSettings()->enabled())
                 setText(2, text(2) + (text(2).isEmpty() ? "SSH" : ", SSH"));

@@ -57,7 +57,7 @@ namespace Robomongo
         tabWidget->addTab(_basicTab,    "Connection");
         tabWidget->addTab(_authTab,     "Authentication");
         tabWidget->addTab(_sshTab,      "SSH");
-        tabWidget->addTab(_sslTab,      "SSL");
+        tabWidget->addTab(_sslTab,      "TLS");
         tabWidget->addTab(_advancedTab, "Advanced");
 
         QVBoxLayout *mainLayout = new QVBoxLayout;

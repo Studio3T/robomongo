@@ -33,14 +33,14 @@ namespace
     }
 
     // Helper hint strings
-    QString const CA_FILE_HINT                      = " mongo --sslCAFile : Certificate Authority file for SSL";
-    QString const PEM_FILE_HINT                     = " mongo --sslPEMKeyFile : PEM certificate/key file for SSL";
-    QString const PEM_PASS_HINT                     = " mongo --sslPEMKeyPassword : password for key in PEM file for SSL";
-    QString const ALLOW_INVALID_HOSTNAME_HINT       = " mongo --sslAllowInvalidHostnames : allow connections to servers"
-                                                      " with non-matching hostnames";
-    QString const ALLOW_INVALID_CERTIFICATES_HINT   = " mongo --sslAllowInvalidCertificates : allow connections to servers"
-                                                      " with invalid certificates";
-    QString const CRL_FILE_HINT                     = " mongo --sslCRLFile : Certificate Revocation List file for SSL";
+    QString const CA_FILE_HINT  = " mongo --tlsCAFile : Certificate Authority file for TLS";
+    QString const PEM_FILE_HINT = " mongo --tlsCertificateKeyFile : PEM certificate/key file for TLS";
+    QString const PEM_PASS_HINT = " mongo --tlsCertificateKeyFilePassword : Password for key in PEM file for TLS";
+    QString const ALLOW_INVALID_HOSTNAME_HINT     = " mongo --tlsAllowInvalidHostnames : Allow connections "
+                                                    "to servers with non-matching hostnames";
+    QString const ALLOW_INVALID_CERTIFICATES_HINT = " mongo --tlsAllowInvalidCertificates : Allow connections "
+                                                    "to servers with invalid certificates";
+    QString const CRL_FILE_HINT = " mongo --tlsCRLFile : Certificate Revocation List file for TLS";
 }
 
 namespace Robomongo
@@ -50,8 +50,8 @@ namespace Robomongo
     {
         const SslSettings* const sslSettings = _connSettings->sslSettings();
 
-        // Use SSL section
-        _useSslCheckBox = new QCheckBox("Use SSL protocol");
+        // Use TLS section
+        _useSslCheckBox = new QCheckBox("Use TLS protocol");
         _useSslCheckBox->setStyleSheet("margin-bottom: 7px");
         VERIFY(connect(_useSslCheckBox, SIGNAL(stateChanged(int)), this, SLOT(useSslCheckBoxStateChange(int))));
 

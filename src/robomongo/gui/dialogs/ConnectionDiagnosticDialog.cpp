@@ -149,7 +149,7 @@ namespace Robomongo
         if (_connSettings->sshSettings()->enabled()) 
             tunnelNote = " via SSH tunnel";
         else if (_connSettings->sslSettings()->sslEnabled())
-            tunnelNote = " via SSL tunnel";
+            tunnelNote = " via TLS tunnel";
         else
             tunnelNote = "";
          

@@ -181,9 +181,9 @@ namespace Robomongo
 
                 if (_connSettings->sslSettings()->sslEnabled())
                      errorReason = 
-                         "SSL tunnel failure: Network is unreachable or SSL connection rejected by server." + 
+                         "TLS tunnel failure: Network is unreachable or TLS connection rejected by server." + 
                           (connErrorStr.empty() ? "" : " Reason: " + connErrorStr);
-                else {  // Non-SSL connections
+                else {  // Non-TLS connections
                     if (_connSettings->isReplicaSet()) {
                         errorReason = "No member of the set is reachable." + 
                                       (connErrorStr.empty() ? "" : " Reason: " + connErrorStr);

@@ -296,7 +296,7 @@ namespace Robomongo
 
         s << std::endl << "Enter your PEM key passphrase (will never be stored):";
 
-        QString userInput = QInputDialog::getText(NULL, tr("SSL Authentication"),
+        QString userInput = QInputDialog::getText(NULL, tr("TLS Authentication"),
             QtUtils::toQString(s.str()),
             QLineEdit::Password, "", &ok);
 

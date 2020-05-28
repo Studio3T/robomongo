@@ -346,7 +346,7 @@ namespace Robomongo
         }
         _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));        
         _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab        
-        _connectionDialog->enableSslBasic();    // SSL Tab        
+        _connectionDialog->enableSslBasic();    // TLS Tab        
         _connectionDialog->setDefaultDb(db);    // Advanced Tab
     }
 }

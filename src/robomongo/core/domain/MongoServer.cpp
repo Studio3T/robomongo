@@ -464,7 +464,7 @@ namespace Robomongo {
                 auto reason = ConnectionFailedEvent::SslConnection;
                 ss.clear();
                 ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
-                    << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
+                    << ".\n\nError:\n" << "TLS connection failure: " << event->error().errorMessage();
                 _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
             }
             else

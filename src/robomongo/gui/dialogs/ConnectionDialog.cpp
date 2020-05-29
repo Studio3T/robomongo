@@ -13,8 +13,6 @@
 #include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 #include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
-#include "robomongo/gui/dialogs/ConnectionSslTab.h"
-#include "robomongo/gui/dialogs/ConnectionSslTab.h"
 #include "robomongo/gui/dialogs/SSHTunnelTab.h"
 #include "robomongo/gui/dialogs/SSLTab.h"
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"

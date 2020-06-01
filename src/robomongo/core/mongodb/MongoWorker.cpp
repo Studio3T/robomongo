@@ -326,6 +326,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             result = client->getDatabaseNames();
         } catch(const std::exception &) {
+            // todo: Log or re-throw this exception
             if (!authBase.empty())
                 result.push_back(authBase);
         }
@@ -358,7 +359,8 @@ namespace Robomongo
             if (dbNames.size()) {
                 reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
             } else {
-                reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Failed to execute \"listdatabases\" command.")));
+                auto const errorStr{ "Failed to execute \"listdatabases\" command." };
+                reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError(errorStr)));
             }
         } catch(const std::exception &ex) {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError(ex.what())));

@@ -102,9 +102,8 @@ namespace Robomongo
         _minusPlusButtonBox->addButton(_removeButton, QDialogButtonBox::NoRole);
         _minusPlusButtonBox->addButton(_addButton, QDialogButtonBox::NoRole);
 #endif
-        _setNameLabel = new QLabel("Set Name:<br><i><font color=\"gray\">(Optional)</font></i>");
+        _setNameLabel = new QLabel("Set Name:");
         _setNameEdit = new QLineEdit(QString::fromStdString(_settings->replicaSetSettings()->setNameUserEntered()));
-        auto _optionalLabel = new QLabel("<i><font color=\"gray\">(Optional)</font></i>");
 
         auto fakeSpacer = new QLabel("");
         auto hline = new QFrame();
@@ -137,7 +136,7 @@ namespace Robomongo
         connLayout->addWidget(_membersLabel,                  7, 0, Qt::AlignTop);
         connLayout->addWidget(_members,                       7, 1, 1, 3);
         connLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
-        connLayout->addWidget(_setNameLabel,                  9, 0,  Qt::AlignTop);
+        connLayout->addWidget(_setNameLabel,                  9, 0);
         connLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
         connLayout->addWidget(fakeSpacer,                    10, 0);
         connLayout->addWidget(hline,                         11, 0, 1, 4);

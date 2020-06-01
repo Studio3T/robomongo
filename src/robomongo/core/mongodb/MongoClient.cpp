@@ -534,16 +534,13 @@ namespace Robomongo
         }
     }
 
-    void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool const replicaSetConnectionWithAuth)
+    void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         _dbclient->insert(ns.toString(), obj);
-        // Robo 1.3: This if() is added with MongoDB 4.0, checkLastErrorAndThrow throws exception 
-        // with unknown reason when the connection is replica set with auth.
-        if (!replicaSetConnectionWithAuth)  
-            checkLastErrorAndThrow(ns.databaseName());
+        checkLastErrorAndThrow(ns.databaseName());
     }
 
-    void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool const replicaSetConnectionWithAuth)
+    void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         mongo::BSONElement id = obj.getField("_id");
         mongo::BSONObjBuilder builder;
@@ -552,16 +549,13 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         _dbclient->update(ns.toString(), query, obj, true, false);
-        if(!replicaSetConnectionWithAuth)
-            checkLastErrorAndThrow(ns.databaseName());
+        checkLastErrorAndThrow(ns.databaseName());
     }
 
-    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool const replicaSetConnectionWithAuth, 
-                                      bool justOne /*= true*/)
+    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
     {
-        _dbclient->remove(ns.toString(), query, justOne);
-        if (!replicaSetConnectionWithAuth)
-            checkLastErrorAndThrow(ns.databaseName());
+        _dbclient->remove(ns.toString(), query, justOne);        
+        checkLastErrorAndThrow(ns.databaseName());
     }
 
     std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
@@ -633,9 +627,7 @@ namespace Robomongo
 
     void MongoClient::checkLastErrorAndThrow(const std::string &db)
     {
-        std::string lastError = _dbclient->getLastError(db);
-
-        // Nothing to do when there is no error
+        std::string const lastError = _dbclient->getLastError(db);        
         if (lastError.empty())
             return;
 

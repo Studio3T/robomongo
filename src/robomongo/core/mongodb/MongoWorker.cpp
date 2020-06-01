@@ -517,18 +517,10 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
     
-            // Added after Mongo 4.0 due to connection problems after first edit/insert/remove operation
-            bool replicaSetConnectionWithAuth = false;
-            if (_connSettings->isReplicaSet()) {
-                restartReplicaSetConnection();  
-                if (_connSettings->hasEnabledPrimaryCredential())
-                    replicaSetConnectionWithAuth = true;
-            }
-
             if (event->overwrite())
-                client->saveDocument(event->obj(), event->ns(), replicaSetConnectionWithAuth);
+                client->saveDocument(event->obj(), event->ns());
             else
-                client->insertDocument(event->obj(), event->ns(), replicaSetConnectionWithAuth);
+                client->insertDocument(event->obj(), event->ns());
 
             client->done();
             reply(event->sender(), new InsertDocumentResponse(this));
@@ -555,15 +547,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
 
-            // Added after Mongo 4.0 due to connection problems after first edit/insert/remove operation
-            bool replicaSetConnectionWithAuth = false;
-            if (_connSettings->isReplicaSet()) {
-                restartReplicaSetConnection();
-                if (_connSettings->hasEnabledPrimaryCredential())
-                    replicaSetConnectionWithAuth = true;
-            }
-
-            client->removeDocuments(event->ns(), event->query(), replicaSetConnectionWithAuth, 
+            client->removeDocuments(event->ns(), event->query(), 
                                     event->removeCount() == RemoveDocumentCount::ONE);
             client->done();
 

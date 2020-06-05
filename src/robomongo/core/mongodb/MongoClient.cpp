@@ -17,7 +17,7 @@ namespace
         info._name = obj.getStringField("name");
         mongo::BSONObj keyObj = obj.getObjectField("key");
         if (keyObj.isValid()) 
-            info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
+            info._keys = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
 
         info._unique = obj.getBoolField("unique");
         info._backGround = obj.getBoolField("background");
@@ -187,72 +187,48 @@ namespace Robomongo
 
     void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo) const
     {   
-        std::string ns = newInfo._collection.ns().toString();
+        mongo::IndexSpec indexSpec;
+        indexSpec.name(newInfo._name);
+        indexSpec.addKeys(mongo::Robomongo::fromjson(newInfo._keys));
 
-        // v0.9
-        // mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
-
-        mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
-        mongo::BSONObjBuilder toSave;
-        bool cache = true;
-        int version = -1;
-
-        toSave.append( "ns" , ns );
-        toSave.append( "key" , keys );
-
-        std::string cacheKey(ns);
-        cacheKey += "--";
-
-
-        if ( newInfo._name != "" ) {
-            toSave.append( "name" , newInfo._name );
-            cacheKey += newInfo._name;
-        }
-        else {
-            std::string nn =  _dbclient->genIndexName(keys);
-            toSave.append( "name" , nn );
-            cacheKey += nn;
-        }
-
-        if (version >= 0)
-            toSave.append("v", version);
+        mongo::BSONObjBuilder optionsBuilder;
 
         if (oldInfo._unique != newInfo._unique)
-            toSave.appendBool("unique", newInfo._unique);
+            optionsBuilder.appendBool("unique", newInfo._unique);
 
         if (oldInfo._backGround != newInfo._backGround)
-            toSave.appendBool("background", newInfo._backGround);
+            optionsBuilder.appendBool("background", newInfo._backGround);
 
         if (oldInfo._dropDups != newInfo._dropDups)
-            toSave.appendBool("dropDups", newInfo._dropDups);
+            optionsBuilder.appendBool("dropDups", newInfo._dropDups);
 
         if (oldInfo._sparse != newInfo._sparse)
-            toSave.appendBool("sparse", newInfo._sparse);
+            optionsBuilder.appendBool("sparse", newInfo._sparse);
 
         if (oldInfo._defaultLanguage != newInfo._defaultLanguage)
-            toSave.append("default_language", newInfo._defaultLanguage);
+            optionsBuilder.append("default_language", newInfo._defaultLanguage);
 
         if (oldInfo._languageOverride != newInfo._languageOverride)
-            toSave.append("language_override", newInfo._languageOverride);
+            optionsBuilder.append("language_override", newInfo._languageOverride);
 
         if (oldInfo._textWeights != newInfo._textWeights)
-            toSave.append("weights", newInfo._textWeights);
-
-       /* if ( _seenIndexes.count( cacheKey ) )
-            return 0;
-
-        if ( cache )
-            _seenIndexes.insert( cacheKey );*/
+            optionsBuilder.append("weights", newInfo._textWeights);
 
         if (oldInfo._ttl != newInfo._ttl)
-            toSave.append("expireAfterSeconds", newInfo._ttl);
+            optionsBuilder.append("expireAfterSeconds", newInfo._ttl);
 
-        MongoNamespace namesp(newInfo._collection.ns().databaseName(), "system.indexes");
-        mongo::BSONObj obj = toSave.obj();
+        mongo::BSONObj const options = optionsBuilder.obj();
+        indexSpec.addOptions(options);
+
+        std::string const ns = newInfo._collection.ns().toString();
         if (!oldInfo._name.empty())
             _dbclient->dropIndex(ns, oldInfo._name);
 
-        _dbclient->insert(namesp.toString().c_str(), obj);
+        _dbclient->createIndex(ns, indexSpec);
+
+        std::string const errorStr = _dbclient->getLastError();
+        if (!errorStr.empty())
+            throw std::runtime_error(errorStr);
     }
 
     void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName) const

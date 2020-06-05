@@ -109,6 +109,7 @@ namespace Robomongo
         vlayout->addWidget(buttonBox);
 
         setLayout(vlayout);
+        _nameLineEdit->setFocus();
     }
 
     QWidget* EditIndexDialog::createBasicTab()
@@ -116,7 +117,7 @@ namespace Robomongo
         QWidget *basicTab = new QWidget(this);
         _nameLineEdit = new QLineEdit(QtUtils::toQString(_info._name), basicTab);
         _nameLineEdit->setFocus();
-        _jsonText = createFindFrame(basicTab, QtUtils::toQString(_info._request));
+        _jsonText = createFindFrame(basicTab, QtUtils::toQString(_info._keys));
         _uniqueCheckBox = new QCheckBox(tr("Unique"));
         _uniqueCheckBox->setChecked(_info._unique);
         _dropDuplicates = new QCheckBox(tr("Drop duplicates"), basicTab);
@@ -278,10 +279,8 @@ namespace Robomongo
         }
         return EnsureIndexInfo(
             _info._collection,
-            QtUtils::toStdString(_nameLineEdit->text()),
-            QtUtils::toStdString(QString(" %1 ,{ name: %2 }")
-                .arg(_jsonText->sciScintilla()->text())
-                .arg(_nameLineEdit->text())),
+            _nameLineEdit->text().toStdString(),
+            _jsonText->sciScintilla()->text().toStdString(),                
             _uniqueCheckBox->checkState() == Qt::Checked,
             _backGroundCheckBox->checkState() == Qt::Checked,
             _dropDuplicates->checkState() == Qt::Checked,

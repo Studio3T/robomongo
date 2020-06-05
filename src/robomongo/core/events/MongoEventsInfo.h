@@ -21,7 +21,7 @@ namespace Robomongo
 
         MongoCollectionInfo _collection;
         std::string _name;
-        std::string _request;
+        std::string _keys;
         bool _unique;
         bool _backGround;
         bool _dropDups;

@@ -210,7 +210,7 @@ namespace Robomongo
             optionsBuilder.append("language_override", newInfo._languageOverride);
         
         if (!mongo::Robomongo::fromjson(newInfo._textWeights).isEmpty())
-            optionsBuilder.append("weights", newInfo._textWeights);
+            optionsBuilder.append("weights", mongo::Robomongo::fromjson(newInfo._textWeights));
 
         if (newInfo._ttl > 0)
             optionsBuilder.append("expireAfterSeconds", newInfo._ttl);

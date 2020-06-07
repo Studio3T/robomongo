@@ -192,33 +192,30 @@ namespace Robomongo
         indexSpec.addKeys(mongo::Robomongo::fromjson(newInfo._keys));
 
         mongo::BSONObjBuilder optionsBuilder;
+        
+        auto const addIfTrue = [&](auto const& keyValuePair) {  
+            if (keyValuePair.second)
+                optionsBuilder.appendBool(keyValuePair.first, true);
+        };        
 
-        if (oldInfo._unique != newInfo._unique)
-            optionsBuilder.appendBool("unique", newInfo._unique);
+        addIfTrue(std::pair{ "unique", newInfo._unique });
+        addIfTrue(std::pair{ "background", newInfo._backGround });
+        addIfTrue(std::pair{ "dropDups", newInfo._dropDups });
+        addIfTrue(std::pair{ "sparse", newInfo._sparse });
 
-        if (oldInfo._backGround != newInfo._backGround)
-            optionsBuilder.appendBool("background", newInfo._backGround);
-
-        if (oldInfo._dropDups != newInfo._dropDups)
-            optionsBuilder.appendBool("dropDups", newInfo._dropDups);
-
-        if (oldInfo._sparse != newInfo._sparse)
-            optionsBuilder.appendBool("sparse", newInfo._sparse);
-
-        if (oldInfo._defaultLanguage != newInfo._defaultLanguage)
+        if (!newInfo._defaultLanguage.empty())
             optionsBuilder.append("default_language", newInfo._defaultLanguage);
 
-        if (oldInfo._languageOverride != newInfo._languageOverride)
+        if (!newInfo._languageOverride.empty())
             optionsBuilder.append("language_override", newInfo._languageOverride);
-
-        if (oldInfo._textWeights != newInfo._textWeights)
+        
+        if (!mongo::Robomongo::fromjson(newInfo._textWeights).isEmpty())
             optionsBuilder.append("weights", newInfo._textWeights);
 
-        if (oldInfo._ttl != newInfo._ttl)
+        if (newInfo._ttl > 0)
             optionsBuilder.append("expireAfterSeconds", newInfo._ttl);
 
-        mongo::BSONObj const options = optionsBuilder.obj();
-        indexSpec.addOptions(options);
+        indexSpec.addOptions(optionsBuilder.obj());
 
         std::string const ns = newInfo._collection.ns().toString();
         if (!oldInfo._name.empty())

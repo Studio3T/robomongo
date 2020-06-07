@@ -21,7 +21,6 @@ namespace
 
         info._unique = obj.getBoolField("unique");
         info._backGround = obj.getBoolField("background");
-        info._dropDups = obj.getBoolField("dropDups");
         info._sparse = obj.getBoolField("sparse");
         info._ttl = obj.getIntField("expireAfterSeconds");
         info._defaultLanguage = obj.getStringField("default_language");
@@ -200,7 +199,6 @@ namespace Robomongo
 
         addIfTrue(std::pair{ "unique", newInfo._unique });
         addIfTrue(std::pair{ "background", newInfo._backGround });
-        addIfTrue(std::pair{ "dropDups", newInfo._dropDups });
         addIfTrue(std::pair{ "sparse", newInfo._sparse });
 
         if (!newInfo._defaultLanguage.empty())

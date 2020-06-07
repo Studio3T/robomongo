@@ -4,14 +4,13 @@ namespace Robomongo
 {
     EnsureIndexInfo::EnsureIndexInfo(
         const MongoCollectionInfo &collection, const std::string &name, const std::string &keys,
-        bool isUnique, bool isBackGround, bool isDropDuplicates, bool isSparce, int expireAfter,
+        bool isUnique, bool isBackGround, bool isSparce, int expireAfter,
         const std::string &defaultLanguage, const std::string &languageOverride, const std::string &textWeights) :
         _name(name),
         _collection(collection),
         _keys(keys),
         _unique(isUnique),
         _backGround(isBackGround),
-        _dropDups(isDropDuplicates),
         _sparse(isSparce),
         _ttl(expireAfter),
         _defaultLanguage(defaultLanguage),

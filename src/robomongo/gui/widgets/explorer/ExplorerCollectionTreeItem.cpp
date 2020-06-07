@@ -107,7 +107,6 @@ namespace Robomongo
                 "// options: \n"
                 "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
                 "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
-                "// { dropDups : true } - Sparse indexes only contain entries for documents that have the indexed field. \n"
                 , false);
         }
     }

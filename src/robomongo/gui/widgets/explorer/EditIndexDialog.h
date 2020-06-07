@@ -25,7 +25,6 @@ namespace Robomongo
 
     public Q_SLOTS:
         virtual void accept();
-        void uniqueStateChanged(int value);
         void expireStateChanged(int value);
 
     private:
@@ -37,7 +36,6 @@ namespace Robomongo
        FindFrame *_jsonText;
        QCheckBox *_uniqueCheckBox;
 
-       QCheckBox *_dropDuplicates;
        QCheckBox *_backGroundCheckBox;
        QCheckBox *_sparceCheckBox;
        QLineEdit *_expireAfterLineEdit;

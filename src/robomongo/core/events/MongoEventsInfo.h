@@ -12,7 +12,6 @@ namespace Robomongo
             const std::string &request = std::string(),
             bool isUnique = false,
             bool isBackGround = false,
-            bool isDropDuplicates = false,
             bool isSparce = false,
             int expireAfter = -1,
             const std::string &defaultLanguage = std::string(),
@@ -24,7 +23,6 @@ namespace Robomongo
         std::string _keys;
         bool _unique;
         bool _backGround;
-        bool _dropDups;
         bool _sparse;
         int _ttl;
         std::string _defaultLanguage;

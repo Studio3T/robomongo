@@ -35,18 +35,14 @@ namespace Robomongo
     R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
     const QString ExplorerCollectionDirIndexesTreeItem::labelText = "Indexes";
 
-/* ------------ Class ExplorerCollectionDirIndexesTreeItem ------------ */
+// --------- todo: to new file
+// ----------------- class ExplorerCollectionDirIndexesTreeItem ------------------------
+
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
         :BaseClass(parent)
     {
         QAction *addIndex = new QAction("Add Index...", this);
         VERIFY(connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex())));
-
-        QAction *addIndexGui = new QAction("Add Index...", this);
-        VERIFY(connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui())));
-
-        QAction *dropIndex = new QAction("Drop Index...", this);
-        VERIFY(connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex())));
 
         QAction *reIndex = new QAction("Rebuild Indexes...", this);
         VERIFY(connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex())));
@@ -58,9 +54,7 @@ namespace Robomongo
         VERIFY(connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex())));
 
         BaseClass::_contextMenu->addAction(viewIndex);
-        //BaseClass::_contextMenu->addAction(addIndex);
-        BaseClass::_contextMenu->addAction(addIndexGui);
-        //BaseClass::_contextMenu->addAction(dropIndex);
+        BaseClass::_contextMenu->addAction(addIndex);
         BaseClass::_contextMenu->addAction(reIndex);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(refreshIndex);      
@@ -99,20 +93,6 @@ namespace Robomongo
 
     void ExplorerCollectionDirIndexesTreeItem::ui_addIndex()
     {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
-            par->openCurrentCollectionShell(
-                "ensureIndex({ \"<field>\" : 1 }); \n"
-                "\n"
-                "// options: \n"
-                "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
-                "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
-                , false);
-        }
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::ui_addIndexGui()
-    {
         auto par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
         if (!par)
             return;
@@ -140,24 +120,19 @@ namespace Robomongo
         }
     }
 
-    void ExplorerCollectionDirIndexesTreeItem::ui_dropIndex()
-    {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
-            par->openCurrentCollectionShell("dropIndex({ \"<field>\" : 1 });", false);
-        }
-    }
+// --------- todo: to new file
+// ----------------- class ExplorerCollectionIndexesTreeItem ------------------------
 
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const IndexInfo &info)
         : BaseClass(parent), _info(info)
     {
-        QAction *deleteIndex = new QAction("Drop Index...", this);
-        connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-        QAction *editIndex = new QAction("Edit Index...", this);
+        auto dropIndex = new QAction("Drop Index...", this);
+        connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
+        auto editIndex = new QAction("Edit Index...", this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
         BaseClass::_contextMenu->addAction(editIndex);
-        BaseClass::_contextMenu->addAction(deleteIndex);
+        BaseClass::_contextMenu->addAction(dropIndex);
 
         setText(0, QtUtils::toQString(_info._name));
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
@@ -202,7 +177,6 @@ namespace Robomongo
             databaseTreeItem->addEditIndex(grPar, _info, dlg.info());
         }
     }
-
 
 /* ------------ Class ExplorerCollectionTreeItem ------------ */
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :

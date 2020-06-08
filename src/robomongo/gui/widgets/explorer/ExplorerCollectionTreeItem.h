@@ -60,6 +60,9 @@ namespace Robomongo
         ExplorerDatabaseTreeItem *const _databaseItem;
     };
 
+    // --------- todo: to new file
+    // ----------------- class ExplorerCollectionDirIndexesTreeItem ------------------------
+
     class ExplorerCollectionDirIndexesTreeItem: public ExplorerTreeItem
     {
         Q_OBJECT
@@ -71,12 +74,13 @@ namespace Robomongo
 
     private Q_SLOTS:
         void ui_addIndex();
-        void ui_addIndexGui();
         void ui_reIndex();
-        void ui_dropIndex();
         void ui_viewIndex();
         void ui_refreshIndex();
     };
+
+    // --------- todo: to new file
+    // ----------------- class ExplorerCollectionIndexesTreeItem ------------------------
 
     class ExplorerCollectionIndexesTreeItem: public ExplorerTreeItem
     {

@@ -8,7 +8,7 @@
 
 namespace
 {
-    Robomongo::IndexInfo makeEnsureIndexInfoFromBsonObj(
+    Robomongo::IndexInfo makeIndexInfoFromBsonObj(
         const Robomongo::MongoCollectionInfo &collection,
         const mongo::BSONObj &obj)
     {
@@ -178,48 +178,64 @@ namespace Robomongo
 
         for (std::list<mongo::BSONObj>::iterator it = indexes.begin(); it != indexes.end(); ++it) {
             mongo::BSONObj bsonObj = *it;
-            result.push_back(makeEnsureIndexInfoFromBsonObj(collection, bsonObj));
+            result.push_back(makeIndexInfoFromBsonObj(collection, bsonObj));
         }
 
         return result;
     }
 
-    void MongoClient::ensureIndex(const IndexInfo &oldInfo, const IndexInfo &newInfo) const
+    void MongoClient::addEditIndex(const IndexInfo &oldInfo, const IndexInfo &newInfo) const
     {   
-        mongo::IndexSpec indexSpec;
-        indexSpec.name(newInfo._name);
-        indexSpec.addKeys(mongo::Robomongo::fromjson(newInfo._keys));
-
-        mongo::BSONObjBuilder optionsBuilder;
-        
-        auto const addIfTrue = [&](auto const& keyValuePair) {  
-            if (keyValuePair.second)
-                optionsBuilder.appendBool(keyValuePair.first, true);
-        };        
-
-        addIfTrue(std::pair{ "unique", newInfo._unique });
-        addIfTrue(std::pair{ "background", newInfo._backGround });
-        addIfTrue(std::pair{ "sparse", newInfo._sparse });
-
-        if (!newInfo._defaultLanguage.empty())
-            optionsBuilder.append("default_language", newInfo._defaultLanguage);
-
-        if (!newInfo._languageOverride.empty())
-            optionsBuilder.append("language_override", newInfo._languageOverride);
-        
-        if (!mongo::Robomongo::fromjson(newInfo._textWeights).isEmpty())
-            optionsBuilder.append("weights", mongo::Robomongo::fromjson(newInfo._textWeights));
-
-        if (newInfo._ttl > 0)
-            optionsBuilder.append("expireAfterSeconds", newInfo._ttl);
-
-        indexSpec.addOptions(optionsBuilder.obj());
-
+        // 1.Step: Drop Index (if this is an Edit Index action).
+        // MongoDB docs: To modify an existing index, you need to drop and recreate the index.
         std::string const ns = newInfo._collection.ns().toString();
         if (!oldInfo._name.empty())
             _dbclient->dropIndex(ns, oldInfo._name);
 
-        _dbclient->createIndex(ns, indexSpec);
+        // 2.Step: Add/Edit Index
+        auto const createIndexSpec = [](IndexInfo const& indexInfo) {
+            mongo::IndexSpec indexSpec;
+            indexSpec.name(indexInfo._name);
+            indexSpec.addKeys(mongo::Robomongo::fromjson(indexInfo._keys));
+
+            mongo::BSONObjBuilder optionsBuilder;
+
+            auto const addIfTrue = [&](auto const& keyValuePair) {
+                if (keyValuePair.second)
+                    optionsBuilder.appendBool(keyValuePair.first, true);
+            };
+
+            addIfTrue(std::pair{ "unique", indexInfo._unique });
+            addIfTrue(std::pair{ "background", indexInfo._backGround });
+            addIfTrue(std::pair{ "sparse", indexInfo._sparse });
+
+            if (!indexInfo._defaultLanguage.empty())
+                optionsBuilder.append("default_language", indexInfo._defaultLanguage);
+
+            if (!indexInfo._languageOverride.empty())
+                optionsBuilder.append("language_override", indexInfo._languageOverride);
+
+            if (!mongo::Robomongo::fromjson(indexInfo._textWeights).isEmpty())
+                optionsBuilder.append("weights", mongo::Robomongo::fromjson(indexInfo._textWeights));
+
+            if (indexInfo._ttl > 0)
+                optionsBuilder.append("expireAfterSeconds", indexInfo._ttl);
+
+            indexSpec.addOptions(optionsBuilder.obj());
+            return indexSpec;
+        };
+
+        try {
+            _dbclient->createIndex(ns, createIndexSpec(newInfo));
+        } 
+        catch (std::exception const& /*ex*/) {  // todo: log this -> ex.what()            
+            if (!oldInfo._name.empty()) {
+                // If we are here, index that is being edited, must have been already dropped and 
+                // creation of new index failed. So, we try to at least recover the dropped (old) index
+                _dbclient->createIndex(ns, createIndexSpec(oldInfo));
+            }
+            throw;
+        }
 
         std::string const errorStr = _dbclient->getLastError();
         if (!errorStr.empty())

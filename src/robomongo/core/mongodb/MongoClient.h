@@ -29,7 +29,7 @@ namespace Robomongo
         std::vector<MongoFunction> getFunctions(const std::string &dbName) const;
         std::vector<IndexInfo> getIndexes(const MongoCollectionInfo &collection) const;
         void dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName) const;
-        void ensureIndex(const IndexInfo &oldInfo, const IndexInfo &newInfo) const;
+        void addEditIndex(const IndexInfo &oldInfo, const IndexInfo &newInfo) const;
 
         void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName,
                                        const std::string &newIndexName) const;

@@ -439,7 +439,7 @@ namespace Robomongo
         const IndexInfo &oldInfo = event->oldInfo();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->ensureIndex(oldInfo, newInfo);
+            client->addEditIndex(oldInfo, newInfo);
             const std::vector<IndexInfo> &ind = client->getIndexes(newInfo._collection);
             client->done();
 

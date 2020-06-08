@@ -224,32 +224,32 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :
+        LoadCollectionIndexesResponse(QObject *sender, const std::vector<IndexInfo> &indexes) :
             Event(sender), _indexes(indexes) {}
 
         LoadCollectionIndexesResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
-        std::vector<EnsureIndexInfo> indexes() const { return _indexes; }
+        std::vector<IndexInfo> indexes() const { return _indexes; }
     private:
-        std::vector<EnsureIndexInfo> _indexes;
+        std::vector<IndexInfo> _indexes;
     };
 
     class AddEditIndexRequest : public Event
     {
         R_EVENT
-            AddEditIndexRequest(QObject *sender, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
+            AddEditIndexRequest(QObject *sender, const IndexInfo &oldInfo, const IndexInfo &newInfo)
             : Robomongo::Event(sender), oldInfo_(oldInfo), newInfo_(newInfo) {}
-        const EnsureIndexInfo &oldInfo() const
+        const IndexInfo &oldInfo() const
         {
             return oldInfo_;
         }
-        const EnsureIndexInfo &newInfo() const
+        const IndexInfo &newInfo() const
         {
             return newInfo_;
         }
     private:
-        const EnsureIndexInfo oldInfo_;
-        const EnsureIndexInfo newInfo_;
+        const IndexInfo oldInfo_;
+        const IndexInfo newInfo_;
     };
 
     class DropCollectionIndexRequest : public Event

@@ -117,7 +117,7 @@ namespace Robomongo
         if (!par)
             return;
 
-        EnsureIndexInfo fakeInfo(par->collection()->info(), "");
+        IndexInfo fakeInfo(par->collection()->info(), "");
         EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()), 
             QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), 
                                treeWidget());
@@ -148,7 +148,7 @@ namespace Robomongo
         }
     }
 
-    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const EnsureIndexInfo &info)
+    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const IndexInfo &info)
         : BaseClass(parent), _info(info)
     {
         QAction *deleteIndex = new QAction("Drop Index...", this);
@@ -298,13 +298,13 @@ namespace Robomongo
         }
 
         QtUtils::clearChildItems(_indexDir);
-        const std::vector<EnsureIndexInfo> &indexes = event->indexes();
+        const std::vector<IndexInfo> &indexes = event->indexes();
 
         // Do not expand, when we do not have functions
         if (indexes.size() == 0)
             _indexDir->setExpanded(false);
 
-        for (std::vector<EnsureIndexInfo>::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
+        for (std::vector<IndexInfo>::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir, *it));
         }
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, _indexDir->childCount()));

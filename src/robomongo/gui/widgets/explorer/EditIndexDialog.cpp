@@ -73,7 +73,7 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent)
+    EditIndexDialog::EditIndexDialog(const IndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent)
         :BaseClass(parent), _info(info)
     {        
         setWindowTitle("Index Properties");
@@ -250,14 +250,14 @@ namespace Robomongo
         return textSearch;
     }
 
-    EnsureIndexInfo EditIndexDialog::info() const
+    IndexInfo EditIndexDialog::info() const
     {
         const QString &expAft = _expireAfterLineEdit->text();
         int expAftInt = _info._ttl;
         if (!expAft.isEmpty()) {
            expAftInt = _expireAfterLineEdit->text().toInt();
         }
-        return EnsureIndexInfo(
+        return IndexInfo(
             _info._collection,
             _nameLineEdit->text().toStdString(),
             _jsonText->sciScintilla()->text().toStdString(),                

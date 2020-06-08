@@ -423,7 +423,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
+            const std::vector<IndexInfo> &ind = client->getIndexes(event->collection());
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
@@ -435,12 +435,12 @@ namespace Robomongo
 
     void MongoWorker::handle(AddEditIndexRequest *event)
     {
-        const EnsureIndexInfo &newInfo = event->newInfo();
-        const EnsureIndexInfo &oldInfo = event->oldInfo();
+        const IndexInfo &newInfo = event->newInfo();
+        const IndexInfo &oldInfo = event->oldInfo();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->ensureIndex(oldInfo, newInfo);
-            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
+            const std::vector<IndexInfo> &ind = client->getIndexes(newInfo._collection);
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));

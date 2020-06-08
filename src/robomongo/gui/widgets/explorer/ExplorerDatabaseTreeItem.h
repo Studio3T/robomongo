@@ -22,7 +22,7 @@ namespace Robomongo
     class MongoUser;
     class MongoFunction;
     class MongoCollection;
-    struct EnsureIndexInfo;
+    struct IndexInfo;
 
     class ExplorerDatabaseTreeItem : public ExplorerTreeItem
     {
@@ -39,7 +39,7 @@ namespace Robomongo
         void expandColection(ExplorerCollectionTreeItem *const item);
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName);
         void addEditIndex(ExplorerCollectionTreeItem *const item, 
-                          const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo);
+                          const IndexInfo &oldInfo, const IndexInfo &newInfo);
 
     public Q_SLOTS:
         void handle(MongoDatabaseCollectionListLoadedEvent *event);

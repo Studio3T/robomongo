@@ -8,12 +8,12 @@
 
 namespace
 {
-    Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(
+    Robomongo::IndexInfo makeEnsureIndexInfoFromBsonObj(
         const Robomongo::MongoCollectionInfo &collection,
         const mongo::BSONObj &obj)
     {
         using namespace Robomongo::BsonUtils;
-        Robomongo::EnsureIndexInfo info(collection);
+        Robomongo::IndexInfo info(collection);
         info._name = obj.getStringField("name");
         mongo::BSONObj keyObj = obj.getObjectField("key");
         if (keyObj.isValid()) 
@@ -171,9 +171,9 @@ namespace Robomongo
         return functions;
     }
 
-    std::vector<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
+    std::vector<IndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
-        std::vector<EnsureIndexInfo> result;
+        std::vector<IndexInfo> result;
         std::list<mongo::BSONObj> indexes = _dbclient->getIndexSpecs(collection.ns().toString());
 
         for (std::list<mongo::BSONObj>::iterator it = indexes.begin(); it != indexes.end(); ++it) {
@@ -184,7 +184,7 @@ namespace Robomongo
         return result;
     }
 
-    void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo) const
+    void MongoClient::ensureIndex(const IndexInfo &oldInfo, const IndexInfo &newInfo) const
     {   
         mongo::IndexSpec indexSpec;
         indexSpec.name(newInfo._name);

@@ -83,12 +83,12 @@ namespace Robomongo
          Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const EnsureIndexInfo &info);
+        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const IndexInfo &info);
 
     private Q_SLOTS:
         void ui_dropIndex();
         void ui_edit();
     private:
-        EnsureIndexInfo _info;
+        IndexInfo _info;
     };
 }

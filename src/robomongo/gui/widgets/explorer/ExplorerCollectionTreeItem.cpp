@@ -129,7 +129,7 @@ namespace Robomongo
         if (!databaseTreeItem)
             return;
 
-        databaseTreeItem->enshureIndex(par, fakeInfo, dlg.info());
+        databaseTreeItem->addEditIndex(par, fakeInfo, dlg.info());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
@@ -199,7 +199,7 @@ namespace Robomongo
             if (!databaseTreeItem)
                 return;
 
-            databaseTreeItem->enshureIndex(grPar, _info, dlg.info());
+            databaseTreeItem->addEditIndex(grPar, _info, dlg.info());
         }
     }
 

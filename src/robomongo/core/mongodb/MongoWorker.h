@@ -80,19 +80,14 @@ namespace Robomongo
         void handle(LoadCollectionIndexesRequest *event);
 
         /**
-        * @brief Load indexes in collection
+        * @brief Add/edit indexes in collection
         */
-        void handle(EnsureIndexRequest *event);
+        void handle(AddEditIndexRequest *event);
 
         /**
         * @brief delete index from collection
         */
         void handle(DropCollectionIndexRequest *event);
-
-          /**
-        * @brief Edit index
-        */
-        void handle(EditIndexRequest *event);
 
         /**
          * @brief Load list of all JS functions

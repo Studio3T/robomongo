@@ -131,14 +131,10 @@ namespace Robomongo
         _bus->send(_database->server()->worker(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
 
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
+    void ExplorerDatabaseTreeItem::addEditIndex(
+        ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
     {
-        _bus->send(_database->server()->worker(), new EnsureIndexRequest(item, oldInfo, newInfo));
-    }
-
-    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &oldIndexText, const std::string &newIndexText)
-    {
-         _bus->send(_database->server()->worker(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
+        _bus->send(_database->server()->worker(), new AddEditIndexRequest(item, oldInfo, newInfo));
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()

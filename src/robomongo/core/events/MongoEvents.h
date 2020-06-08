@@ -234,10 +234,11 @@ namespace Robomongo
         std::vector<EnsureIndexInfo> _indexes;
     };
 
-    class EnsureIndexRequest : public Event
+    class AddEditIndexRequest : public Event
     {
         R_EVENT
-        EnsureIndexRequest(QObject *sender, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo) : Robomongo::Event(sender), oldInfo_(oldInfo), newInfo_(newInfo) {}
+            AddEditIndexRequest(QObject *sender, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
+            : Robomongo::Event(sender), oldInfo_(oldInfo), newInfo_(newInfo) {}
         const EnsureIndexInfo &oldInfo() const
         {
             return oldInfo_;
@@ -282,21 +283,6 @@ namespace Robomongo
     private:
         MongoCollectionInfo _collection;
         std::string _index;
-    };
-
-    class EditIndexRequest : public Event
-    {
-        R_EVENT
-    public:
-        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const std::string &oldIndex, const std::string &newIndex) :
-            Event(sender), _collection(collection), _oldIndex(oldIndex), _newIndex(newIndex) {}
-        MongoCollectionInfo collection() const { return _collection; }
-        std::string oldIndex() const { return _oldIndex; }
-        std::string newIndex() const { return _newIndex; }
-    private:
-        const MongoCollectionInfo _collection;
-        std::string _oldIndex;
-        std::string _newIndex;
     };
 
     /**

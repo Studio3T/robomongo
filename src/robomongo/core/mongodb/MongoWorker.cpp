@@ -433,7 +433,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::handle(EnsureIndexRequest *event)
+    void MongoWorker::handle(AddEditIndexRequest *event)
     {
         const EnsureIndexInfo &newInfo = event->newInfo();
         const EnsureIndexInfo &oldInfo = event->oldInfo();
@@ -461,21 +461,6 @@ namespace Robomongo
             reply(event->sender(), new DeleteCollectionIndexResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }            
-    }
-
-    void MongoWorker::handle(EditIndexRequest *event)
-    {
-        try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->renameIndexFromCollection(event->collection(), event->oldIndex(), event->newIndex());
-            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
-            client->done();
-
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
-        } catch(const std::exception &ex) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
-        } 
     }
 
     void MongoWorker::handle(LoadFunctionsRequest *event)

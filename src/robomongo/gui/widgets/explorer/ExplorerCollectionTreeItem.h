@@ -2,6 +2,7 @@
 
 #include "robomongo/core/Event.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h"
 #include "robomongo/core/domain/CursorPosition.h"
 #include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/domain/MongoCollection.h"
@@ -10,7 +11,7 @@ namespace Robomongo
 {
     class LoadCollectionIndexesResponse;
     class DeleteCollectionIndexResponse;
-    class ExplorerCollectionDirIndexesTreeItem;
+    class ExplorerCollectionIndexesDir;
     class ExplorerDatabaseTreeItem;
 
     class CollectionIndexesLoadingEvent : public Event
@@ -55,28 +56,9 @@ namespace Robomongo
 
     private:
         QString buildToolTip(MongoCollection *collection);
-        ExplorerCollectionDirIndexesTreeItem *_indexDir;
+        ExplorerCollectionIndexesDir *_indexDir;
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
-    };
-
-    // --------- todo: to new file
-    // ----------------- class ExplorerCollectionDirIndexesTreeItem ------------------------
-
-    class ExplorerCollectionDirIndexesTreeItem: public ExplorerTreeItem
-    {
-        Q_OBJECT
-    public:
-        typedef ExplorerTreeItem BaseClass;
-        static const QString labelText;
-        explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
-        void expand();
-
-    private Q_SLOTS:
-        void ui_addIndex();
-        void ui_reIndex();
-        void ui_viewIndex();
-        void ui_refreshIndex();
     };
 
     // --------- todo: to new file
@@ -87,7 +69,8 @@ namespace Robomongo
          Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const IndexInfo &info);
+        explicit ExplorerCollectionIndexesTreeItem(
+            ExplorerCollectionIndexesDir *parent, const IndexInfo &info);
 
     private Q_SLOTS:
         void ui_dropIndex();

@@ -4,6 +4,7 @@
 #include <QMenu>
 
 #include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
+#include "robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/dialogs/CopyCollectionDialog.h"
@@ -32,98 +33,13 @@ namespace
 
 namespace Robomongo
 {
-    R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
-    const QString ExplorerCollectionDirIndexesTreeItem::labelText = "Indexes";
-
-// --------- todo: to new file
-// ----------------- class ExplorerCollectionDirIndexesTreeItem ------------------------
-
-    ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
-        :BaseClass(parent)
-    {
-        QAction *addIndex = new QAction("Add Index...", this);
-        VERIFY(connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex())));
-
-        QAction *reIndex = new QAction("Rebuild Indexes...", this);
-        VERIFY(connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex())));
-
-        QAction *viewIndex = new QAction("View Indexes", this);
-        VERIFY(connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex())));
-
-        QAction *refreshIndex = new QAction("Refresh", this);
-        VERIFY(connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex())));
-
-        BaseClass::_contextMenu->addAction(viewIndex);
-        BaseClass::_contextMenu->addAction(addIndex);
-        BaseClass::_contextMenu->addAction(reIndex);
-        BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(refreshIndex);      
-
-        setText(0, labelText);
-        setIcon(0, Robomongo::GuiRegistry::instance().folderIcon());
-
-        setExpanded(false);
-        setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::expand()
-    {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (!par)
-            return;
-
-        par->expand();
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::ui_viewIndex()
-    {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
-            par->openCurrentCollectionShell("getIndexes()");
-        }
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::ui_refreshIndex()
-    {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
-            par->expand();
-        }
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::ui_addIndex()
-    {
-        auto par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
-        if (!par)
-            return;
-
-        IndexInfo fakeInfo(par->collection()->info(), "");
-        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()), 
-            QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), 
-                               treeWidget());
-        int result = dlg.exec();
-        if (result != QDialog::Accepted)
-            return;
-
-        auto databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
-        if (!databaseTreeItem)
-            return;
-
-        databaseTreeItem->addEditIndex(par, fakeInfo, dlg.info());
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
-    {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
-            par->openCurrentCollectionShell("reIndex()", false);
-        }
-    }
+    R_REGISTER_EVENT(CollectionIndexesLoadingEvent)      
 
 // --------- todo: to new file
 // ----------------- class ExplorerCollectionIndexesTreeItem ------------------------
 
-    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const IndexInfo &info)
+    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(
+        ExplorerCollectionIndexesDir *parent, const IndexInfo &info)
         : BaseClass(parent), _info(info)
     {
         auto dropIndex = new QAction("Drop Index...", this);
@@ -146,7 +62,7 @@ namespace Robomongo
         if (answer != QMessageBox::Yes)
             return;
 
-        ExplorerCollectionDirIndexesTreeItem *par = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(parent());
+        ExplorerCollectionIndexesDir *par = dynamic_cast<ExplorerCollectionIndexesDir *>(parent());
         if (!par)
             return;
         
@@ -159,7 +75,7 @@ namespace Robomongo
 
     void ExplorerCollectionIndexesTreeItem::ui_edit()
     {
-        ExplorerCollectionDirIndexesTreeItem *par = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(parent());           
+        ExplorerCollectionIndexesDir *par = dynamic_cast<ExplorerCollectionIndexesDir *>(parent());           
         if (par) {
             ExplorerCollectionTreeItem *grPar = dynamic_cast<ExplorerCollectionTreeItem *const>(par->parent());
             if (!par)
@@ -250,7 +166,7 @@ namespace Robomongo
         setText(0, QtUtils::toQString(_collection->name()));
         setIcon(0, GuiRegistry::instance().collectionIcon());
 
-        _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
+        _indexDir = new ExplorerCollectionIndexesDir(this);
         addChild(_indexDir);
 
         setExpanded(false);
@@ -281,7 +197,7 @@ namespace Robomongo
         for (std::vector<IndexInfo>::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir, *it));
         }
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, _indexDir->childCount()));
+        _indexDir->setText(0, detail::buildName("Indexes", _indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
@@ -302,12 +218,12 @@ namespace Robomongo
                 }
             }
         }
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, _indexDir->childCount()));
+        _indexDir->setText(0, detail::buildName("Indexes", _indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(CollectionIndexesLoadingEvent *event)
     {
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
+        _indexDir->setText(0, detail::buildName("Indexes", -1));
     }
 
     void ExplorerCollectionTreeItem::expand()

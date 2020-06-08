@@ -13,6 +13,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
@@ -140,7 +141,7 @@ namespace Robomongo
             return;
         }
        
-        auto dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
+        auto dirItem = dynamic_cast<ExplorerCollectionIndexesDir *>(item);
         if (dirItem) {
             dirItem->expand();
         }

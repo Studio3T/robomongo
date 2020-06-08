@@ -90,6 +90,7 @@ set(SOURCES
 
     # Isolated scope #6
     gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
+    gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp
     gui/widgets/explorer/ExplorerTreeItem.cpp
     gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp
     gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp

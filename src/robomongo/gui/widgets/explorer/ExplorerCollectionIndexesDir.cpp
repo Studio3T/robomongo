@@ -43,7 +43,7 @@ namespace Robomongo
 
     void ExplorerCollectionIndexesDir::expand()
     {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        auto const par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
         if (!par)
             return;
 
@@ -52,18 +52,16 @@ namespace Robomongo
 
     void ExplorerCollectionIndexesDir::ui_viewIndex()
     {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
-            par->openCurrentCollectionShell("getIndexes()");
-        }
+        auto const par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if (par)
+            par->openCurrentCollectionShell("getIndexes()");        
     }
 
     void ExplorerCollectionIndexesDir::ui_refreshIndex()
     {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
+        auto const par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if (par)
             par->expand();
-        }
     }
 
     void ExplorerCollectionIndexesDir::ui_addIndex()
@@ -73,14 +71,16 @@ namespace Robomongo
             return;
 
         IndexInfo fakeInfo(par->collection()->info(), "");
-        EditIndexDialog dlg(fakeInfo, QtUtils::toQString(par->databaseItem()->database()->name()),
+        EditIndexDialog dlg(
+            fakeInfo, QtUtils::toQString(par->databaseItem()->database()->name()),
             QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()),
-            treeWidget());
-        int result = dlg.exec();
+            treeWidget()
+        );
+        auto const result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
 
-        auto databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
+        auto const databaseTreeItem = dynamic_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
         if (!databaseTreeItem)
             return;
 
@@ -89,9 +89,8 @@ namespace Robomongo
 
     void ExplorerCollectionIndexesDir::ui_reIndex()
     {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if (par) {
+        auto const par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if (par)
             par->openCurrentCollectionShell("reIndex()", false);
-        }
     }
 }

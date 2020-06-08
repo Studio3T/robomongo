@@ -34,16 +34,15 @@ namespace Robomongo
     void ExplorerCollectionIndexItem::ui_dropIndex()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(), "Drop", "Index", text(0));
-
+        auto const answer = utils::questionDialog(treeWidget(), "Drop", "Index", text(0));
         if (answer != QMessageBox::Yes)
             return;
 
-        ExplorerCollectionIndexesDir *par = dynamic_cast<ExplorerCollectionIndexesDir *>(parent());
+        auto const par = dynamic_cast<ExplorerCollectionIndexesDir *>(parent());
         if (!par)
             return;
         
-        ExplorerCollectionTreeItem *grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(par->parent());
+        auto const grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(par->parent());
         if (!grandParent)
             return;
 
@@ -52,10 +51,10 @@ namespace Robomongo
 
     void ExplorerCollectionIndexItem::ui_edit()
     {
-        ExplorerCollectionIndexesDir *par = dynamic_cast<ExplorerCollectionIndexesDir *>(parent());           
+        auto const par = dynamic_cast<ExplorerCollectionIndexesDir *>(parent());
         if (par) {
-            ExplorerCollectionTreeItem *grPar = dynamic_cast<ExplorerCollectionTreeItem *const>(par->parent());
-            if (!par) // todo: !grPar ?
+            auto const grPar = dynamic_cast<ExplorerCollectionTreeItem *const>(par->parent());
+            if (!grPar)
                 return;
 
             EditIndexDialog dlg(
@@ -64,11 +63,11 @@ namespace Robomongo
                 treeWidget()
             );
 
-            int result = dlg.exec();
+            auto const result = dlg.exec();
             if (result != QDialog::Accepted)
                 return;
 
-            ExplorerDatabaseTreeItem *databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(grPar->databaseItem());
+            auto const databaseTreeItem = dynamic_cast<ExplorerDatabaseTreeItem *>(grPar->databaseItem());
             if (!databaseTreeItem)
                 return;
 

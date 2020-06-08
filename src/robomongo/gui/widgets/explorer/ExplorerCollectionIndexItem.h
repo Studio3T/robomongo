@@ -1,8 +1,7 @@
 #pragma once
 
-#include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
-
 #include "robomongo/core/events/MongoEventsInfo.h"
+#include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 
 namespace Robomongo
 {
@@ -13,7 +12,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef ExplorerTreeItem BaseClass;
+        using BaseClass = ExplorerTreeItem ;
         explicit ExplorerCollectionIndexItem(
             ExplorerCollectionIndexesDir *parent, const IndexInfo &info);
 

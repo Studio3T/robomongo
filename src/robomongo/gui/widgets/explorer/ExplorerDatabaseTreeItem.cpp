@@ -132,7 +132,7 @@ namespace Robomongo
     }
 
     void ExplorerDatabaseTreeItem::addEditIndex(
-        ExplorerCollectionTreeItem *const item, const IndexInfo &oldInfo, const IndexInfo &newInfo)
+        ExplorerCollectionTreeItem *const item, const IndexInfo &oldInfo, const IndexInfo &newInfo) const
     {
         _bus->send(_database->server()->worker(), new AddEditIndexRequest(item, oldInfo, newInfo));
     }

@@ -39,7 +39,7 @@ namespace Robomongo
         void expandColection(ExplorerCollectionTreeItem *const item);
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName);
         void addEditIndex(ExplorerCollectionTreeItem *const item, 
-                          const IndexInfo &oldInfo, const IndexInfo &newInfo);
+                          const IndexInfo &oldInfo, const IndexInfo &newInfo) const;
 
     public Q_SLOTS:
         void handle(MongoDatabaseCollectionListLoadedEvent *event);

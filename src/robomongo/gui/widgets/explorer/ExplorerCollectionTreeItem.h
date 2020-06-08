@@ -60,22 +60,4 @@ namespace Robomongo
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
     };
-
-    // --------- todo: to new file
-    // ----------------- class ExplorerCollectionIndexesTreeItem ------------------------
-
-    class ExplorerCollectionIndexesTreeItem: public ExplorerTreeItem
-    {
-         Q_OBJECT
-    public:
-        typedef ExplorerTreeItem BaseClass;
-        explicit ExplorerCollectionIndexesTreeItem(
-            ExplorerCollectionIndexesDir *parent, const IndexInfo &info);
-
-    private Q_SLOTS:
-        void ui_dropIndex();
-        void ui_edit();
-    private:
-        IndexInfo _info;
-    };
 }

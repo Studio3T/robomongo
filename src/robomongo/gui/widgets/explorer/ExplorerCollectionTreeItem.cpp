@@ -152,10 +152,11 @@ namespace Robomongo
            isAddIndex ? event->newIndex_._name : event->oldIndex_._name
         )};
         if (event->isError()) {
-            QString const header{ "Failed to " + action + " index \"" + index + '\"'};
-            auto const msg{ QString::fromStdString(event->error().errorMessage()) };
-            LOG_MSG((header + ". " + msg).toStdString(), mongo::logger::LogSeverity::Error());
-            QMessageBox::critical(nullptr, "Error: " + header, msg);
+            QString const header{ "Operation failed" };
+            QString const msg{ "Failed to " + action + " index \"" + index + '\"'};
+            auto const err{ QString::fromStdString(event->error().errorMessage()) };
+            LOG_MSG((msg + ". " + err).toStdString(), mongo::logger::LogSeverity::Error());
+            QMessageBox::critical(nullptr, "Error: " + header, msg + "\n\n" + err);
             return;
         }
         LOG_MSG(("Succeeded to " + action + " index \"" + index + '\"').toStdString(), 

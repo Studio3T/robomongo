@@ -274,15 +274,15 @@ namespace Robomongo
         R_EVENT
     public:
         DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, 
-            const std::string &name) 
-            : Event(sender), _collection(collection), _name(name) 
+            const std::string &index) 
+            : Event(sender), _collection(collection), _index(index) 
         {}
 
         MongoCollectionInfo collection() const { return _collection; }
-        std::string name() const { return _name; }
+        std::string index() const { return _index; }
     private:
         const MongoCollectionInfo _collection;
-        std::string _name;
+        std::string _index;  // todo: rename to index
     };
 
     class DropCollectionIndexResponse: public Event

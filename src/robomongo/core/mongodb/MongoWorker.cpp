@@ -457,13 +457,13 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropIndexFromCollection(event->collection(), event->name());
+            client->dropIndexFromCollection(event->collection(), event->index());
             client->done();
             reply(event->sender(), 
-                new DropCollectionIndexResponse(this, event->collection(), event->name()));
+                new DropCollectionIndexResponse(this, event->collection(), event->index()));
         } catch(const std::exception &ex) {
             reply(event->sender(), 
-                new DropCollectionIndexResponse(this, EventError(ex.what()), event->name()));
+                new DropCollectionIndexResponse(this, EventError(ex.what()), event->index()));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }            
     }

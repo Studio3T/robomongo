@@ -252,14 +252,31 @@ namespace Robomongo
         const IndexInfo newInfo_;
     };
 
+    struct AddEditIndexResponse : public Event
+    {
+        R_EVENT
+    
+        AddEditIndexResponse(QObject *sender, const IndexInfo &oldIndex, const IndexInfo &newIndex)
+            : Event(sender), oldIndex_(oldIndex), newIndex_(newIndex)
+        {}
+
+        AddEditIndexResponse(QObject *sender, const EventError &error, 
+            const IndexInfo &oldIndex, const IndexInfo &newIndex) 
+            : Event(sender, error), oldIndex_(oldIndex), newIndex_(newIndex)
+        {}
+    
+        const IndexInfo oldIndex_;
+        const IndexInfo newIndex_;
+    };
+
     class DropCollectionIndexRequest : public Event
     {
         R_EVENT
     public:
-        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const std::string &name) :
-            Event(sender),
-            _collection(collection),
-            _name(name) {}
+        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, 
+            const std::string &name) 
+            : Event(sender), _collection(collection), _name(name) 
+        {}
 
         MongoCollectionInfo collection() const { return _collection; }
         std::string name() const { return _name; }
@@ -272,8 +289,10 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        DropCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection, const std::string &index) :
-            Event(sender), _collection(collection), _index(index) {}
+        DropCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection, 
+                                    const std::string &index) 
+            : Event(sender), _collection(collection), _index(index) 
+        {}
 
         DropCollectionIndexResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}

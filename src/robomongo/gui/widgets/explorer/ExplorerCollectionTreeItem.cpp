@@ -18,6 +18,7 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
@@ -102,6 +103,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(shardDistribution);
 
         AppRegistry::instance().bus()->subscribe(_databaseItem, LoadCollectionIndexesResponse::Type, this);
+        AppRegistry::instance().bus()->subscribe(_databaseItem, AddEditIndexResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(_databaseItem, DropCollectionIndexResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
 
@@ -140,6 +142,24 @@ namespace Robomongo
             _indexDir->addChild(new ExplorerCollectionIndexItem(_indexDir, *it));
         }
         _indexDir->setText(0, detail::buildName("Indexes", _indexDir->childCount()));
+    }
+
+    void ExplorerCollectionTreeItem::handle(AddEditIndexResponse *event)
+    {
+        bool const isAddIndex{ event->oldIndex_._name.empty() };
+        QString const action{ isAddIndex ? "add" : "edit" };
+        auto const index{ QString::fromStdString(
+           isAddIndex ? event->newIndex_._name : event->oldIndex_._name
+        )};
+        if (event->isError()) {
+            QString const header{ "Failed to " + action + " index \"" + index + '\"'};
+            auto const msg{ QString::fromStdString(event->error().errorMessage()) };
+            LOG_MSG((header + ". " + msg).toStdString(), mongo::logger::LogSeverity::Error());
+            QMessageBox::critical(nullptr, "Error: " + header, msg);
+            return;
+        }
+        LOG_MSG(("Succeeded to " + action + " index \"" + index + '\"').toStdString(), 
+            mongo::logger::LogSeverity::Info());
     }
 
     void ExplorerCollectionTreeItem::handle(DropCollectionIndexResponse *event)

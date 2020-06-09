@@ -435,17 +435,20 @@ namespace Robomongo
 
     void MongoWorker::handle(AddEditIndexRequest *event)
     {
-        const IndexInfo &newInfo = event->newInfo();
-        const IndexInfo &oldInfo = event->oldInfo();
+        const IndexInfo &newIndex = event->newInfo();
+        const IndexInfo &oldIndex = event->oldInfo();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->addEditIndex(oldInfo, newInfo);
-            const std::vector<IndexInfo> &ind = client->getIndexes(newInfo._collection);
+            client->addEditIndex(oldIndex, newIndex);
             client->done();
+            reply(event->sender(), new AddEditIndexResponse(this, oldIndex, newIndex));
 
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
+            std::vector<IndexInfo> const &indexes = client->getIndexes(newIndex._collection);
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, indexes));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, EventError(ex.what())));
+            reply(event->sender(), 
+                new AddEditIndexResponse(this, EventError(ex.what()), oldIndex, newIndex)
+            );
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }

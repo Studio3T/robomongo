@@ -10,6 +10,7 @@
 namespace Robomongo
 {
     class LoadCollectionIndexesResponse;
+    struct AddEditIndexResponse;
     class DropCollectionIndexResponse;
     class ExplorerCollectionIndexesDir;
     class ExplorerDatabaseTreeItem;
@@ -34,6 +35,7 @@ namespace Robomongo
 
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
+        void handle(AddEditIndexResponse *event);
         void handle(DropCollectionIndexResponse *event);
         void handle(CollectionIndexesLoadingEvent *event);
 

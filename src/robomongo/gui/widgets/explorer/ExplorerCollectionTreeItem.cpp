@@ -102,7 +102,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(shardDistribution);
 
         AppRegistry::instance().bus()->subscribe(_databaseItem, LoadCollectionIndexesResponse::Type, this);
-        AppRegistry::instance().bus()->subscribe(_databaseItem, DeleteCollectionIndexResponse::Type, this);
+        AppRegistry::instance().bus()->subscribe(_databaseItem, DropCollectionIndexResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
 
         setText(0, QtUtils::toQString(_collection->name()));
@@ -142,7 +142,7 @@ namespace Robomongo
         _indexDir->setText(0, detail::buildName("Indexes", _indexDir->childCount()));
     }
 
-    void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
+    void ExplorerCollectionTreeItem::handle(DropCollectionIndexResponse *event)
     {
         if (event->isError()) {
             return;

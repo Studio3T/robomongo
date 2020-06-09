@@ -268,14 +268,14 @@ namespace Robomongo
         std::string _name;
     };
 
-    class DeleteCollectionIndexResponse: public Event
+    class DropCollectionIndexResponse: public Event
     {
         R_EVENT
     public:
-        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection, const std::string &index) :
+        DropCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection, const std::string &index) :
             Event(sender), _collection(collection), _index(index) {}
 
-        DeleteCollectionIndexResponse(QObject *sender, const EventError &error) :
+        DropCollectionIndexResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
         MongoCollectionInfo collection() const { return _collection; }

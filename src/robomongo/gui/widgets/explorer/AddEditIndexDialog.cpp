@@ -1,4 +1,4 @@
-#include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
+#include "robomongo/gui/widgets/explorer/AddEditIndexDialog.h"
 
 #include <QTabWidget>
 #include <QTabBar>
@@ -73,7 +73,7 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(
+    AddEditIndexDialog::AddEditIndexDialog(
         const IndexInfo &info, const QString &databaseName, const QString &serverAdress, 
         bool const isAddIndex, QWidget *parent)
         : BaseClass(parent), _info(info), _isAddIndex(isAddIndex)
@@ -114,7 +114,7 @@ namespace Robomongo
         _nameLineEdit->setFocus();
     }
 
-    QWidget* EditIndexDialog::createBasicTab()
+    QWidget* AddEditIndexDialog::createBasicTab()
     {
         QWidget *basicTab = new QWidget(this);
         _nameLineEdit = new QLineEdit(QtUtils::toQString(_info._name), basicTab);
@@ -151,7 +151,7 @@ namespace Robomongo
         return basicTab;
     }
 
-    void EditIndexDialog::expireStateChanged(int value)
+    void AddEditIndexDialog::expireStateChanged(int value)
     {
         _expireAfterLineEdit->setEnabled(value);
         if (!value) {
@@ -159,7 +159,7 @@ namespace Robomongo
         }
     }
 
-    QWidget* EditIndexDialog::createAdvancedTab()
+    QWidget* AddEditIndexDialog::createAdvancedTab()
     {
         QWidget *advanced = new QWidget(this);
 
@@ -215,7 +215,7 @@ namespace Robomongo
         return advanced;
     }
 
-    QWidget* EditIndexDialog::createTextSearchTab()
+    QWidget* AddEditIndexDialog::createTextSearchTab()
     {
         QWidget *textSearch = new QWidget(this);
 
@@ -252,7 +252,7 @@ namespace Robomongo
         return textSearch;
     }
 
-    IndexInfo EditIndexDialog::info() const
+    IndexInfo AddEditIndexDialog::info() const
     {
         const QString &expAft = _expireAfterLineEdit->text();
         int expAftInt = _info._ttl;
@@ -272,7 +272,7 @@ namespace Robomongo
             QtUtils::toStdString(_textWeightsLineEdit->sciScintilla()->text()));
     }
 
-    void EditIndexDialog::accept()
+    void AddEditIndexDialog::accept()
     {
         if (isValidJson(_jsonText->sciScintilla()->text())) {
             const QString &weightText = _textWeightsLineEdit->sciScintilla()->text();

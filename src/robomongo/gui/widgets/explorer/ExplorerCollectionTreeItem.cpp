@@ -3,7 +3,7 @@
 #include <QAction>
 #include <QMenu>
 
-#include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
+#include "robomongo/gui/widgets/explorer/AddEditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"

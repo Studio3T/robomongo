@@ -85,7 +85,7 @@ set(SOURCES
     gui/editors/PlainJavaScriptEditor.cpp
     gui/editors/JSLexer.cpp
     gui/editors/FindFrame.cpp
-    gui/widgets/explorer/EditIndexDialog.cpp
+    gui/widgets/explorer/AddEditIndexDialog.cpp
     gui/widgets/workarea/ScriptWidget.cpp
 
     # Isolated scope #6

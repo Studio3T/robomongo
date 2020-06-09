@@ -8,7 +8,7 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/DialogUtils.h"
-#include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
+#include "robomongo/gui/widgets/explorer/AddEditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
@@ -57,14 +57,14 @@ namespace Robomongo
             if (!grPar)
                 return;
 
-            auto const& db{ grPar->databaseItem()->database() };
-            EditIndexDialog dlg(
+            auto const& db { grPar->databaseItem()->database() };
+            AddEditIndexDialog dlg {
                 _info, 
                 QtUtils::toQString(db->name()), 
                 QtUtils::toQString(db->server()->connectionRecord()->getFullAddress()),
                 false,
                 treeWidget()
-            );
+            };
 
             auto const result = dlg.exec();
             if (result != QDialog::Accepted)

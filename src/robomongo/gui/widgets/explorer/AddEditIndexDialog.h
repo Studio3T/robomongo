@@ -10,7 +10,7 @@ QT_END_NAMESPACE
 namespace Robomongo
 {
     class FindFrame;
-    class EditIndexDialog: public QDialog
+    class AddEditIndexDialog: public QDialog
     {
         Q_OBJECT
     public:
@@ -19,7 +19,7 @@ namespace Robomongo
             HeightWidget = 320,
             WidthWidget = 480
         };
-        explicit EditIndexDialog(
+        explicit AddEditIndexDialog(
             const IndexInfo &info, const QString &databaseName, 
             const QString &serverAdress, bool const isAddIndex,
             QWidget *parent = nullptr

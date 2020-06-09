@@ -73,8 +73,10 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(const IndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent)
-        :BaseClass(parent), _info(info)
+    EditIndexDialog::EditIndexDialog(
+        const IndexInfo &info, const QString &databaseName, const QString &serverAdress, 
+        bool const isAddIndex, QWidget *parent)
+        : BaseClass(parent), _info(info), _isAddIndex(isAddIndex)
     {        
         setWindowTitle("Index Properties");
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
@@ -279,6 +281,25 @@ namespace Robomongo
                 _textWeightsLineEdit->setFocus();
                 return ;
             }
+
+            if (!_isAddIndex) {
+                // Ask user
+                int const answer = QMessageBox::question(this, "Warning",
+                    QString("MongoDB does not support direct (one step) edit index. "
+                        "\nTo edit an existing index, the index must be dropped and recreated. "
+                        "This means if the recreate step fails, the index being edited might "
+                        "have already been dropped. "
+                        "In this case, Robo 3T will try to recover (recreate) the index being edited. "
+                        "Nevertheless, please do consider to backup your index first. "
+                        "\n\nAre you sure to proceed?"
+                    ),
+                    QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton
+                );
+
+                if (answer == QMessageBox::No)
+                    return;
+            }
+
             return BaseClass::accept();
         }
         else {

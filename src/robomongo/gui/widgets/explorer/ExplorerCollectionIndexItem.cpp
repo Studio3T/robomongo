@@ -57,9 +57,12 @@ namespace Robomongo
             if (!grPar)
                 return;
 
+            auto const& db{ grPar->databaseItem()->database() };
             EditIndexDialog dlg(
-                _info, QtUtils::toQString(grPar->databaseItem()->database()->name()), 
-                QtUtils::toQString(grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), 
+                _info, 
+                QtUtils::toQString(db->name()), 
+                QtUtils::toQString(db->server()->connectionRecord()->getFullAddress()),
+                false,
                 treeWidget()
             );
 

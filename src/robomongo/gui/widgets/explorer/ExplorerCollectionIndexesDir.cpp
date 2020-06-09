@@ -70,10 +70,12 @@ namespace Robomongo
         if (!par)
             return;
 
-        IndexInfo fakeInfo(par->collection()->info(), "");
-        EditIndexDialog dlg(
-            fakeInfo, QtUtils::toQString(par->databaseItem()->database()->name()),
-            QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()),
+        IndexInfo const fakeInfo(par->collection()->info(), "");
+        auto const& db{ par->databaseItem()->database() };
+            fakeInfo, 
+            QtUtils::toQString(db->name()),
+            QtUtils::toQString(db->server()->connectionRecord()->getFullAddress()),
+            true,
             treeWidget()
         );
         auto const result = dlg.exec();

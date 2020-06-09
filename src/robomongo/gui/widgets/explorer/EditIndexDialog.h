@@ -15,12 +15,15 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef QDialog BaseClass;
-        enum
-        {
+        enum {
             HeightWidget = 320,
             WidthWidget = 480
         };
-        explicit EditIndexDialog(const IndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent = 0);
+        explicit EditIndexDialog(
+            const IndexInfo &info, const QString &databaseName, 
+            const QString &serverAdress, bool const isAddIndex,
+            QWidget *parent = nullptr
+        );
         IndexInfo info() const;
 
     public Q_SLOTS:
@@ -31,7 +34,9 @@ namespace Robomongo
        QWidget *createBasicTab();
        QWidget *createAdvancedTab();
        QWidget *createTextSearchTab();
-       const IndexInfo _info;
+
+       bool const _isAddIndex;
+       IndexInfo const _info;
        QLineEdit *_nameLineEdit;
        FindFrame *_jsonText;
        QCheckBox *_uniqueCheckBox;

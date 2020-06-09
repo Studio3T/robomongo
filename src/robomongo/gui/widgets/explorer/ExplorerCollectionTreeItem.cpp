@@ -165,21 +165,28 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::handle(DropCollectionIndexResponse *event)
     {
         if (event->isError()) {
+            QString const header{"Operation failed"};
+            QString const msg{ 
+                "Failed to drop index \"" + QString::fromStdString(event->index()) + '\"' 
+            };
+            auto const err{ "Reason: " + QString::fromStdString(event->error().errorMessage()) };
+            LOG_MSG((msg + ". " + err).toStdString(), mongo::logger::LogSeverity::Error());
+            QMessageBox::critical(nullptr, "Error: " + header, msg + "\n\n" + err);
             return;
         }
 
-        if (!event->index().empty()) {
-            int itemCount = _indexDir->childCount();
-            QString eventIndex = QtUtils::toQString(event->index());
-            for (int i = 0; i < itemCount; ++i) {
-                QTreeWidgetItem *item = _indexDir->child(i);
-                if (item->text(0) == eventIndex) {
-                    removeChild(item);
-                    delete item;
-                    break;
-                }
+        for (int i = 0; i < _indexDir->childCount(); ++i) {
+            QTreeWidgetItem *item = _indexDir->child(i);
+            if (item->text(0) == QString::fromStdString(event->index())) {
+                removeChild(item);
+                delete item;
+                break;
             }
-        }
+        }        
+
+        LOG_MSG("Succeeded to drop index \"" + event->index() + '\"', 
+            mongo::logger::LogSeverity::Info());
+
         _indexDir->setText(0, detail::buildName("Indexes", _indexDir->childCount()));
     }
 

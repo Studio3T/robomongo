@@ -294,8 +294,10 @@ namespace Robomongo
             : Event(sender), _collection(collection), _index(index) 
         {}
 
-        DropCollectionIndexResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        DropCollectionIndexResponse(QObject *sender, const EventError &error, 
+                                    const std::string &index)
+            : Event(sender, error), _index(index) 
+        {}
 
         MongoCollectionInfo collection() const { return _collection; }
         std::string index() const { return _index; }

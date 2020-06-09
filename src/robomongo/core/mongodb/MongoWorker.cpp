@@ -459,9 +459,11 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             client->dropIndexFromCollection(event->collection(), event->name());
             client->done();
-            reply(event->sender(), new DropCollectionIndexResponse(this, event->collection(), event->name()));
+            reply(event->sender(), 
+                new DropCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new DropCollectionIndexResponse(this, EventError(ex.what())));
+            reply(event->sender(), 
+                new DropCollectionIndexResponse(this, EventError(ex.what()), event->name()));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }            
     }

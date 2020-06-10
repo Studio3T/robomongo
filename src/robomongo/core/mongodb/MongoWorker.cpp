@@ -314,18 +314,18 @@ namespace Robomongo
         return std::string();
     }
 
-    MongoWorker::DatabasesContainerType MongoWorker::getDatabaseNamesSafe()
+    std::vector<std::string> MongoWorker::getDatabaseNamesSafe()
     {        
-        DatabasesContainerType result;
+        std::vector<std::string> dbNames;
         std::string authBase = getAuthBase();
         if (!_isAdmin && !authBase.empty()) {
-            result.push_back(_connSettings->primaryCredential()->databaseName());
-            return result;
+            dbNames.push_back(_connSettings->primaryCredential()->databaseName());
+            return dbNames;
         }
 
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            result = client->getDatabaseNames();
+            dbNames = client->getDatabaseNames();
         } catch(const std::exception &ex) {
             std::string const hint {
                 "\n\nHint: If you are sure that this user has access to a specific database, "
@@ -338,9 +338,9 @@ namespace Robomongo
             );
 
             if (!authBase.empty())
-                result.push_back(authBase);
+                dbNames.push_back(authBase);
         }
-        return result;
+        return dbNames;
     }
 
     /**

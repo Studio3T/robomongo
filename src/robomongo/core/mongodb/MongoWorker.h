@@ -25,13 +25,12 @@ namespace Robomongo
 
     public:
         enum { pingTimeMs = 60 * 1000 };
-
-        typedef std::vector<std::string> DatabasesContainerType;
+        
         using DBClientReplicaSet = std::unique_ptr<mongo::DBClientReplicaSet>;
         using DBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
 
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
-                             int mongoTimeoutSec, int shellTimeoutSec, QObject *parent = NULL);
+                             int mongoTimeoutSec, int shellTimeoutSec, QObject *parent = nullptr);
 
         ~MongoWorker();
         void interrupt();
@@ -143,7 +142,7 @@ namespace Robomongo
          */
         void send(Event *event);
 
-        DatabasesContainerType getDatabaseNamesSafe();
+        std::vector<std::string> getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
         // Returns a pair of DBClientBase* connection and error string

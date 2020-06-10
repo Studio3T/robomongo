@@ -17,7 +17,7 @@ namespace
     {
         RemoveIfReciver(QObject *receiver) : _receiver(receiver) {}
 
-        bool operator()(const Robomongo::EventBus::SubscribersType& item) const {
+        bool operator()(const Robomongo::EventBus::EventTypeAndSubscriber& item) const {
             if (item.second->receiver == _receiver) {
                 delete item.second;
                 return true;
@@ -31,7 +31,7 @@ namespace
     struct FindIfReciver
     {
         FindIfReciver(QThread *thread) : _thread(thread) {}
-        bool operator()(const Robomongo::EventBus::DispatchersType &item) const {
+        bool operator()(const Robomongo::EventBus::ThreadAndDispatcher &item) const {
             if (item.first == _thread) 
                 return true;
             
@@ -50,10 +50,8 @@ namespace Robomongo
 
     EventBus::~EventBus()
     {
-        for (DispatchersContainerType::iterator it = _dispatchersByThread.begin(); it != _dispatchersByThread.end(); ++it) {
-            DispatchersType item = *it;
-            delete item.second;
-        }
+        for (auto const& dispatchersByThread : _dispatchersByThread)
+            delete dispatchersByThread.second;
     }
 
     void EventBus::publish(Event *event)
@@ -117,7 +115,7 @@ namespace Robomongo
         VERIFY(connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unsubscibe(QObject*))));
 
         // add subscriber
-        _subscribersByEventType.push_back(SubscribersType(type, new EventBusSubscriber(dis, receiver, sender)));
+        _subscribersByEventType.push_back(EventTypeAndSubscriber(type, new EventBusSubscriber(dis, receiver, sender)));
     }
 
     void EventBus::unsubscibe(QObject *receiver)
@@ -133,8 +131,9 @@ namespace Robomongo
      */
     EventBusDispatcher *EventBus::dispatcher(QThread *thread)
     {
-        DispatchersContainerType::iterator disIt = std::find_if(
-            _dispatchersByThread.begin(), _dispatchersByThread.end(), FindIfReciver(thread));
+        auto const& disIt = std::find_if(
+            _dispatchersByThread.begin(), _dispatchersByThread.end(), FindIfReciver(thread)
+        );
        
         if (disIt != _dispatchersByThread.end()) {
             return (*disIt).second;
@@ -142,7 +141,7 @@ namespace Robomongo
         else {
             EventBusDispatcher *dis = new EventBusDispatcher();
             dis->moveToThread(thread);
-            _dispatchersByThread.push_back(DispatchersType(thread, dis));
+            _dispatchersByThread.push_back(ThreadAndDispatcher(thread, dis));
             return dis;
         }        
     }

@@ -21,9 +21,9 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef std::pair<QEvent::Type, EventBusSubscriber *> SubscribersType;
-        typedef std::pair<QThread *, EventBusDispatcher *> DispatchersType;
-        typedef std::vector<DispatchersType> DispatchersContainerType;
+        typedef std::pair<QEvent::Type, EventBusSubscriber *> EventTypeAndSubscriber;
+        typedef std::pair<QThread *, EventBusDispatcher *> ThreadAndDispatcher;
+
         EventBus();
         ~EventBus();
 
@@ -64,7 +64,7 @@ namespace Robomongo
 
     private:
         QMutex _lock;
-        std::vector<SubscribersType> _subscribersByEventType;
-        DispatchersContainerType _dispatchersByThread;
+        std::vector<EventTypeAndSubscriber> _subscribersByEventType;
+        std::vector<ThreadAndDispatcher> _dispatchersByThread;
     };
 }

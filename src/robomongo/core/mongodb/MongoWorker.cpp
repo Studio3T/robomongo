@@ -10,15 +10,16 @@
 #include <mongo/util/net/ssl_manager.h>
 #include <mongo/util/net/ssl_options.h>
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"
 #include "robomongo/core/EventBus.h"
-#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/mongodb/MongoClient.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
-#include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/settings/SslSettings.h"
@@ -325,8 +326,17 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             result = client->getDatabaseNames();
-        } catch(const std::exception &) {
-            // todo: Log or re-throw this exception
+        } catch(const std::exception &ex) {
+            std::string const hint {
+                "\n\nHint: If you are sure that this user has access to a specific database, "
+                "creating this database (with the same name) manually, might work " 
+                "in some cases."
+            };
+            AppRegistry::instance().bus()->send(
+                AppRegistry::instance().app(),
+                new LogEvent(this, ex.what() + hint, LogEvent::LogLevel::RBM_WARN, true)
+            );
+
             if (!authBase.empty())
                 result.push_back(authBase);
         }

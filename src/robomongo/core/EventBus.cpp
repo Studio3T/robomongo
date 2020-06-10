@@ -60,9 +60,8 @@ namespace Robomongo
     {
         QMutexLocker lock(&_lock);
         QList<QObject*> theReceivers;
-        EventBusDispatcher *dis = NULL;
-        for (SubscribersContainerType::iterator it = _subscribersByEventType.begin(); it != _subscribersByEventType.end(); ++it ) {
-            SubscribersType item = *it;
+        EventBusDispatcher *dis = nullptr;
+        for (auto const& item : _subscribersByEventType) {            
             if (event->type() == item.first) {
                 EventBusSubscriber *subscriber = item.second;
                 if (!subscriber->sender || subscriber->sender == event->sender()) {

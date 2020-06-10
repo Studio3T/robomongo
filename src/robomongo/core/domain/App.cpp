@@ -1,6 +1,8 @@
 #include "robomongo/core/domain/App.h"
+
 #include <QHash>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
@@ -263,6 +265,12 @@ namespace Robomongo
         } else if (event->level == LogEvent::RBM_DEBUG) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Log());
         }
+
+        if (!event->informUser)
+            return;
+
+        QString const errMsg { QtUtils::toQString("Error: " + event->message) };
+        QMessageBox::critical(nullptr, "Error", errMsg);
     }
 
     void App::handle(ListenSshConnectionResponse *event) {

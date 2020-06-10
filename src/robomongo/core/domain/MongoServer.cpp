@@ -247,10 +247,8 @@ namespace Robomongo {
 
         clearDatabases();
 
-        for (auto const& dbname : event->databaseNames) {
-            MongoDatabase *db  = new MongoDatabase(this, dbname);
-            addDatabase(db);
-        }
+        for (auto const& dbname : event->databaseNames) 
+            addDatabase(new MongoDatabase(this, dbname));
 
         _bus->publish(new DatabaseListLoadedEvent(this, _databases));
         LOG_MSG("Database list refreshed. Connection: " + _connSettings->connectionName(), 

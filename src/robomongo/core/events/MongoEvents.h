@@ -1254,13 +1254,14 @@ namespace Robomongo
             RBM_DEBUG  = 100 // log as much as possible
         };
 
-        LogEvent(QObject *sender, const std::string& message, LogLevel level) :
-            Event(sender),
-            message(message),
-            level(level) {}
+        LogEvent(QObject *sender, const std::string& message, LogLevel level, 
+                 bool const informUser = false) 
+            : Event(sender), message(message), level(level), informUser(informUser)
+        {}
 
         std::string message;
         LogLevel level;
+        bool const informUser = false;
     };
 
     class StopScriptRequest : public Event

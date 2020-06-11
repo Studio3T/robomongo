@@ -109,11 +109,7 @@ namespace Robomongo
     void MongoDatabase::handle(LoadCollectionNamesResponse *event)
     {
         if (event->isError()) {
-            if (_server->connectionRecord()->isReplicaSet()) // replica set
-                handleIfReplicaSetUnreachable(event);            
-            else  // single server
-                _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, event->error()));            
-
+            _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, event->error()));            
             genericEventErrorHandler(event, "Failed to refresh 'Collections'.", _bus, this);
             return;
         }

@@ -210,8 +210,7 @@ namespace Robomongo
             // --- Replica set:   Connection successful (primary reachable) or 
             //                    Connection failed (primary unreachable with at least one reachable member)
             if (_connSettings->isReplicaSet()) {
-                bool refresh = (ConnectionType::ConnectionRefresh == event->connectionType);
-                ReplicaSet const& setInfo = getReplicaSetInfo(refresh);
+                ReplicaSet const& setInfo = getReplicaSetInfo();
 
                 // Check if same set name used with different members which is not supported
                 auto const& members = _connSettings->replicaSetSettings()->members();
@@ -293,17 +292,32 @@ namespace Robomongo
     void MongoWorker::handle(RefreshReplicaSetFolderRequest *event)
     {
 		configureSSL();
-        ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
 
-        // Primary is unreachable, but there might be reachable secondary(ies)
-        if (replicaSetInfo.primary.empty()) {  
-            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded,
-                                                                       EventError(replicaSetInfo.errorStr)));
-            LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
-            return;
+        try {
+            ReplicaSet const& replicaSetInfo = getReplicaSetInfo();
+            // Primary is unreachable, but there might be reachable secondary(ies)
+            if (replicaSetInfo.primary.empty()) {
+                reply(
+                    event->sender(), 
+                    new RefreshReplicaSetFolderResponse(
+                        this, replicaSetInfo, event->expanded, EventError(replicaSetInfo.errorStr)
+                    )
+                );
+                // todo: send this log to main thread
+                LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
+                return;
+            }
+            else // Primary is reachable
+                reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded));
         }
-        else // Primary is reachable
-            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded));
+        catch (const std::exception &ex) {
+            reply(
+                event->sender(),
+                new RefreshReplicaSetFolderResponse(
+                    this, ReplicaSet(), event->expanded, EventError(ex.what())
+                )
+            );
+        }
     }
 
     std::string MongoWorker::getAuthBase() const
@@ -329,7 +343,7 @@ namespace Robomongo
         } catch(const std::exception &ex) {
             std::string const hint {
                 "\n\nHint: If you are sure that this user has access to a specific database, "
-                "creating this database (with the same name) manually, might work " 
+                "creating that database (with the same name) manually, might work " 
                 "in some cases."
             };
             AppRegistry::instance().bus()->send(
@@ -385,24 +399,12 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-
             auto const& namespaces = client->getCollectionNamesWithDbname(event->databaseName());
             std::vector<MongoCollectionInfo> const& collInfos = client->runCollStatsCommand(namespaces);
             client->done();
-
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), collInfos));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new LoadCollectionNamesResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new LoadCollectionNamesResponse(this, EventError(ex.what())));
-            }
-            else // single server
-                reply(event->sender(), new LoadCollectionNamesResponse(this, EventError(ex.what())));
+            reply(event->sender(), new LoadCollectionNamesResponse(this, EventError(ex.what())));
         }
     }
 
@@ -415,17 +417,7 @@ namespace Robomongo
 
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new LoadUsersResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new LoadUsersResponse(this, EventError(ex.what())));
-            }
-            else // single server
-                reply(event->sender(), new LoadUsersResponse(this, EventError(ex.what())));
+            reply(event->sender(), new LoadUsersResponse(this, EventError(ex.what())));
         }
     }
 
@@ -500,17 +492,7 @@ namespace Robomongo
 
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funcs));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new LoadFunctionsResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new LoadFunctionsResponse(this, EventError(ex.what())));
-            }
-            else // single server
-                reply(event->sender(), new LoadFunctionsResponse(this, EventError(ex.what())));
+            reply(event->sender(), new LoadFunctionsResponse(this, EventError(ex.what())));
         }
     }
 
@@ -528,19 +510,7 @@ namespace Robomongo
             reply(event->sender(), new InsertDocumentResponse(this));
         } 
         catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new InsertDocumentResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else    // other errors
-                    reply(event->sender(), new InsertDocumentResponse(this, EventError(ex.what())));
-            }
-            else { // single server
-                    reply(event->sender(), new InsertDocumentResponse(this, 
-                          EventError("Error when saving document: " + std::string(ex.what()))));
-            }
+            reply(event->sender(), new InsertDocumentResponse(this, EventError(ex.what())));
         }
     }
 
@@ -556,19 +526,8 @@ namespace Robomongo
             reply(event->sender(), new RemoveDocumentResponse(this, event->removeCount(), event->index()));
         } 
         catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new RemoveDocumentResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false), event->removeCount(), event->index()));
-                }
-                else // other errors
-                    reply(event->sender(), new RemoveDocumentResponse(this, EventError(ex.what()), 
-                          event->removeCount(), event->index()));
-            }
-            else // single server
-                reply(event->sender(), new RemoveDocumentResponse(this,
-                      EventError("Error when deleting document: " + std::string(ex.what())), event->removeCount(), event->index()));
+            reply(event->sender(), new RemoveDocumentResponse(this, EventError(ex.what()), 
+                event->removeCount(), event->index()));
         }
     }
 
@@ -627,7 +586,7 @@ namespace Robomongo
             if (result.error()) {
                 // If this is replica set, update script engine and try again
                 if (_connSettings->isReplicaSet()) {
-                    ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                    ReplicaSet const& replicaSetInfo = getReplicaSetInfo();
                     if (replicaSetInfo.primary.empty()) {  // primary not reachable
                         reply(event->sender(), 
                             new ExecuteScriptResponse(this, EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
@@ -702,18 +661,9 @@ namespace Robomongo
 
             reply(event->sender(), new CreateDatabaseResponse(this, dbname));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new CreateDatabaseResponse(this, dbname,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else    // other errors
-                    reply(event->sender(), new CreateDatabaseResponse(this, dbname, 
-                                                                      EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new CreateDatabaseResponse(this, dbname, EventError(ex.what())));
+            reply(event->sender(), new CreateDatabaseResponse(this, dbname, 
+                EventError(ex.what()))
+            );
         }
     }
 
@@ -729,17 +679,9 @@ namespace Robomongo
             reply(event->sender(), new DropDatabaseResponse(this, event->database));
         } 
         catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new DropDatabaseResponse(this, event->database,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new DropDatabaseResponse(this, event->database, EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new DropDatabaseResponse(this, event->database, EventError(ex.what())));
+            reply(event->sender(), 
+                new DropDatabaseResponse(this, event->database, EventError(ex.what()))
+            );
         }
     }
 
@@ -755,17 +697,9 @@ namespace Robomongo
 
             reply(event->sender(), new CreateCollectionResponse(this, collection));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new CreateCollectionResponse(this, collection,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new CreateCollectionResponse(this, collection, EventError(ex.what())));
-            }
-            else // single server
-                reply(event->sender(), new CreateCollectionResponse(this, collection, EventError(ex.what())));
+            reply(event->sender(), 
+                new CreateCollectionResponse(this, collection, EventError(ex.what()))
+            );
         }
     }
 
@@ -780,17 +714,9 @@ namespace Robomongo
 
             reply(event->sender(), new DropCollectionResponse(this, collection));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new DropCollectionResponse(this, collection,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new DropCollectionResponse(this, collection, EventError(ex.what())));
-            }
-            else // single server
-                reply(event->sender(), new DropCollectionResponse(this, collection, EventError(ex.what())));
+            reply(event->sender(), 
+                new DropCollectionResponse(this, collection, EventError(ex.what()))
+            );
         }
     }
 
@@ -804,17 +730,8 @@ namespace Robomongo
             reply(event->sender(), new RenameCollectionResponse(this, event->ns().collectionName(),
                                                                 event->newCollection()));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new RenameCollectionResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else // other errors
-                    reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
-            }
-            else // single server
-                reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
+            reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
+
         }
     }
 
@@ -827,20 +744,14 @@ namespace Robomongo
             client->duplicateCollection(event->ns(), event->newCollection());
             client->done();
 
-            reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, event->newCollection()));
+            reply(event->sender(), 
+                new DuplicateCollectionResponse(this, sourceCollection, event->newCollection())
+            );
         }
         catch (const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else    // other errors
-                    reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
+            reply(event->sender(), 
+                new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what()))
+            );
         }
     }
 
@@ -849,12 +760,16 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             MongoWorker *cl = event->worker();
-            client->copyCollectionToDiffServer(cl->_dbclient.get(), event->from(), event->to());
+            client->copyCollectionToDiffServer(
+                cl->_dbclient.get(), event->from(), event->to()
+            );
             client->done();
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new CopyCollectionToDiffServerResponse(this, EventError(ex.what())));
+            reply(event->sender(), 
+                new CopyCollectionToDiffServerResponse(this, EventError(ex.what()))
+            );
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
@@ -868,19 +783,9 @@ namespace Robomongo
 
             reply(event->sender(), new CreateUserResponse(this, event->user().name()));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new CreateUserResponse(this, event->user().name(),
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else   // other errors
-                    reply(event->sender(), new CreateUserResponse(this, event->user().name(), 
-                                                                  EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new CreateUserResponse(this, event->user().name(), 
-                                                              EventError(ex.what())));
+            reply(event->sender(), 
+                new CreateUserResponse(this, event->user().name(), EventError(ex.what()))
+            );
         }
     }
 
@@ -893,17 +798,9 @@ namespace Robomongo
 
             reply(event->sender(), new DropUserResponse(this, event->username()));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new DropUserResponse(this, event->username(),
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else   // other errors
-                    reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
+            reply(event->sender(), 
+                new DropUserResponse(this, event->username(), EventError(ex.what()))
+            );
         }
     }
 
@@ -926,17 +823,9 @@ namespace Robomongo
 
             reply(event->sender(), new CreateFunctionResponse(this, functionName));
         } catch(const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new CreateFunctionResponse(this, functionName,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else    // other errors
-                    reply(event->sender(), new CreateFunctionResponse(this, functionName, EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new CreateFunctionResponse(this, functionName, EventError(ex.what())));
+            reply(event->sender(), 
+                new CreateFunctionResponse(this, functionName, EventError(ex.what()))
+            );
         }
     }
 
@@ -958,17 +847,9 @@ namespace Robomongo
             reply(event->sender(), new DropFunctionResponse(this, event->functionName()));
         }
         catch (const std::exception &ex) {
-            if (_connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new DropFunctionResponse(this, event->functionName(),
-                        EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
-                }
-                else  // other errors
-                    reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));
-            }
-            else  // single server
-                reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));
+            reply(event->sender(), 
+                new DropFunctionResponse(this, event->functionName(), EventError(ex.what()))
+            );
         }
     }
 
@@ -1070,7 +951,9 @@ namespace Robomongo
         mongo::sslGlobalParams.sslAllowInvalidHostnames = false;
     }
 
-    ReplicaSet MongoWorker::getReplicaSetInfo(bool refresh /*= true*/) const
+    // todo: From 1.4, this function started to return incorrect member healths when set is unreachable. 
+    //       Needs more investigation.
+    ReplicaSet MongoWorker::getReplicaSetInfo() const
     {
         std::string setName;
         mongo::HostAndPort primary;

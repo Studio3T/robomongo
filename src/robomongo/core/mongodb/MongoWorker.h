@@ -167,15 +167,8 @@ namespace Robomongo
 
         /**
         *@brief Update Replica Set related parameters/settings.
-        *       Warning: Using parameter 'refresh' as false might return incorrect cached values for status 
-        *                of secondary members.
-        * @param refresh : If true it will be deep scan of replica set status which 
-        *                  might take quite some time. If false, it will be quick scan
-        *                  which might return incorrect cached values for status of secondary members.
-        *                  Use false only to achieve quick first connection, in all other cases true 
-        *                  should be used.
         */
-        ReplicaSet getReplicaSetInfo(bool refresh = true) const;
+        ReplicaSet getReplicaSetInfo() const;
 
         std::string connectAndGetReplicaSetName() const;
 

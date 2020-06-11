@@ -16,19 +16,20 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-namespace
-{
-    void openDatabaseShell(Robomongo::MongoDatabase *database, const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
-    {
-        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
-    }
-}
 
 namespace Robomongo
 {
 
-    ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem, ExplorerDatabaseCategory category) :
-        BaseClass(databaseItem), _category(category)
+    void openDatabaseShell(MongoDatabase *database, const QString &script, 
+                           bool execute = true, const CursorPosition &cursor = CursorPosition())
+    {
+        AppRegistry::instance().app()->openShell(database, script, execute, 
+            QtUtils::toQString(database->name()), cursor);
+    }
+
+    ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(
+        ExplorerDatabaseTreeItem *databaseItem, ExplorerDatabaseCategory category) 
+        : BaseClass(databaseItem), _category(category)
     {
         if (_category == Collections) {
             QAction *createCollection = new QAction("Create Collection...", this);

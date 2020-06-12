@@ -148,6 +148,7 @@ namespace Robomongo
 
         void setMinimizeToTray(bool isMinimizingToTray) { _minimizeToTray = isMinimizingToTray; }
         bool minimizeToTray() const { return _minimizeToTray; }
+        bool writeLogFile() const { return _writeLogFile; }
 
         void setLineNumbers(bool showLineNumbers) { _lineNumbers = showLineNumbers; }
         bool lineNumbers() const { return _lineNumbers; }
@@ -245,6 +246,7 @@ namespace Robomongo
         bool _autoExpand;
         bool _autoExec;
         bool _minimizeToTray;
+        bool _writeLogFile;
         bool _lineNumbers;
         bool _disableConnectionShortcuts;
         bool _programExitedNormally = true;

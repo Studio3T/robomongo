@@ -91,6 +91,7 @@ namespace Robomongo
         _autocompletionMode(AutocompleteAll),
         _loadMongoRcJs(false),
         _minimizeToTray(false),
+        _writeLogFile(true),
         _lineNumbers(false),
         _disableConnectionShortcuts(false),
         _batchSize(50),
@@ -205,6 +206,7 @@ namespace Robomongo
         _autoExpand = map.contains("autoExpand") ? map.value("autoExpand").toBool() : true;
         _autoExec = map.contains("autoExec") ? map.value("autoExec").toBool() : true;
         _minimizeToTray = map.contains("minimizeToTray") ? map.value("minimizeToTray").toBool() : false;
+        _writeLogFile = map.contains("writeLogFile") ? map.value("writeLogFile").toBool() : true;
         _lineNumbers = map.contains("lineNumbers") ? map.value("lineNumbers").toBool() : false;
         _imported = map.contains("imported") ? map.value("imported").toBool() : false;
         _programExitedNormally = map.contains("programExitedNormally") ? 
@@ -391,6 +393,7 @@ namespace Robomongo
 
         map.insert("autoExec", _autoExec);
         map.insert("minimizeToTray", _minimizeToTray);
+        map.insert("writeLogFile", _writeLogFile);
         map.insert("toolbars", _toolbars);
         map.insert("imported", _imported);
         map.insert("anonymousID", _anonymousID);

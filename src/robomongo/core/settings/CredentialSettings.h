@@ -53,11 +53,19 @@ namespace Robomongo
         bool enabled() const { return _enabled; }
         void setEnabled(bool enabled) { _enabled = enabled; }
 
+        bool useManuallyVisibleDbs() const { return _useManuallyVisibleDbs; }
+        void setUseManuallyVisibleDbs(bool enabled) { _useManuallyVisibleDbs = enabled; }
+
+        std::string manuallyVisibleDbs() const { return _manuallyVisibleDbs; }
+        void setManuallyVisibleDbs(std::string const& dbs) { _manuallyVisibleDbs = dbs; }
+
     private:
         std::string _userName;
         std::string _userPassword;  // clear text password (decrypted)
         std::string _databaseName;
         std::string _mechanism;     // authentication mechanism (SCRAM-SHA-1, SCRAM-SHA-256 or MONGODB-CR)
+        bool _useManuallyVisibleDbs;
+        std::string _manuallyVisibleDbs;
 
         /**
          * @brief Flag, indecating whether we should use this

@@ -25,6 +25,7 @@ namespace Robomongo
     private Q_SLOTS:
         void toggleEchoMode();
         void authChecked(bool checked);
+        void useManuallyVisibleDbsChecked(bool checked);
 
     private:
         QLineEdit *_userName;
@@ -36,9 +37,12 @@ namespace Robomongo
         QLabel    *_databaseNameDescriptionLabel;
         QCheckBox *_useAuth;
         QPushButton *_echoModeButton;
-
         QLabel    *_mechanismLabel;
         QComboBox *_mechanismComboBox;
+        QCheckBox *_useManuallyVisibleDbs;
+        QLineEdit *_manuallyVisibleDbs;
+        QLabel    *_manuallyVisibleDbsLabel;
+        QLabel    *_manuallyVisibleDbsInfo;
 
         ConnectionSettings *const _settings;        
     };

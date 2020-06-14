@@ -351,8 +351,24 @@ namespace Robomongo
                 new LogEvent(this, ex.what() + hint, LogEvent::LogLevel::RBM_WARN, true)
             );
 
-            if (!authBase.empty())
+            if (_connSettings->credentialCount() > 0 &&
+                _connSettings->primaryCredential()->useManuallyVisibleDbs())
+            {
+                CredentialSettings const *primCred = _connSettings->primaryCredential();
+                auto const dbList {
+                    QString::fromStdString(primCred->manuallyVisibleDbs())
+                    .split(',').toStdList()
+                };
+
+                for (auto const& db : dbList)
+                    dbNames.push_back(db.toStdString());
+            }
+
+            if (!authBase.empty() &&
+                find(dbNames.cbegin(), dbNames.cend(), authBase) == dbNames.cend()
+            ) {
                 dbNames.push_back(authBase);
+            }
         }
         return dbNames;
     }

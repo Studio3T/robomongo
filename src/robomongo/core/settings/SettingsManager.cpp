@@ -633,10 +633,12 @@ namespace Robomongo
                 QVariantMap vcred = (*itcred).toMap();
 
                 auto cred = new CredentialSettings();
-                cred->setUserName(QtUtils::toStdString(vcred.value("userName").toString()));
-                cred->setUserPassword(QtUtils::toStdString(vcred.value("userPassword").toString()));
-                cred->setDatabaseName(QtUtils::toStdString(vcred.value("databaseName").toString()));
+                cred->setUserName(vcred.value("userName").toString().toStdString());
+                cred->setUserPassword(vcred.value("userPassword").toString().toStdString());
+                cred->setDatabaseName(vcred.value("databaseName").toString().toStdString());
                 cred->setMechanism("MONGODB-CR");
+                cred->setUseManuallyVisibleDbs(vcred.value("useManuallyVisibleDbs").toBool());
+                cred->setManuallyVisibleDbs(vcred.value("manuallyVisibleDbs").toString().toStdString());
                 cred->setEnabled(vcred.value("enabled").toBool());
 
                 conn->addCredential(cred);

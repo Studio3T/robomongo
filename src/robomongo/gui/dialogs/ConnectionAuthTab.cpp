@@ -18,15 +18,16 @@ namespace Robomongo
     ConnectionAuthTab::ConnectionAuthTab(ConnectionSettings *settings) :
         _settings(settings)
     {
+        _useAuth = new QCheckBox("Perform authentication");
+        _useAuth->setStyleSheet("margin-bottom: 7px");
+        VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
+
         _databaseNameDescriptionLabel = new QLabel(
             "<nobr>The admin database is unique in MongoDB.</nobr> Users with normal access "
             "to the admin database have read and write access to <b>all "
-            "databases</b>.");
-
+            "databases</b>."
+        );
         _databaseNameDescriptionLabel->setWordWrap(true);
-        _databaseNameDescriptionLabel->setAlignment(Qt::AlignTop);
-        _databaseNameDescriptionLabel->setContentsMargins(0, -2, 0, 0);
-        _databaseNameDescriptionLabel->setMinimumSize(_databaseNameDescriptionLabel->sizeHint());
 
         _userName = new QLineEdit();
         _userNameLabel = new QLabel("User Name");
@@ -37,14 +38,25 @@ namespace Robomongo
         _databaseName = new QLineEdit("admin");
         _databaseNameLabel = new QLabel("Database");
 
-        _mechanismComboBox = new QComboBox();
+        _mechanismComboBox = new QComboBox;
         _mechanismComboBox->addItem("SCRAM-SHA-1");
         _mechanismComboBox->addItem("SCRAM-SHA-256");
         _mechanismComboBox->addItem("MONGODB-CR");
 
-        _useAuth = new QCheckBox("Perform authentication");
-        _useAuth->setStyleSheet("margin-bottom: 7px");
-        VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
+        _manuallyVisibleDbs = new QLineEdit;
+        _manuallyVisibleDbs->setPlaceholderText("Comma-separated e.g. production, test");
+        _manuallyVisibleDbsLabel = new QLabel("Databases");
+        _manuallyVisibleDbsInfo = new QLabel(
+            "Some MongoDB users might not have the permission to get the list of"
+            " database names (<b>listDatabases</b> command). For this case, manually add"
+            " the name of the database(s) that this user has access to."
+        );
+        _manuallyVisibleDbsInfo->setWordWrap(true);
+
+        _useManuallyVisibleDbs = new QCheckBox("Manually specify visible databases");
+        _useManuallyVisibleDbs->setStyleSheet("margin-bottom: 7px");
+        VERIFY(connect(_useManuallyVisibleDbs, SIGNAL(toggled(bool)), 
+                       this, SLOT(useManuallyVisibleDbsChecked(bool))));
 
         _echoModeButton = new QPushButton;
         _echoModeButton->setIcon(GuiRegistry::instance().hideIcon());
@@ -68,20 +80,34 @@ namespace Robomongo
             _userPassword->setText(QtUtils::toQString(primaryCredential->userPassword()));
             _databaseName->setText(QtUtils::toQString(primaryCredential->databaseName()));
             _mechanismComboBox->setCurrentText(QtUtils::toQString(primaryCredential->mechanism()));
+            _useManuallyVisibleDbs->setChecked(_settings->primaryCredential()->useManuallyVisibleDbs());
+            _manuallyVisibleDbs->setText(QtUtils::toQString(primaryCredential->manuallyVisibleDbs()));
         }
+        useManuallyVisibleDbsChecked(_useManuallyVisibleDbs->isChecked());
 
-        QGridLayout *authLayout = new QGridLayout;
+        auto horline = new QFrame;
+        horline->setFrameShape(QFrame::HLine);
+        horline->setFrameShadow(QFrame::Sunken);
+
+        auto authLayout = new QGridLayout;
         authLayout->addWidget(_useAuth,                      0, 0, 1, 3);
         authLayout->addWidget(_databaseNameLabel,            1, 0);
         authLayout->addWidget(_databaseName,                 1, 1, 1, 2);
         authLayout->addWidget(_databaseNameDescriptionLabel, 2, 1, 1, 2);
-        authLayout->addWidget(_userNameLabel,                3, 0);
-        authLayout->addWidget(_userName,                     3, 1, 1, 2);
-        authLayout->addWidget(_userPasswordLabel,            4, 0);
-        authLayout->addWidget(_userPassword,                 4, 1);
-        authLayout->addWidget(_echoModeButton,               4, 2);
-        authLayout->addWidget(_mechanismLabel,               5, 0);
-        authLayout->addWidget(_mechanismComboBox,            5, 1, 1, 2);
+        authLayout->addWidget(new QLabel,                    3, 0);
+        authLayout->addWidget(_userNameLabel,                4, 0);
+        authLayout->addWidget(_userName,                     4, 1, 1, 2);
+        authLayout->addWidget(_userPasswordLabel,            5, 0);
+        authLayout->addWidget(_userPassword,                 5, 1);
+        authLayout->addWidget(_echoModeButton,               5, 2);
+        authLayout->addWidget(_mechanismLabel,               6, 0);
+        authLayout->addWidget(_mechanismComboBox,            6, 1, 1, 2);
+        authLayout->addWidget(new QLabel,                    7, 0);
+        authLayout->addWidget(horline,                       8, 0, 1, 3);
+        authLayout->addWidget(_useManuallyVisibleDbs,        9, 0, 1, 3);
+        authLayout->addWidget(_manuallyVisibleDbsLabel,     10, 0);
+        authLayout->addWidget(_manuallyVisibleDbs,          10, 1, 1, 2);
+        authLayout->addWidget(_manuallyVisibleDbsInfo,      11, 1, 1, 2);        
         authLayout->setAlignment(Qt::AlignTop);
         setLayout(authLayout);
     }
@@ -95,13 +121,17 @@ namespace Robomongo
             _userPassword->text().isEmpty() &&
             _databaseName->text().isEmpty())
             return;       
-
-        CredentialSettings *credential = new CredentialSettings();
+        
+        auto credential { new CredentialSettings };
         credential->setEnabled(_useAuth->isChecked());
         credential->setUserName(QtUtils::toStdString(_userName->text()));
         credential->setUserPassword(QtUtils::toStdString(_userPassword->text()));
         credential->setDatabaseName(QtUtils::toStdString(_databaseName->text()));
         credential->setMechanism(QtUtils::toStdString(_mechanismComboBox->currentText()));
+        credential->setUseManuallyVisibleDbs(_useManuallyVisibleDbs->isChecked());
+        credential->setManuallyVisibleDbs(
+            _manuallyVisibleDbs->text().simplified().replace(' ', "").toStdString()
+        );
         _settings->addCredential(credential);
     }
 
@@ -122,19 +152,28 @@ namespace Robomongo
 
     void ConnectionAuthTab::authChecked(bool checked)
     {
-        _databaseName->setDisabled(!checked);
-        _databaseNameLabel->setDisabled(!checked);
-        _databaseNameDescriptionLabel->setDisabled(!checked);
-        _userName->setDisabled(!checked);
-        _userNameLabel->setDisabled(!checked);
-        _userPassword->setDisabled(!checked);
-        _userPasswordLabel->setDisabled(!checked);
-        _echoModeButton->setDisabled(!checked);
-
-        _mechanismLabel->setDisabled(!checked);
-        _mechanismComboBox->setDisabled(!checked);
+        _databaseName->setEnabled(checked);
+        _databaseNameLabel->setEnabled(checked);
+        _databaseNameDescriptionLabel->setEnabled(checked);
+        _userName->setEnabled(checked);
+        _userNameLabel->setEnabled(checked);
+        _userPassword->setEnabled(checked);
+        _userPasswordLabel->setEnabled(checked);
+        _echoModeButton->setEnabled(checked);
+        _mechanismLabel->setEnabled(checked);
+        _mechanismComboBox->setEnabled(checked);
+        _useManuallyVisibleDbs->setEnabled(checked);
+        _manuallyVisibleDbs->setEnabled(checked);
+        _manuallyVisibleDbsLabel->setEnabled(checked);
+        _manuallyVisibleDbsInfo->setEnabled(checked);
 
         if (checked)
             _databaseName->setFocus();
+    }
+    void ConnectionAuthTab::useManuallyVisibleDbsChecked(bool checked)
+    {
+        _manuallyVisibleDbs->setVisible(checked);
+        _manuallyVisibleDbsLabel->setVisible(checked);
+        _manuallyVisibleDbsInfo->setVisible(checked);
     }
 }

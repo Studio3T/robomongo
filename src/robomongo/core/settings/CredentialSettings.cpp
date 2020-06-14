@@ -10,7 +10,9 @@ namespace Robomongo
         _userPassword(),
         _databaseName(),
         _mechanism(),
-        _enabled(false)
+        _enabled(false),
+        _useManuallyVisibleDbs(false),
+        _manuallyVisibleDbs()
     {
 
     }
@@ -18,6 +20,8 @@ namespace Robomongo
         _userName(QtUtils::toStdString(map.value("userName").toString())),
         _databaseName(QtUtils::toStdString(map.value("databaseName").toString())),
         _mechanism(QtUtils::toStdString(map.value("mechanism").toString())),
+        _useManuallyVisibleDbs(map.value("useManuallyVisibleDbs").toBool()),
+        _manuallyVisibleDbs(QtUtils::toStdString(map.value("manuallyVisibleDbs").toString())),
         _enabled(map.value("enabled").toBool())
     {
         // From version Robo 1.3 "userPasswordEncrypted" is used instead of "userPassword" in config. file
@@ -44,6 +48,8 @@ namespace Robomongo
                                             QtUtils::toQString(RoboCrypt::encrypt(userPassword())));
         map.insert("databaseName", QtUtils::toQString(databaseName()));
         map.insert("mechanism", QtUtils::toQString(mechanism()));
+        map.insert("useManuallyVisibleDbs", _useManuallyVisibleDbs);
+        map.insert("manuallyVisibleDbs", QtUtils::toQString(_manuallyVisibleDbs));
         map.insert("enabled", enabled());
         return map;
     }

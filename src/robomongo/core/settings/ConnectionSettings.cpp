@@ -169,9 +169,8 @@ namespace Robomongo
         map.insert("serverPort", serverPort());
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
         map.insert("isReplicaSet", isReplicaSet());
-        if (isReplicaSet()) {
+        if (isReplicaSet())
             map.insert("replicaSet", _replicaSetSettings->toVariant());
-        }
 
 #ifdef MONGO_SSL
         SSLInfo infl = _info.sslInfo();
@@ -179,12 +178,10 @@ namespace Robomongo
         map.insert("sslPemKeyFile", QtUtils::toQString(infl._sslPEMKeyFile));
 #endif
         QVariantList list;
-        for (QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
-            CredentialSettings *credential = *it;
-            list.append(credential->toVariant());
-        }
+        for (auto const& cred : _credentials)
+            list.append(cred->toVariant());
+        
         map.insert("credentials", list);
-
         map.insert("ssh", _sshSettings->toVariant());
         map.insert("ssl", _sslSettings->toVariant());
         map.insert("uuid", _uuid); 

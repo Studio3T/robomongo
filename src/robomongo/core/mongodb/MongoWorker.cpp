@@ -256,7 +256,7 @@ namespace Robomongo
             }
 
             boost::scoped_ptr<MongoClient> client(getClient());
-            std::vector<std::string> dbNames = getDatabaseNamesSafe();
+            std::vector<std::string> dbNames = getDatabaseNamesSafe(event);
 
             // If we do not have databases, it means that we are unable to
             // execute "listdatabases" command and we have nothing to show.
@@ -328,10 +328,10 @@ namespace Robomongo
         return std::string();
     }
 
-    std::vector<std::string> MongoWorker::getDatabaseNamesSafe()
-    {        
+    std::vector<std::string> MongoWorker::getDatabaseNamesSafe(EstablishConnectionRequest* event /*= nullptr*/)
+    {
         std::vector<std::string> dbNames;
-        std::string authBase = getAuthBase();
+        std::string const authBase = getAuthBase();
         if (!_isAdmin && !authBase.empty()) {
             dbNames.push_back(_connSettings->primaryCredential()->databaseName());
             return dbNames;
@@ -341,14 +341,21 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             dbNames = client->getDatabaseNames();
         } catch(const std::exception &ex) {
+            bool const informUser {
+                event != nullptr &&
+                event->connectionType == ConnectionType::ConnectionPrimary &&
+                _connSettings->credentialCount() > 0 &&
+                !_connSettings->primaryCredential()->useManuallyVisibleDbs()
+            };
+
             std::string const hint {
-                "\n\nHint: If you are sure that this user has access to a specific database, "
-                "creating that database (with the same name) manually, might work " 
-                "in some cases."
+                "\n\nHint: If this user has access to a specific database, "
+                "please use \"Manually specify visible databases\" option in "
+                "Connection Settings window -> Authentication tab."
             };
             AppRegistry::instance().bus()->send(
                 AppRegistry::instance().app(),
-                new LogEvent(this, ex.what() + hint, LogEvent::LogLevel::RBM_WARN, true)
+                new LogEvent(this, ex.what() + hint, LogEvent::LogLevel::RBM_WARN, informUser)
             );
 
             if (_connSettings->credentialCount() > 0 &&

@@ -1259,6 +1259,17 @@ namespace Robomongo
             : Event(sender), message(message), level(level), informUser(informUser)
         {}
 
+        std::string severity() const {
+            switch (level)
+            {
+                case RBM_ERROR : return "Error";
+                case RBM_WARN  : return "Warning";
+                case RBM_INFO  : return "Info";
+                case RBM_DEBUG : return "Debug";
+                default: return "Undefined";
+            }
+        }
+
         std::string message;
         LogLevel level;
         bool const informUser = false;

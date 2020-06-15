@@ -269,8 +269,8 @@ namespace Robomongo
         if (!event->informUser)
             return;
 
-        QString const errMsg { QtUtils::toQString("Error: " + event->message) };
-        QMessageBox::critical(nullptr, "Error", errMsg);
+        QString const msg { QtUtils::toQString(event->severity() + ": " + event->message) };
+        QMessageBox::critical(nullptr, QString::fromStdString(event->severity()), msg);
     }
 
     void App::handle(ListenSshConnectionResponse *event) {

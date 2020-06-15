@@ -142,7 +142,7 @@ namespace Robomongo
          */
         void send(Event *event);
 
-        std::vector<std::string> getDatabaseNamesSafe();
+        std::vector<std::string> getDatabaseNamesSafe(EstablishConnectionRequest* event = nullptr);
         std::string getAuthBase() const;
 
         // Returns a pair of DBClientBase* connection and error string

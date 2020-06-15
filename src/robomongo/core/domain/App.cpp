@@ -256,21 +256,16 @@ namespace Robomongo
     }
 
     void App::handle(LogEvent *event) {
-        if (event->level == LogEvent::RBM_ERROR) {
-            LOG_MSG(event->message, mongo::logger::LogSeverity::Error());
-        } else if (event->level == LogEvent::RBM_WARN) {
-            LOG_MSG(event->message, mongo::logger::LogSeverity::Warning());
-        } else if (event->level == LogEvent::RBM_INFO) {
-            LOG_MSG(event->message, mongo::logger::LogSeverity::Info());
-        } else if (event->level == LogEvent::RBM_DEBUG) {
-            LOG_MSG(event->message, mongo::logger::LogSeverity::Log());
-        }
+        LOG_MSG(event->message, event->mongoLogSeverity());
 
         if (!event->informUser)
             return;
 
-        QString const msg { QtUtils::toQString(event->severity() + ": " + event->message) };
-        QMessageBox::critical(nullptr, QString::fromStdString(event->severity()), msg);
+        QMessageBox(
+            event->qMessageBoxIcon(),
+            QString::fromStdString(event->severity()),
+            QtUtils::toQString(event->severity() + ": " + event->message)
+        ).exec();
     }
 
     void App::handle(ListenSshConnectionResponse *event) {

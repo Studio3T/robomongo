@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QMessageBox>
 #include <QString>
 #include <QStringList>
 #include <QEvent>
@@ -1260,13 +1261,32 @@ namespace Robomongo
         {}
 
         std::string severity() const {
-            switch (level)
-            {
+            switch (level) {
                 case RBM_ERROR : return "Error";
                 case RBM_WARN  : return "Warning";
                 case RBM_INFO  : return "Info";
                 case RBM_DEBUG : return "Debug";
                 default: return "Undefined";
+            }
+        }
+
+        QMessageBox::Icon qMessageBoxIcon() const {
+            switch (level) {
+                case RBM_ERROR: return QMessageBox::Icon::Critical;
+                case RBM_WARN: return QMessageBox::Icon::Warning;
+                case RBM_INFO: return QMessageBox::Icon::Information;
+                case RBM_DEBUG: return QMessageBox::Icon::Information;
+                default: return QMessageBox::Icon::Information;
+            }
+        }
+
+        mongo::logger::LogSeverity mongoLogSeverity() const {
+            switch (level) {
+                case RBM_ERROR: return mongo::logger::LogSeverity::Error();
+                case RBM_WARN: return mongo::logger::LogSeverity::Warning();
+                case RBM_INFO: return mongo::logger::LogSeverity::Info();
+                case RBM_DEBUG: return mongo::logger::LogSeverity::Log();
+                default: return mongo::logger::LogSeverity::Info();
             }
         }
 

@@ -17,12 +17,12 @@ namespace Robomongo
         friend class Patterns::LazySingleton<Logger>;
 
     public:
-        void print(const char *mess, mongo::logger::LogSeverity level, bool notify);
-        void print(const std::string &mess, mongo::logger::LogSeverity level, bool notify);
-        void print(const QString &mess, mongo::logger::LogSeverity level, bool notify);
+        void print(const char *msg, mongo::logger::LogSeverity level, bool notify);
+        void print(const std::string &msg, mongo::logger::LogSeverity level, bool notify);
+        void print(const QString &msg, mongo::logger::LogSeverity level, bool notify);
 
     Q_SIGNALS:
-        void printed(const QString &mess, mongo::logger::LogSeverity level);
+        void printed(const QString &msg, mongo::logger::LogSeverity level);
 
     private:
         Logger();
@@ -30,8 +30,8 @@ namespace Robomongo
     };
 
     template<typename T>
-    inline void LOG_MSG(const T &mess, mongo::logger::LogSeverity level, bool notify = true)
+    inline void LOG_MSG(const T &msg, mongo::logger::LogSeverity level, bool notify = true)
     {
-        return Logger::instance().print(mess, level, notify);
+        return Logger::instance().print(msg, level, notify);
     }
 }

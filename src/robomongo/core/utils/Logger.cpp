@@ -45,19 +45,18 @@ namespace Robomongo
         print(QtUtils::toQString(mess), level, notify);
     }
 
-    void Logger::print(const QString &mess, mongo::logger::LogSeverity level, bool notify)
+    void Logger::print(const QString &msg, mongo::logger::LogSeverity level, bool notify)
     {
-        // v0.9
-//        LOG(level) << "[" PROJECT_NAME_TITLE "] " << QtUtils::toStdString(mess) << std::endl;
-        if (notify) {
-            // Make uniform log level strings e.g "Error: ", "Info: " etc...
-            auto logLevelStr = QString::fromStdString(level.toStringData().toString());
-            if (!logLevelStr.isEmpty()) {
-                logLevelStr = logLevelStr.toLower();
-                logLevelStr[0] = logLevelStr[0].toUpper();
-                logLevelStr += ": ";
-            }
-            emit printed(logLevelStr + mess, level);
+        if (!notify)
+            return;
+
+        // Make uniform log level strings e.g "Error: ", "Info: " etc...
+        auto logLevelStr = QString::fromStdString(level.toStringData().toString());
+        if (!logLevelStr.isEmpty()) {
+            logLevelStr = logLevelStr.toLower();
+            logLevelStr[0] = logLevelStr[0].toUpper();
+            logLevelStr += ": ";
         }
+        emit printed(logLevelStr + msg.simplified(), level);
     }
 }

@@ -23,9 +23,7 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    public:
-        enum { pingTimeMs = 60 * 1000 };
-        
+    public:        
         using DBClientReplicaSet = std::unique_ptr<mongo::DBClientReplicaSet>;
         using DBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
 

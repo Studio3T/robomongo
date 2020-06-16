@@ -30,8 +30,6 @@
 
 namespace Robomongo
 {
-    std::string const PRIMARY_UNREACHABLE = "Replica set's primary is unreachable.";
-
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
         _scriptEngine(nullptr),
@@ -75,12 +73,14 @@ namespace Robomongo
             return;
 
         CredentialSettings *credentials = _connSettings->primaryCredential();
-        mongo::BSONObj authParams(mongo::BSONObjBuilder()
+        mongo::BSONObj authParams {
+            mongo::BSONObjBuilder()
             .append("user", credentials->userName())
             .append("db", credentials->databaseName())
             .append("pwd", credentials->userPassword())
             .append("mechanism", credentials->mechanism())
-            .obj());
+            .obj()
+        };
 
         _dbclientRepSet.release();
         if(mongo::DBClientBase *conn = getConnection(true).first)
@@ -90,21 +90,21 @@ namespace Robomongo
     void MongoWorker::keepAlive()
     {
         try {
-            if (_dbclient) {
+            if (_dbclient)
                 pingDatabase(_dbclient.get());
-            }
 
-            if (_dbclientRepSet) {
+            if (_dbclientRepSet)
                 pingDatabase(_dbclientRepSet.get());
-            }
 
-            if (_scriptEngine) {
+            if (_scriptEngine)
                 _scriptEngine->ping();
-            }
 
         } catch(std::exception &ex) {
-            LOG_MSG("Failed to ping the server. MongoWorker::keepAlive() failed. " + std::string(ex.what()), 
-                    mongo::logger::LogSeverity::Error());
+            std::string const msg { "Failed to ping the server. MongoWorker::keepAlive() failed. " };
+            AppRegistry::instance().bus()->send(
+                AppRegistry::instance().app(),
+                new LogEvent(this, msg + std::string(ex.what()), LogEvent::LogLevel::RBM_WARN, false)
+            );
         }
     }
 
@@ -115,7 +115,8 @@ namespace Robomongo
             _scriptEngine->init(_isLoadMongoRcJs);
             _scriptEngine->use(_connSettings->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
-            _timerId = startTimer(pingTimeMs);
+            constexpr int PING_INTERVAL_MSEC { 60 * 1000 };  // 60 seconds
+            _timerId = startTimer(PING_INTERVAL_MSEC);
             _dbAutocompleteCacheTimerId = startTimer(30000);
         } catch (const std::exception &ex) {
             auto const error = "Failed to initialize MongoWorker, " + std::string(ex.what());
@@ -611,9 +612,15 @@ namespace Robomongo
                 // If this is replica set, update script engine and try again
                 if (_connSettings->isReplicaSet()) {
                     ReplicaSet const& replicaSetInfo = getReplicaSetInfo();
+                    std::string const PRIMARY_UNREACHABLE { "Replica set's primary is unreachable." };
                     if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                        reply(event->sender(), 
-                            new ExecuteScriptResponse(this, EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
+                        reply(
+                            event->sender(), 
+                            new ExecuteScriptResponse(
+                                this, 
+                                EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)
+                            )
+                        );
                         return;
                     }
                     else {  // primary reachable
@@ -1077,12 +1084,7 @@ namespace Robomongo
         mongo::BSONObjBuilder command;
         command.append("ping", 1);
         mongo::BSONObj result;
-        std::string authBase = getAuthBase();
-        if (authBase.empty()) {
-            dbclient->runCommand("admin", command.obj(), result);
-        }
-        else {
-            dbclient->runCommand(authBase, command.obj(), result);
-        }
+        std::string const authBase = getAuthBase();
+        dbclient->runCommand(authBase.empty() ? "admin" : authBase, command.obj(), result);
     }
 }

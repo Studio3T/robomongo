@@ -358,8 +358,9 @@ namespace Robomongo
                 new LogEvent(this, ex.what() + hint, LogEvent::LogLevel::RBM_WARN, informUser)
             );
 
-            if (_connSettings->credentialCount() > 0 &&
-                _connSettings->primaryCredential()->useManuallyVisibleDbs())
+            if (_connSettings->credentialCount() > 0 &&                
+                _connSettings->primaryCredential()->useManuallyVisibleDbs() && 
+                !_connSettings->primaryCredential()->manuallyVisibleDbs().empty())
             {
                 CredentialSettings const *primCred = _connSettings->primaryCredential();
                 auto const dbList {

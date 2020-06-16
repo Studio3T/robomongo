@@ -29,7 +29,6 @@ namespace Robomongo
         setWindowTitle("Connection Settings");
         setWindowIcon(GuiRegistry::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setMinimumWidth(450);
 
         QPushButton *testButton = new QPushButton("&Test");
         testButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
@@ -66,8 +65,12 @@ namespace Robomongo
         _basicTab->setFocus();
         adjustSize();
 
-#ifdef __APPLE__
-        setMinimumWidth(660);   // MacOS & Linux
+#ifdef _WIN32
+        setMinimumWidth(500);
+#elif __APPLE__
+        setMinimumWidth(660);
+#elif __linux__        
+        setMinimumWidth(900);
 #endif
     }
 

@@ -9,7 +9,6 @@
 #include <QTextEdit>
 #include <QLabel>
 #include <QCheckBox>
-#include <QSpacerItem>
 #include <QMessageBox>
 #include <Qsci/qsciscintilla.h>
 

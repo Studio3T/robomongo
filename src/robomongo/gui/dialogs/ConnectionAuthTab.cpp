@@ -89,6 +89,8 @@ namespace Robomongo
         horline->setFrameShape(QFrame::HLine);
         horline->setFrameShadow(QFrame::Sunken);
 
+        auto verSpacer { new QSpacerItem(0, 80, QSizePolicy::Minimum, QSizePolicy::Expanding) };
+
         auto authLayout = new QGridLayout;
         authLayout->addWidget(_useAuth,                      0, 0, 1, 3);
         authLayout->addWidget(_databaseNameLabel,            1, 0);
@@ -108,6 +110,8 @@ namespace Robomongo
         authLayout->addWidget(_manuallyVisibleDbsLabel,     10, 0);
         authLayout->addWidget(_manuallyVisibleDbs,          10, 1, 1, 2);
         authLayout->addWidget(_manuallyVisibleDbsInfo,      11, 1, 1, 2);        
+        authLayout->addItem(verSpacer,                      12, 0, 1, 3); 
+        
         authLayout->setAlignment(Qt::AlignTop);
         setLayout(authLayout);
     }

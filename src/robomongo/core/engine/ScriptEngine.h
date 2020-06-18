@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QMutex>
 #include <mongo/scripting/engine.h>
 //#include <third_party/js-1.7/jsparse.h>
@@ -11,8 +12,9 @@ namespace Robomongo
 {
     class ConnectionSettings;
 
-    class ScriptEngine
+    class ScriptEngine : public QObject
     {
+        Q_OBJECT
 
     public:
         ScriptEngine(ConnectionSettings *connection, int timeoutSec);

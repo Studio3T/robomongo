@@ -41,12 +41,13 @@ namespace Robomongo
                                        const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms,
                                        const std::string &statement, AggrInfo aggrInfo = AggrInfo());
 
-        MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results, 
-                                               bool timeoutReached = false);
+        MongoShellExecResult prepareExecResult(
+            const std::vector<MongoShellResult> &results, bool timeoutReached = false);
 
         std::string loadFile(const QString &path, bool throwOnError);
         std::string getString(const char *fieldName);
-        bool statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError);
+        bool statementize(
+            const std::string &script, std::vector<std::string> &outVec, std::string &outError);
 
         int _timeoutSec;
         mongo::ScriptEngine *_engine;

@@ -441,12 +441,12 @@ namespace Robomongo
         return _scope->getString(fieldName);
     }
 
-    bool ScriptEngine::statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError)
+    bool ScriptEngine::statementize(
+        const std::string &script, std::vector<std::string> &outVec, std::string &outError)
     {
-        QString qScript = QtUtils::toQString(script);
         _scope->setString("__robomongoEsprima", script.c_str());
 
-        mongo::StringData data(
+        mongo::StringData const data {
             "var __robomongoResult = {};"
             "try {"
                 "__robomongoResult.result = esprima.parse(__robomongoEsprima, { range: true, loc : true });"
@@ -454,36 +454,29 @@ namespace Robomongo
                 "__robomongoResult.error = e.name + ': ' + e.message;"
             "}"
             "__robomongoResult;"
-        );
+        };
+        
+        if(!_scope->exec(data, "(esprima2)", false, true, false)) {
+            _scope->reset();
+            _scope->exec(data, "(esprima2)", false, true, false);
+        }
 
-        bool res2 = _scope->exec(data, "(esprima2)", false, true, false);
-        mongo::BSONObj obj = _scope->getObject("__lastres__");
-
+        mongo::BSONObj const obj = _scope->getObject("__lastres__");
         if (obj.hasField("error")) {
             outError = obj.getField("error");
             return false;
         }
 
-        mongo::BSONObj result = obj.getField("result").Obj();
-        std::vector<mongo::BSONElement> v = result.getField("body").Array();
-        for (std::vector<mongo::BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
+        for (auto const& bsonElem : obj.getField("result").Obj().getField("body").Array())
         {
-            mongo::BSONObj item = (*it).Obj();
-            mongo::BSONObj loc = item.getField("loc").Obj();
-            mongo::BSONObj start = loc.getField("start").Obj();
-            mongo::BSONObj end = loc.getField("end").Obj();
+            mongo::BSONObj const item = bsonElem.Obj();
+            std::vector<mongo::BSONElement> const range = item.getField("range").Array();
+            auto const from = static_cast<int>(range.at(0).number());
+            auto const till = static_cast<int>(range.at(1).number());
 
-            int startLine = start.getIntField("line");
-            int startColumn = start.getIntField("column");
-            int endLine = end.getIntField("line");
-            int endColumn = end.getIntField("column");
-
-            std::vector<mongo::BSONElement> range = item.getField("range").Array();
-            int from = (int) range.at(0).number();
-            int till = (int) range.at(1).number();
-
-            std::string statement = QtUtils::toStdString(qScript.mid(from, till - from));
-            outList.push_back(statement);
+            QString const qScript = QtUtils::toQString(script);
+            std::string statement = qScript.mid(from, till - from).toStdString();
+            outVec.push_back(statement);
         }
 
         return true;

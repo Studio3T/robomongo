@@ -581,11 +581,8 @@ namespace Robomongo
     {        
         try {
             if (!_scriptEngine) {
-                reply(
-                    event->sender(), 
-                    new ExecuteScriptResponse(this, 
-                        EventError("MongoDB Shell was not initialized"))
-                );
+                auto const error { EventError("MongoDB Shell was not initialized") };
+                reply(event->sender(), new ExecuteScriptResponse(this, error));
                 return;
             }
 
@@ -614,7 +611,7 @@ namespace Robomongo
                     _dbclientRepSet->getSuspectedPrimaryHostAndPort().toString()
                 );
 
-            if (!result.error()) {
+            if (!result.error()) {                
                 reply(
                     event->sender(),
                     new ExecuteScriptResponse(this, result, event->script.empty(), 
@@ -623,35 +620,36 @@ namespace Robomongo
                 return;
             }
 
-            // Re-try:
-            // Recover the case where server went up/down
-            mongo::DBClientBase* mongodbClient { 
-                _dbclient ? _dbclient.get() : 
-                dynamic_cast<mongo::DBClientBase*>(_dbclientRepSet.get()) 
-            };
-           
-            if(!mongodbClient->isStillConnected())
-                mongodbClient->checkConnection();
-
-            result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
-            if (result.error())
-                reply(
-                    event->sender(),
-                    new ExecuteScriptResponse(this, EventError(result.errorMessage()))
-                );
-            else {
-                reply(
-                    event->sender(),
-                    new ExecuteScriptResponse(this, result, event->script.empty(), 
-                        result.timeoutReached())
-                );
-            }
+            retry(event);
         } 
         catch(const std::exception &ex) {
+            auto const error { EventError(ex.what(), EventError::Unknown) };
+            reply(event->sender(), new ExecuteScriptResponse(this, error));
+        }
+    }
+
+    void MongoWorker::retry(ExecuteScriptRequest * event)
+    {
+        mongo::DBClientBase* mongodbClient {
+            _dbclient ? _dbclient.get() :
+            dynamic_cast<mongo::DBClientBase*>(_dbclientRepSet.get())
+        };
+
+        if (!mongodbClient->isStillConnected())
+            mongodbClient->checkConnection();
+
+        MongoShellExecResult const result {
+            _scriptEngine->exec(event->script, _connSettings->defaultDatabase())
+        };
+        if (result.error()) {
+            auto const error { EventError(result.errorMessage()) };
+            reply(event->sender(), new ExecuteScriptResponse(this, error));
+        }
+        else {
             reply(
-                event->sender(), 
-                new ExecuteScriptResponse(this, EventError(ex.what(), 
-                    EventError::Unknown, false))
+                event->sender(),
+                new ExecuteScriptResponse(this, result, event->script.empty(),
+                    result.timeoutReached())
             );
         }
     }

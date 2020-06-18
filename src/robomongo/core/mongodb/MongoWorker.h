@@ -107,6 +107,7 @@ namespace Robomongo
          * @brief Execute javascript
          */
         void handle(ExecuteScriptRequest *event);
+        void retry(ExecuteScriptRequest *event);
         void handle(StopScriptRequest *event);
 
         void handle(AutocompleteRequest *event);

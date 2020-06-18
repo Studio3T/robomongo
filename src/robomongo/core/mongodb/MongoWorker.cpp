@@ -30,6 +30,9 @@
 
 namespace Robomongo
 {
+    std::string const APP_VERSION = PROJECT_VERSION;
+    std::string const APP_NAME_VERSION { "robo3t-" + APP_VERSION };
+
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              double mongoTimeoutSec, int shellTimeoutSec, QObject *parent) 
         : QObject(parent),
@@ -914,7 +917,7 @@ namespace Robomongo
             // Step-2: Try connect to replica set with set name
             auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
             _dbclientRepSet.reset(new mongo::DBClientReplicaSet {
-                 setName, membersHostsAndPorts, "robo3t", _mongoTimeoutSec 
+                 setName, membersHostsAndPorts, APP_NAME_VERSION, _mongoTimeoutSec                 
             });
                 
             if (!_dbclientRepSet->connect()) 
@@ -929,7 +932,7 @@ namespace Robomongo
             // Timeout for operations
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
             _dbclient.reset(new mongo::DBClientConnection { true, _mongoTimeoutSec });
-            mongo::Status const& status = _dbclient->connect(_connSettings->hostAndPort(), "robo3t");
+            mongo::Status const& status = _dbclient->connect(_connSettings->hostAndPort(), APP_NAME_VERSION);
             if (!status.isOK() && mayReturnNull) 
                 return { nullptr, status.reason() };
             else 
@@ -1038,24 +1041,23 @@ namespace Robomongo
 
     std::string MongoWorker::connectAndGetReplicaSetName() const
     {
-        auto dbclientTemp = DBClientConnection(new mongo::DBClientConnection(true, 10));
+        auto const dbclientTemp { std::make_unique<mongo::DBClientConnection>(true, 10) };
         std::string setName = "";
 
         // Try connecting to the nodes one by one until getting replica set name.
         for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
         {
-            mongo::Status const status = dbclientTemp->connect(node, "robo3t");
-            if (status.isOK())
-            {
-                _scriptEngine->init(_isLoadMongoRcJs, node.toString());
-                MongoShellExecResult const& result = _scriptEngine->exec("rs.status()", "");
-                if (!result.results().empty()) {
-                    auto const& resultDocs = result.results().front().documents();
-                    if (!resultDocs.empty()) {
-                        setName = resultDocs.front()->bsonObj().getStringField("set");
-                        if (!setName.empty()) // We get the information, finish the loop
-                            break;
-                    }
+            if (!dbclientTemp->connect(node, APP_NAME_VERSION).isOK())
+                return "";
+
+            _scriptEngine->init(_isLoadMongoRcJs, node.toString());
+            MongoShellExecResult const& result = _scriptEngine->exec("rs.status()", "");
+            if (!result.results().empty()) {
+                auto const& resultDocs = result.results().front().documents();
+                if (!resultDocs.empty()) {
+                    setName = resultDocs.front()->bsonObj().getStringField("set");
+                    if (!setName.empty()) // We get the information, finish the loop
+                        break;
                 }
             }
         }

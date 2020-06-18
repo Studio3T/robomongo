@@ -24,9 +24,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:        
-        using DBClientReplicaSet = std::unique_ptr<mongo::DBClientReplicaSet>;
-        using DBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
-
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              double mongoTimeoutSec, int shellTimeoutSec, QObject *parent = nullptr);
 

@@ -28,7 +28,7 @@ namespace Robomongo
         using DBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
 
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
-                             int mongoTimeoutSec, int shellTimeoutSec, QObject *parent = nullptr);
+                             double mongoTimeoutSec, int shellTimeoutSec, QObject *parent = nullptr);
 
         ~MongoWorker();
         void interrupt();
@@ -190,7 +190,7 @@ namespace Robomongo
         const int _batchSize;
         int _timerId;
         int _dbAutocompleteCacheTimerId;
-        int _mongoTimeoutSec;
+        double _mongoTimeoutSec;
         int _shellTimeoutSec;
         QAtomicInteger<int> _isQuiting;
 

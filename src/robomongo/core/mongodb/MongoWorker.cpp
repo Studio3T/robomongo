@@ -31,7 +31,8 @@
 namespace Robomongo
 {
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
-                             int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
+                             double mongoTimeoutSec, int shellTimeoutSec, QObject *parent) 
+        : QObject(parent),
         _scriptEngine(nullptr),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
@@ -614,13 +615,13 @@ namespace Robomongo
                 reply(
                     event->sender(),
                     new ExecuteScriptResponse(this, result, event->script.empty(), 
-                        result.timeoutReached())
+                        result.timeoutReached()) // todo: rename to shellTimeout...
                 );
                 return;
             }
 
-            // Re-try to handle a possible error:
-            // Recover the cases where server went up/down, try again
+            // Re-try:
+            // Recover the case where server went up/down
             mongo::DBClientBase* mongodbClient { 
                 _dbclient ? _dbclient.get() : 
                 dynamic_cast<mongo::DBClientBase*>(_dbclientRepSet.get()) 
@@ -893,44 +894,46 @@ namespace Robomongo
         configureSSL();
 
         // --- Perform connection ---
-        if (_connSettings->isReplicaSet()) // connection to replica set 
-        {  
-            if (!_dbclientRepSet) 
-            {
-                init(); // Init mongoworker for early-use of _scriptEngine
+        if (_connSettings->isReplicaSet()) { // connection to replica set 
+            if(_dbclientRepSet)
+                return { _dbclientRepSet.get(), "" };
 
-                // Step-1: Use user entered set name or retrieve set name from cache or from a reachable member
-                std::string setName = _connSettings->replicaSetSettings()->setNameUserEntered();
-                if (setName.empty()) {
-                    setName = _connSettings->replicaSetSettings()->cachedSetName();
-                    if (setName.empty()) // If there is no cached set name, get it from an on-line replica node
-                        setName = connectAndGetReplicaSetName();
+            init(); // Init mongoworker for early-use of _scriptEngine
 
-                    if (setName.empty())   // It is not possible to continue with empty set name
-                        return{ nullptr, "It is not possible to continue with empty set name" };
-                }
+            // Step-1: Use user entered set name or retrieve set name from cache or from a reachable member
+            std::string setName = _connSettings->replicaSetSettings()->setNameUserEntered();
+            if (setName.empty()) {
+                setName = _connSettings->replicaSetSettings()->cachedSetName();
+                if (setName.empty()) // If there is no cached set name, get it from an on-line replica node
+                    setName = connectAndGetReplicaSetName();
 
-                // Step-2: Try connect to replica set with set name
-                auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
-                _dbclientRepSet = DBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
-                                                     "robo3t", _mongoTimeoutSec));
-                
-                if (!_dbclientRepSet->connect()) 
-                    return{ nullptr, "Connect failed" };
+                if (setName.empty())   // It is not possible to continue with empty set name
+                    return { nullptr, "It is not possible to continue with empty set name" };
             }
-            return { _dbclientRepSet.get(), ""};
+
+            // Step-2: Try connect to replica set with set name
+            auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
+            _dbclientRepSet.reset(new mongo::DBClientReplicaSet {
+                 setName, membersHostsAndPorts, "robo3t", _mongoTimeoutSec 
+            });
+                
+            if (!_dbclientRepSet->connect()) 
+                return { nullptr, "Connect failed" };
+            else 
+                return { _dbclientRepSet.get(), "" };
         }
         else {  // connection to single server
-            if (!_dbclient) {
-                // Timeout for operations
-                // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-                _dbclient = DBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
-
-                mongo::Status const& status = _dbclient->connect(_connSettings->hostAndPort(), "robo3t");
-                if (!status.isOK() && mayReturnNull) 
-                    return{ nullptr, status.reason() };
-            }
-            return{ _dbclient.get(), "" };
+            if(_dbclient)
+                return { _dbclient.get(), "" };
+            
+            // Timeout for operations
+            // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
+            _dbclient.reset(new mongo::DBClientConnection { true, _mongoTimeoutSec });
+            mongo::Status const& status = _dbclient->connect(_connSettings->hostAndPort(), "robo3t");
+            if (!status.isOK() && mayReturnNull) 
+                return { nullptr, status.reason() };
+            else 
+                return { _dbclient.get(), "" };
         }
     }
 

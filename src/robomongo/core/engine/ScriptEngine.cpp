@@ -202,17 +202,14 @@ namespace Robomongo
         std::string error;
         bool result = statementize(stdstr, statements, error);
 
-        if (!result && statements.size() == 0) {
+        if (!result && statements.size() == 0)
             statements.push_back("print(__robomongoResult.error)");
-        }
 
         std::vector<MongoShellResult> results;
 
         use(dbName);
 
-        for (std::vector<std::string>::const_iterator it = statements.begin(); it != statements.end(); ++it)
-        {
-            std::string statement = *it;
+        for (auto const& statement : statements) {
             // clear global objects
             __objects.clear();
             __type = "";

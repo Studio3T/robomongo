@@ -577,12 +577,16 @@ namespace Robomongo
     {        
         try {
             if (!_scriptEngine) {
-                reply(event->sender(), 
-                    new ExecuteScriptResponse(this, EventError("MongoDB Shell was not initialized")));
+                reply(
+                    event->sender(), 
+                    new ExecuteScriptResponse(this, 
+                        EventError("MongoDB Shell was not initialized"))
+                );
                 return;
             }
 
-            // Try to handle case where new shell (which was opened when server unreachable) was re-executed
+            // Try to handle case where new shell (which was opened when server unreachable) 
+            // was re-executed
             if (_scriptEngine->failedScope()) {
                 try {
                     _scriptEngine->init(_isLoadMongoRcJs);
@@ -593,58 +597,58 @@ namespace Robomongo
                 }
             }
 
-            AggrInfo const& aggrInfo = event->aggrInfo;
-            
             // todo: should we use dbName from event or _connSettings? 
-            MongoShellExecResult result = 
-                _scriptEngine->exec(event->script, _connSettings->defaultDatabase(), aggrInfo);
-                       
+            MongoShellExecResult result {
+                _scriptEngine->exec(
+                    event->script, _connSettings->defaultDatabase(), event->aggrInfo
+                )
+            };
+
             // To fix the problem where 'result' comes with old primary address.
             if (_connSettings->isReplicaSet()) 
-                result.setCurrentServer(_dbclientRepSet->getSuspectedPrimaryHostAndPort().toString());
+                result.setCurrentServer(
+                    _dbclientRepSet->getSuspectedPrimaryHostAndPort().toString()
+                );
 
-            // Robomongo shell timeout
-            bool timeoutReached = false;
-            if (result.timeoutReached()) 
-                timeoutReached = true;          
-
-            if (result.error()) {
-                // If this is replica set, update script engine and try again
-                if (_connSettings->isReplicaSet()) {
-                    ReplicaSet const& replicaSetInfo = getReplicaSetInfo();
-                    std::string const PRIMARY_UNREACHABLE { "Replica set's primary is unreachable." };
-                    if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                        reply(
-                            event->sender(), 
-                            new ExecuteScriptResponse(
-                                this, 
-                                EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)
-                            )
-                        );
-                        return;
-                    }
-                    else {  // primary reachable
-                        _scriptEngine->init(_isLoadMongoRcJs, replicaSetInfo.primary.toString(),
-                                            _connSettings->defaultDatabase());
-                        result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
-                        if(result.error()) 
-                            reply(event->sender(),
-                                new ExecuteScriptResponse(this, EventError(result.errorMessage())));
-                    }
-                }
-                else { // single server
-                    reply(event->sender(), 
-                        new ExecuteScriptResponse(this, EventError(result.errorMessage())));
-                    return;
-                }
+            if (!result.error()) {
+                reply(
+                    event->sender(),
+                    new ExecuteScriptResponse(this, result, event->script.empty(), 
+                        result.timeoutReached())
+                );
+                return;
             }
 
-            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty(),
-                                                             timeoutReached));
+            // Re-try to handle a possible error:
+            // Recover the cases where server went up/down, try again
+            mongo::DBClientBase* mongodbClient { 
+                _dbclient ? _dbclient.get() : 
+                dynamic_cast<mongo::DBClientBase*>(_dbclientRepSet.get()) 
+            };
+           
+            if(!mongodbClient->isStillConnected())
+                mongodbClient->checkConnection();
+
+            result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+            if (result.error())
+                reply(
+                    event->sender(),
+                    new ExecuteScriptResponse(this, EventError(result.errorMessage()))
+                );
+            else {
+                reply(
+                    event->sender(),
+                    new ExecuteScriptResponse(this, result, event->script.empty(), 
+                        result.timeoutReached())
+                );
+            }
         } 
         catch(const std::exception &ex) {
-            reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), 
-                                                             EventError::Unknown, false)));
+            reply(
+                event->sender(), 
+                new ExecuteScriptResponse(this, EventError(ex.what(), 
+                    EventError::Unknown, false))
+            );
         }
     }
 

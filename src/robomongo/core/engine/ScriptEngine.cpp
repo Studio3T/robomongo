@@ -27,9 +27,6 @@
 #include <mongo/client/dbclient_base.h>
 #include <pcrecpp.h>
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -457,19 +454,11 @@ namespace Robomongo
             "}"
             "__robomongoResult;"
         };
-        
+
         if(!_scope->exec(data, "(esprima2)", false, true, false)) {
-            AppRegistry::instance().bus()->send(
-                AppRegistry::instance().app(),
-                new LogEvent(this, "ScriptEngine: Scope failed. Resetting mongo::Scope", 
-                    LogEvent::RBM_ERROR)
-            );
+            sendLog(this, LogEvent::RBM_ERROR, "ScriptEngine: Scope failed. Resetting scope.");
             _scope->reset();
-            AppRegistry::instance().bus()->send(
-                AppRegistry::instance().app(),
-                new LogEvent(this, "ScriptEngine: Scope reset complete",
-                    LogEvent::RBM_INFO)
-            );
+            sendLog(this, LogEvent::RBM_INFO, "ScriptEngine: Scope reset complete.");
             _scope->exec(data, "(esprima2)", false, true, false);
         }
 

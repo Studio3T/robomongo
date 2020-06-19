@@ -104,11 +104,8 @@ namespace Robomongo
                 _scriptEngine->ping();
 
         } catch(std::exception &ex) {
-            std::string const msg { "Failed to ping the server. MongoWorker::keepAlive() failed. " };
-            AppRegistry::instance().bus()->send(
-                AppRegistry::instance().app(),
-                new LogEvent(this, msg + std::string(ex.what()), LogEvent::LogLevel::RBM_WARN, false)
-            );
+            sendLog(this, LogEvent::RBM_WARN, 
+                "Failed to ping the server. " + std::string(ex.what()));
         }
     }
 
@@ -358,10 +355,7 @@ namespace Robomongo
                 "please use \"Manually specify visible databases\" option in "
                 "Connection Settings window -> Authentication tab."
             };
-            AppRegistry::instance().bus()->send(
-                AppRegistry::instance().app(),
-                new LogEvent(this, ex.what() + hint, LogEvent::LogLevel::RBM_WARN, informUser)
-            );
+            sendLog(this, LogEvent::RBM_WARN, ex.what() + hint, informUser);
 
             if (_connSettings->credentialCount() > 0 &&                
                 _connSettings->primaryCredential()->useManuallyVisibleDbs() && 

@@ -3,32 +3,31 @@
 #include <QDir>
 #include <QMetaType>
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
-
-namespace
-{
-    std::string getLoggerPath()
-    {
-        static std::string path = 
-            Robomongo::QtUtils::toStdString(QString("%1/" PROJECT_NAME_LOWERCASE ".log").arg(QDir::tempPath()));
-
-        return path;
-    }
-}
 
 namespace Robomongo
 {
+    void sendLog(
+        QObject *sender, LogEvent::LogLevel const& severity,
+        std::string const& msg, bool const informUser /*= false*/)
+    {
+        AppRegistry::instance().bus()->send(
+            AppRegistry::instance().app(),
+            new LogEvent(sender, msg, severity, informUser)
+        );
+    }
+
     Logger::Logger()
     {
-        // v0.9
-        // qRegisterMetaType<mongo::logger::LogSeverity>("mongo::LogLevel");
-        std::string path = getLoggerPath();
-        QFile file(QtUtils::toQString(path)); //delete file if it size more than 5mb
-        if (file.exists() && file.size() > 5 * 1024 * 1024) {
-            file.remove();
-        }
-        // v0.9
-        // mongo::initLogging(path,true);
+        QFile file {
+            QString("%1/" PROJECT_NAME_LOWERCASE ".log").arg(QDir::tempPath()) 
+        }; 
+        //delete file if it size more than 5mb
+        if (file.exists() && file.size() > 5 * 1024 * 1024)
+            file.remove();      
     }
 
     Logger::~Logger()

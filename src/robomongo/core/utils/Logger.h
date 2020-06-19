@@ -1,12 +1,12 @@
 #pragma once
 
-
-// #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
-
 #include <QObject>
 #include <QString>
 #include <string>
+
 #include <mongo/logger/log_severity.h>
+
+#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/utils/SingletonPattern.hpp"
 
 namespace Robomongo
@@ -29,9 +29,15 @@ namespace Robomongo
         ~Logger();
     };
 
+    // Use in main thread
     template<typename T>
     inline void LOG_MSG(const T &msg, mongo::logger::LogSeverity level, bool notify = true)
     {
         return Logger::instance().print(msg, level, notify);
     }
+    
+    // Use in worker threads (e.g. MongoWorker) to send LogEvent to main thread (App class) 
+    void sendLog(
+        QObject *sender, LogEvent::LogLevel const& severity,
+        std::string const& msg, bool const informUser = false);
 }

@@ -132,7 +132,9 @@ namespace Robomongo
         credential->setUserPassword(QtUtils::toStdString(_userPassword->text()));
         credential->setDatabaseName(QtUtils::toStdString(_databaseName->text()));
         credential->setMechanism(QtUtils::toStdString(_mechanismComboBox->currentText()));
-        credential->setUseManuallyVisibleDbs(_useManuallyVisibleDbs->isChecked());
+        credential->setUseManuallyVisibleDbs(
+            _useManuallyVisibleDbs->isChecked() && !_manuallyVisibleDbs->text().isEmpty()
+        );
         credential->setManuallyVisibleDbs(
             _manuallyVisibleDbs->text().simplified().replace(' ', "").toStdString()
         );

@@ -347,7 +347,8 @@ namespace Robomongo
                 event != nullptr &&
                 event->connectionType == ConnectionType::ConnectionPrimary &&
                 _connSettings->credentialCount() > 0 &&
-                !_connSettings->primaryCredential()->useManuallyVisibleDbs()
+                !_connSettings->primaryCredential()->useManuallyVisibleDbs() ||
+                _connSettings->primaryCredential()->manuallyVisibleDbs().empty()
             };
 
             std::string const hint {

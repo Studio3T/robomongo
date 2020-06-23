@@ -103,7 +103,8 @@ namespace Robomongo
             if (_scriptEngine)
                 _scriptEngine->ping();
 
-        } catch(std::exception &ex) {
+        } 
+        catch(std::exception &ex) {
             sendLog(this, LogEvent::RBM_WARN, 
                 "Failed to ping the server. " + std::string(ex.what()));
         }
@@ -120,9 +121,9 @@ namespace Robomongo
             _timerId = startTimer(PING_INTERVAL_MSEC);
             _dbAutocompleteCacheTimerId = startTimer(30000);
         } catch (const std::exception &ex) {
-            auto const error = "Failed to initialize MongoWorker, " + std::string(ex.what());
-            LOG_MSG(error, mongo::logger::LogSeverity::Error());
-            throw std::runtime_error(error);
+            auto const msg { "Failed to initialize MongoWorker. Reason: "};
+            sendLog(this, LogEvent::RBM_ERROR, msg + std::string(ex.what()));
+            throw std::runtime_error(msg + std::string(ex.what()));
         }
     }
 
@@ -133,7 +134,7 @@ namespace Robomongo
 
             _scriptEngine->interrupt();
         } catch(const std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));
         }
     }
 
@@ -218,17 +219,20 @@ namespace Robomongo
                 auto const& members = _connSettings->replicaSetSettings()->members();
                 if (std::find(members.cbegin(), members.cend(), setInfo.primary.toString()) == members.cend()) 
                 {   // primary not found between user entered members
-                    std::string const errorStr = "Different members found under same replica set name \"" + 
-                         setInfo.setName + "\".";
+                    std::string const errorStr { 
+                        "Different members found under same replica set name \"" +
+                         setInfo.setName + "\"." 
+                    };
                     repSetInfo.reset(new ReplicaSet(setInfo));
                     errorCode = EventError::ErrorCode::ServerHasDifferentMembers;
-                    LOG_MSG(errorStr, mongo::logger::LogSeverity::Error());
+                    sendLog(this, LogEvent::RBM_ERROR, errorStr);
                     throw std::runtime_error(errorStr);
                 }
 
                 if (setInfo.primary.empty()) {  // No reachable primary
-                    repSetInfo.reset(new ReplicaSet(setInfo)); // Pass possible reachable secondary(ies) info 
-                    LOG_MSG(setInfo.errorStr, mongo::logger::LogSeverity::Error());
+                    // Pass possible reachable secondary(ies) info 
+                    repSetInfo.reset(new ReplicaSet(setInfo)); 
+                    sendLog(this, LogEvent::RBM_ERROR, setInfo.errorStr);
                     throw std::runtime_error(setInfo.errorStr);
                 }
                 else {  // Primary is reachable, save setInfo and continue
@@ -286,6 +290,7 @@ namespace Robomongo
 
             reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what(), errorCode), 
                   event->connectionType, ConnectionInfo(event->uuid), *repSetInfo.release(), errorReason));
+            sendLog(this, LogEvent::RBM_ERROR, ex.what());  // todo: duplicate logging?
         }
 
         return false;
@@ -305,12 +310,13 @@ namespace Robomongo
                         this, replicaSetInfo, event->expanded, EventError(replicaSetInfo.errorStr)
                     )
                 );
-                // todo: send this log to main thread
-                LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
+                sendLog(this, LogEvent::RBM_ERROR, replicaSetInfo.errorStr);
                 return;
             }
-            else // Primary is reachable
-                reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded));
+            else { // Primary is reachable
+                reply(event->sender(), 
+                    new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded));
+            }
         }
         catch (const std::exception &ex) {
             reply(
@@ -319,6 +325,7 @@ namespace Robomongo
                     this, ReplicaSet(), event->expanded, EventError(ex.what())
                 )
             );
+            sendLog(this, LogEvent::RBM_ERROR, ex.what());
         }
     }
 
@@ -342,7 +349,8 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             dbNames = client->getDatabaseNames();
-        } catch(const std::exception &ex) {
+        } 
+        catch(const std::exception &ex) {
             bool const informUser {
                 event != nullptr &&
                 event->connectionType == ConnectionType::ConnectionPrimary &&
@@ -412,7 +420,7 @@ namespace Robomongo
             }
         } catch(const std::exception &ex) {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, ex.what());
         }
     }
 
@@ -429,6 +437,7 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), collInfos));
         } catch(const std::exception &ex) {
             reply(event->sender(), new LoadCollectionNamesResponse(this, EventError(ex.what())));
+            // Logging handled in main thread
         }
     }
 
@@ -442,6 +451,7 @@ namespace Robomongo
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
         } catch(const std::exception &ex) {
             reply(event->sender(), new LoadUsersResponse(this, EventError(ex.what())));
+            // Logging handled in main thread
         }
     }
 
@@ -455,7 +465,7 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const std::exception &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, ex.what());
         }
     }
 
@@ -475,7 +485,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new AddEditIndexResponse(this, EventError(ex.what()), oldIndex, newIndex)
             );
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            // Logging handled in main thread
         }
     }
 
@@ -490,7 +500,7 @@ namespace Robomongo
         } catch(const std::exception &ex) {
             reply(event->sender(), 
                 new DropCollectionIndexResponse(this, EventError(ex.what()), event->index()));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            // Logging handled in main thread
         }            
     }
 
@@ -517,6 +527,7 @@ namespace Robomongo
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funcs));
         } catch(const std::exception &ex) {
             reply(event->sender(), new LoadFunctionsResponse(this, EventError(ex.what())));
+            // Logging handled in main thread
         }
     }
 
@@ -535,6 +546,7 @@ namespace Robomongo
         } 
         catch(const std::exception &ex) {
             reply(event->sender(), new InsertDocumentResponse(this, EventError(ex.what())));
+            sendLog(this, LogEvent::RBM_ERROR, ex.what());
         }
     }
 
@@ -552,6 +564,7 @@ namespace Robomongo
         catch(const std::exception &ex) {
             reply(event->sender(), new RemoveDocumentResponse(this, EventError(ex.what()), 
                 event->removeCount(), event->index()));
+            // Logging handled in main thread
         }
     }
 
@@ -565,7 +578,7 @@ namespace Robomongo
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
         } catch(const std::exception &ex) {
             reply(event->sender(), new ExecuteQueryResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));
         }
     }
 
@@ -587,9 +600,9 @@ namespace Robomongo
                 try {
                     _scriptEngine->init(_isLoadMongoRcJs);
                 }
-                catch (std::exception const& ex) {     
-                    LOG_MSG(captilizeFirstChar(ex.what()) + ", cannot init mongo scope", 
-                            mongo::logger::LogSeverity::Error());
+                catch (std::exception const& ex) {
+                    sendLog(this, LogEvent::RBM_ERROR, 
+                        captilizeFirstChar(ex.what()) + ", cannot init mongo scope");
                 }
             }
 
@@ -620,6 +633,7 @@ namespace Robomongo
         catch(const std::exception &ex) {
             auto const error { EventError(ex.what(), EventError::Unknown) };
             reply(event->sender(), new ExecuteScriptResponse(this, error));
+            sendLog(this, LogEvent::RBM_ERROR, ex.what());
         }
     }
 
@@ -661,7 +675,7 @@ namespace Robomongo
 
             _scriptEngine->interrupt();
         } catch(const std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));
         }
     }
 
@@ -669,7 +683,8 @@ namespace Robomongo
     {
         try {
             if (!_scriptEngine) {
-                reply(event->sender(), new AutocompleteResponse(this, EventError("MongoDB Shell was not initialized")));
+                reply(event->sender(), 
+                    new AutocompleteResponse(this, EventError("MongoDB Shell was not initialized")));
                 return;
             }
 
@@ -677,7 +692,7 @@ namespace Robomongo
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
         } catch(const std::exception &ex) {
             reply(event->sender(), new AutocompleteResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));            
         }
     }
 
@@ -696,6 +711,7 @@ namespace Robomongo
             reply(event->sender(), new CreateDatabaseResponse(this, dbname, 
                 EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -714,6 +730,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new DropDatabaseResponse(this, event->database, EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -732,6 +749,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new CreateCollectionResponse(this, collection, EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -749,6 +767,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new DropCollectionResponse(this, collection, EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -763,7 +782,7 @@ namespace Robomongo
                                                                 event->newCollection()));
         } catch(const std::exception &ex) {
             reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
-
+            // Logging handled in main thread
         }
     }
 
@@ -784,9 +803,10 @@ namespace Robomongo
             reply(event->sender(), 
                 new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
-
+    
     void MongoWorker::handle(CopyCollectionToDiffServerRequest *event)
     {
         try {
@@ -802,7 +822,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new CopyCollectionToDiffServerResponse(this, EventError(ex.what()))
             );
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));
         }
     }
 
@@ -818,6 +838,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new CreateUserResponse(this, event->user().name(), EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -833,6 +854,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new DropUserResponse(this, event->username(), EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -858,6 +880,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new CreateFunctionResponse(this, functionName, EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 
@@ -882,6 +905,7 @@ namespace Robomongo
             reply(event->sender(), 
                 new DropFunctionResponse(this, event->functionName(), EventError(ex.what()))
             );
+            // Logging handled in main thread
         }
     }
 

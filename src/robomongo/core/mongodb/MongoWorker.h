@@ -117,9 +117,9 @@ namespace Robomongo
         void handle(CreateCollectionRequest *event);
         void handle(DropCollectionRequest *event);
         void handle(RenameCollectionRequest *event);
-        void handle(DuplicateCollectionRequest *event);
-        void handle(CopyCollectionToDiffServerRequest *event);
-
+        void handle(DuplicateCollectionRequest *event);       
+        void handle(CopyCollectionToDiffServerRequest *event); // todo: unused? remove
+ 
         void handle(CreateUserRequest *event);
         void handle(DropUserRequest *event);
 

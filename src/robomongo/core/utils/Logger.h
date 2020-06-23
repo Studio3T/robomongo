@@ -36,7 +36,8 @@ namespace Robomongo
         return Logger::instance().print(msg, level, notify);
     }
     
-    // Use in worker threads (e.g. MongoWorker) to send LogEvent to main thread (App class) 
+    // Use in worker threads (e.g. MongoWorker) to log anything 
+    // Sends LogEvent to main thread (App class) 
     void sendLog(
         QObject *sender, LogEvent::LogLevel const& severity,
         std::string const& msg, bool const informUser = false);

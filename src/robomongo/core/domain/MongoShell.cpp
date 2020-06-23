@@ -12,6 +12,8 @@
 
 namespace Robomongo
 {  
+    auto const& eventBus = []() { return AppRegistry::instance().bus(); };
+
     MongoShell::MongoShell(MongoServer *server, ScriptInfo scriptInfo) :
         QObject(),
         _scriptInfo(scriptInfo),
@@ -21,10 +23,9 @@ namespace Robomongo
 
     void MongoShell::open(const std::string &script, const std::string &dbName)
     {
-        auto const& bus = AppRegistry::instance().bus();
-        bus->publish(new ScriptExecutingEvent(this));
+        eventBus()->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
-        bus->send(_server->worker(), new ExecuteScriptRequest(this, query(), dbName));
+        eventBus()->send(_server->worker(), new ExecuteScriptRequest(this, query(), dbName));
         LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
     }
 
@@ -33,14 +34,15 @@ namespace Robomongo
         return QtUtils::toStdString(_scriptInfo.script()); 
     }
 
-    void MongoShell::execute(const std::string &script /* = "" */, const std::string &dbName /* = "" */)
+    void MongoShell::execute(const std::string &script /* = "" */, 
+                             const std::string &dbName /* = "" */)
     {
         if (!_scriptInfo.execute())
             return;
 
         std::string const finalScript = script.empty() ? query() : script;
-        AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
-        AppRegistry::instance().bus()->send(_server->worker(), 
+        eventBus()->publish(new ScriptExecutingEvent(this));
+        eventBus()->send(_server->worker(), 
             new ExecuteScriptRequest(this, finalScript, dbName, _aggrInfo));
         if (!_scriptInfo.script().isEmpty())
             LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
@@ -48,15 +50,20 @@ namespace Robomongo
 
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {
-        AppRegistry::instance().bus()->send(_server->worker(), new ExecuteQueryRequest(this, resultIndex, info));
+        eventBus()->send(_server->worker(), new ExecuteQueryRequest(this, resultIndex, info));
     }
 
     void MongoShell::autocomplete(const std::string &prefix)
     {
-        AutocompletionMode autocompletionMode = AppRegistry::instance().settingsManager()->autocompletionMode();
+        AutocompletionMode autocompletionMode {
+            AppRegistry::instance().settingsManager()->autocompletionMode()
+        };
         if (autocompletionMode == AutocompleteNone)
             return;
-        AppRegistry::instance().bus()->send(_server->worker(), new AutocompleteRequest(this, prefix, autocompletionMode));
+
+        eventBus()->send(_server->worker(), 
+            new AutocompleteRequest(this, prefix, autocompletionMode)
+        );
     }
 
     void MongoShell::stop()
@@ -83,42 +90,50 @@ namespace Robomongo
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
         if (event->isError()) {
-            AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, event->error()));
+            eventBus()->publish(new DocumentListLoadedEvent(this, event->error()));
             return;
         }
 
-        AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));
+        eventBus()->publish(
+            new DocumentListLoadedEvent(this, 
+                event->resultIndex, event->queryInfo, query(), event->documents)
+        );
     }
 
     void MongoShell::handle(ExecuteScriptResponse *event)
     {
-        if (event->isError()) {
-            if (_server->connectionRecord()->isReplicaSet()) {
-                AppRegistry::instance().bus()->publish(
-                    new ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
-
-                AppRegistry::instance().bus()->publish(
-                    new ScriptExecutedEvent(this, event->error(), event->timeoutReached()));
-                return;
-            }
-            else {  // single server
-                AppRegistry::instance().bus()->publish(
-                    new ScriptExecutedEvent(this, event->error(), event->timeoutReached()));
-                return;
-            }
+        if (!event->isError()) {
+            eventBus()->publish(
+                new ScriptExecutedEvent(this, event->result, event->empty, event->timeoutReached())
+            );
+            return;
         }
 
-        AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty,
-                                                                       event->timeoutReached()));
+        if (_server->connectionRecord()->isReplicaSet()) {
+            eventBus()->publish(
+                new ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo())
+            );
+
+            eventBus()->publish(
+                new ScriptExecutedEvent(this, event->error(), event->timeoutReached())
+            );
+            return;
+        }
+        else {  // single server
+            eventBus()->publish(
+                new ScriptExecutedEvent(this, event->error(), event->timeoutReached())
+            );
+            return;
+        }
     }
 
     void MongoShell::handle(AutocompleteResponse *event)
     {
         if (event->isError()) {
-            AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->error()));
+            eventBus()->publish(new AutocompleteResponse(this, event->error()));
             return;
         }
 
-        AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->list, event->prefix));
+        eventBus()->publish(new AutocompleteResponse(this, event->list, event->prefix));
     }
 }

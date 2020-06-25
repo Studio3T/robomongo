@@ -41,15 +41,20 @@ if (SYSTEM_MACOSX)
     find_package(Qt5MacExtras REQUIRED)
 endif()
 
+# Projects
+set(LIBSSH2_VERSION 1.7.0)
+set(LIBSSH2_DIR src/third-party/libssh2-${LIBSSH2_VERSION})
+set(QJSON_VERSION 0.8.1)
+set(QJSON_DIR src/third-party/qjson-${QJSON_VERSION})
+set(QSCINTILLA_VERSION 2.8.4)
+set(QSCINTILLA_DIR src/third-party/qscintilla-${QSCINTILLA_VERSION})
 # todo: Use equivalent vars from googletest cmake files. Currently they are somehow not working.
 set(GOOGLE_TEST_VERSION 1.8.1)
 set(GOOGLE_TEST_DIR src/third-party/googletest-${GOOGLE_TEST_VERSION})
-
-# Projects
-add_subdirectory(src/third-party/libssh2)
+add_subdirectory(${LIBSSH2_DIR})
 add_subdirectory(src/robomongo/ssh)
-add_subdirectory(src/third-party/qjson)
-add_subdirectory(src/third-party/qscintilla)
+add_subdirectory(${QJSON_DIR})
+add_subdirectory(${QSCINTILLA_DIR})
 add_subdirectory(${GOOGLE_TEST_DIR})
 add_subdirectory(src/robomongo)
 # todo: Enable unit tests

@@ -14,27 +14,14 @@
 
 # Try to find OpenSSL directory (uses CMAKE_PREFIX_PATH locations)
 #-------------------------------------------
-
-if(SYSTEM_WINDOWS)
-  find_path(
-      OpenSSL_DIR inc32/openssl/ssl.h
-      DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
-  )
-else()
-  find_path(
-      OpenSSL_DIR include/openssl/ssl.h
-      DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
-  )
-endif()
+find_path(
+    OpenSSL_DIR include/openssl/ssl.h
+    DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
+)
 
 # Find OpenSSL version
 #-------------------------------------------
-
-if(SYSTEM_WINDOWS)
-  set (OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/inc32")
-else()
-  set (OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
-endif()
+set (OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
 
 function(from_hex HEX DEC)
   string(TOUPPER "${HEX}" HEX)
@@ -113,33 +100,30 @@ add_library(ssl SHARED IMPORTED)
 # Add imported target for crypto (libeay32)
 add_library(crypto SHARED IMPORTED)
     
+# todo: refactor
 if(SYSTEM_WINDOWS)
     set_target_properties(ssl PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/inc32"
-        IMPORTED_IMPLIB                 "${OpenSSL_DIR}/out32dll/ssleay32.lib"
-    )
-    set_target_properties(crypto PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/inc32"
-        IMPORTED_IMPLIB                 "${OpenSSL_DIR}/out32dll/libeay32.lib"
-    )
-elseif(SYSTEM_MACOSX)
-    set_target_properties(ssl PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/libssl.dylib"
+        IMPORTED_IMPLIB                 "${OpenSSL_DIR}/libssl.lib"
     )
     set_target_properties(crypto PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/libcrypto.dylib"
+        IMPORTED_IMPLIB                 "${OpenSSL_DIR}/libcrypto.lib"
     )
-elseif(SYSTEM_LINUX)
-    set_target_properties(ssl PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/libssl.so"
-    )
-    set_target_properties(crypto PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/libcrypto.so"
-    )
+else()
+  if(SYSTEM_MACOSX)
+    SET(EXT "dylib")
+  elseif(SYSTEM_LINUX)
+    SET(EXT "so")
+  endif()
+  set_target_properties(ssl PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
+      IMPORTED_LOCATION               "${OpenSSL_DIR}/libssl.${EXT}"
+  )
+  set_target_properties(crypto PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
+      IMPORTED_LOCATION               "${OpenSSL_DIR}/libcrypto.${EXT}"
+  )  
 endif()
 
 # End of file

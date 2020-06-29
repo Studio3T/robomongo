@@ -25,8 +25,8 @@ rem // Copy dll files
 for /d %%a in (
   "%VS140COMNTOOLS%\..\..\VC\redist\debug_nonredist\x64\Microsoft.VC140.DebugCRT\msvcp140d.dll"
   "%VS140COMNTOOLS%\..\..\VC\redist\debug_nonredist\x64\Microsoft.VC140.DebugCRT\vcruntime140d.dll"
-  "%OPENSSL_DIR%\out32dll\libeay32.dll"
-  "%OPENSSL_DIR%\out32dll\ssleay32.dll"
+  "%OPENSSL_DIR%\libssl-1_1-x64.dll"
+  "%OPENSSL_DIR%\libcrypto-1_1-x64.dll"
   "%Qt_DIR%\bin\Qt5Cored.dll"
   "%Qt_DIR%\bin\Qt5Guid.dll"
   "%Qt_DIR%\bin\Qt5Networkd.dll"

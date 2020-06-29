@@ -1,0 +1,89 @@
+# Copyright (c) 2014, Ruslan Baratov
+# Copyright (c) 2014, 2016 Alexander Lamaison
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+os: Visual Studio 2015
+
+environment:
+  matrix:
+    - GENERATOR: "Visual Studio 14 2015"
+      BUILD_SHARED_LIBS: ON
+
+    - GENERATOR: "Visual Studio 14 2015"
+      BUILD_SHARED_LIBS: OFF
+
+    - GENERATOR: "Visual Studio 12 2013"
+      BUILD_SHARED_LIBS: ON
+
+    - GENERATOR: "Visual Studio 12 2013"
+      BUILD_SHARED_LIBS: OFF
+
+  digitalocean_access_token:
+    secure: 8qRitvrj69Xhf0Tmu27xnz5drmL2YhmOJLGpXIkYyTCC0JNtBoXW6fMcF3u4Uj1+pIQ+TjegQOwYimlz0oivKTro3v3EXro+osAMNJG6NKc=
+
+platform:
+  - x86
+  - x64
+
+configuration:
+# - Debug
+  - Release
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - GENERATOR: "Visual Studio 9 2008"
+      platform: x64
+
+install:
+  - choco install -y docker
+  - choco install -y docker-machine
+
+build_script:
+  - ps: if($env:PLATFORM -eq "x64") { $env:CMAKE_GEN_SUFFIX=" Win64" }
+  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% -H. -B_builds
+  - cmake --build _builds --config "%CONFIGURATION%"
+
+before_test:
+  - set DOCKER_MACHINE_NAME=appveyor-%APPVEYOR_PROJECT_SLUG%-%APPVEYOR_JOB_ID%
+  - ps: if($env:digitalocean_access_token) { echo "Using DigitalOcean for testing." } else { echo "DigitalOcean not available. Skipping testing." }
+  - ps: if($env:digitalocean_access_token) { docker-machine create --driver digitalocean --digitalocean-access-token $($env:digitalocean_access_token) $($env:DOCKER_MACHINE_NAME) }
+  - ps: if($env:digitalocean_access_token) { docker-machine env $($env:DOCKER_MACHINE_NAME) --shell powershell | Invoke-Expression }
+
+test_script:
+  - ps: cd _builds
+  - ps: if($env:digitalocean_access_token) { ctest -VV -C $($env:CONFIGURATION) --output-on-failure }
+
+after_test:
+  - ps: if($env:digitalocean_access_token) { docker-machine rm -y $($env:DOCKER_MACHINE_NAME) }
+
+on_failure:
+  - ps: if($env:digitalocean_access_token) { docker-machine rm -y $($env:DOCKER_MACHINE_NAME) }
+  - ps: if(Test-Path _builds/CMakeFiles/CMakeOutput.log) { cat _builds/CMakeFiles/CMakeOutput.log }
+  - ps: if(Test-Path _builds/CMakeFiles/CMakeError.log) { cat _builds/CMakeFiles/CMakeError.log }
+
+# whitelist branches to avoid testing feature branches twice (as branch and as pull request)
+branches:
+    only:
+        - master

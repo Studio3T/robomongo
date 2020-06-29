@@ -42,7 +42,10 @@ if (SYSTEM_MACOSX)
 endif()
 
 # Projects
-set(LIBSSH2_VERSION 1.7.0)
+set(LIBSSH2_VERSION 1.9.0)
+if(SYSTEM_LINUX)
+    set(LIBSSH2_VERSION 1.7.0)
+endif()
 set(LIBSSH2_DIR src/third-party/libssh2-${LIBSSH2_VERSION})
 set(QJSON_VERSION 0.8.1)
 set(QJSON_DIR src/third-party/qjson-${QJSON_VERSION})

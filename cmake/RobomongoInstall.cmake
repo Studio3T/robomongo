@@ -60,14 +60,14 @@ install(
 if(SYSTEM_WINDOWS)
     install(
         FILES 
-        "${OpenSSL_DIR}/out32dll/ssleay32.dll"
-        "${OpenSSL_DIR}/out32dll/libeay32.dll"
+        "${OpenSSL_DIR}/libssl-1_1-x64.dll"
+        "${OpenSSL_DIR}/libcrypto-1_1-x64.dll"
         DESTINATION ${bin_dir})
 elseif(SYSTEM_MACOSX)
     install(
         FILES 
-        "${OpenSSL_DIR}/libssl.1.0.0.dylib"
-        "${OpenSSL_DIR}/libcrypto.1.0.0.dylib"
+        "${OpenSSL_DIR}/libssl.1.1.dylib"
+        "${OpenSSL_DIR}/libcrypto.1.1.dylib"
         DESTINATION ${lib_dir}/lib)
 elseif(SYSTEM_LINUX)
     install(

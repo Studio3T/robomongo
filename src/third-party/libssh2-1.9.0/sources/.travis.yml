@@ -1,0 +1,124 @@
+# Copyright (c) 2014 Alexander Lamaison <alexander.lamaison@gmail.com>
+#
+# Redistribution and use in source and binary forms,
+# with or without modification, are permitted provided
+# that the following conditions are met:
+#
+#   Redistributions of source code must retain the above
+#   copyright notice, this list of conditions and the
+#   following disclaimer.
+#
+#   Redistributions in binary form must reproduce the above
+#   copyright notice, this list of conditions and the following
+#   disclaimer in the documentation and/or other materials
+#   provided with the distribution.
+#
+#   Neither the name of the copyright holder nor the names
+#   of any other contributors may be used to endorse or
+#   promote products derived from this software without
+#   specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+# CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+# OF SUCH DAMAGE.
+
+sudo: required
+
+services:
+  - docker
+
+language: c
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  matrix:
+   - B=style
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=configure
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON B=cmake
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=mbedTLS BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON B=cmake
+
+before_install:
+  # Fix issue with chrome and 32-bit multilib
+  # See http://www.omgubuntu.co.uk/2016/03/fix-failed-to-fetch-google-chrome-apt-error-ubuntu
+  - sudo sed -i -e 's/deb http/deb [arch=amd64] http/' "/etc/apt/sources.list.d/google-chrome.list"
+  - sudo sed -i -e 's/deb http/deb [arch=amd64] http/' "/opt/google/chrome/cron/google-chrome"
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo dpkg --add-architecture i386; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get update -qq; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get install -y gcc-multilib; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get install -y libssl-dev:i386 libgcrypt11-dev:i386 build-essential gcc-multilib; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo dpkg --purge --force-depends gcc-multilib && sudo dpkg --purge --force-depends libssl-dev; fi
+  - if [ $ADDRESS_SIZE = '64' ]; then sudo apt-get install -y libssl-dev; fi
+  - if [ $ADDRESS_SIZE = '64' ]; then sudo apt-get install -y libgcrypt11-dev; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then export TOOLCHAIN_OPTION="-DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-Linux-32.cmake"; fi
+  - if [ $CRYPTO_BACKEND = 'mbedTLS' ]; then
+      MBEDTLSVER=mbedtls-2.4.0;
+      curl -L https://github.com/ARMmbed/mbedtls/archive/$MBEDTLSVER.tar.gz | tar -xzf -;
+      cd mbedtls-$MBEDTLSVER;
+      cmake $TOOLCHAIN_OPTION -DUSE_SHARED_MBEDTLS_LIBRARY=ON -DCMAKE_INSTALL_PREFIX:PATH=../usr .;
+      make -j3 install;
+      cd ..;
+      export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/usr/lib;
+      export TOOLCHAIN_OPTION="$TOOLCHAIN_OPTION -DCMAKE_PREFIX_PATH=$PWD/usr";
+    fi
+
+install:
+
+script:
+  - |
+      if [ "$B" = "style" ]; then
+        perl src/checksrc.pl -i4 -m79 -ASIZEOFNOPAREN -ASNPRINTF -ACOPYRIGHT -AFOPENMODE -Wsrc/libssh2_config.h src/*.[ch] include/*.h example/*.c
+      fi
+  - |
+      if [ "$B" = "configure" ]; then
+        ./buildconf
+        ./configure --enable-debug --enable-werror
+        make
+        make check
+      fi
+  - |
+      if [ "$B" = "cmake" ]; then
+        mkdir bin
+        cd bin
+        cmake $TOOLCHAIN_OPTION -DCRYPTO_BACKEND=$CRYPTO_BACKEND -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DENABLE_ZLIB_COMPRESSION=$ENABLE_ZLIB_COMPRESSION .. && cmake --build . && CTEST_OUTPUT_ON_FAILURE=1 cmake --build . --target test && cmake --build . --target package
+      fi
+
+# whitelist branches to avoid testing feature branches twice (as branch and as pull request)
+branches:
+    only:
+        - master

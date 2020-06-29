@@ -1,4 +1,4 @@
-Building Robo 3T (Mac OS X and Linux)  
+Building Robo 3T (macOS and Linux)  
 ==================
 
 A. Prerequisites
@@ -9,7 +9,7 @@ A modern and complete C++17 compiler:
 ```
 GCC 8.0 or newer
 Clang 7 (or Apple XCode 10 Clang) or newer
-On Linux and macOS, the libcurl library and header is required. MacOS includes libcurl.
+On Linux and macOS, the libcurl library and header is required. macOS includes libcurl.
   Fedora/RHEL - dnf install libcurl-devel
   Ubuntu/Debian - apt-get install libcurl-dev
 Python 3.7
@@ -42,13 +42,13 @@ python setup.py install
 4. Install Qt 5.9.3
 
   ```sh
-Example installation for MAC OSX and Ubuntu:
+Example installation for macOS and Ubuntu:
     Go to http://download.qt.io/archive/qt/5.x/5.x.y/
     Download, run and install 
-      qt-opensource-mac-x64-clang-5.x.y.dmg (for MAC OSX) 
+      qt-opensource-mac-x64-clang-5.x.y.dmg (for macOS) 
       qt-opensource-linux-x64-5.x.y.run (for Linux)
     After successful installation you should have 
-      /path/to/qt-5.x.y/5.x/clang_64 (for MAC OSX)
+      /path/to/qt-5.x.y/5.x/clang_64 (for macOS)
       /path/to/qt-5.x.y/5.x/gcc_64 (for Linux)
 
 More information for installing on Ubuntu:
@@ -59,39 +59,57 @@ https://wiki.qt.io/Install_Qt_5_on_Ubuntu
 
 B. Building Robo 3T and Dependencies
 -------------
+Ref: https://wiki.openssl.org/index.php/Compilation_and_Installation#OS_X  
 
-#### Step 1. Build OpenSSL (1.0.2o)
+#### 1. Build OpenSSL 
 
-Steps to build OpenSSL on MAC:
+Version 1.1.1f (Mar/2020) for macOS  
+Version 1.0.2o (Mar/2018) for Linux  
 
+**macOS:**  
   ```sh
-Download openssl-1.0.2o (https://www.openssl.org/source/old/1.0.2/)
-tar -xvzf openssl-1.0.2o.tar.gz
-cd openssl-1.0.2o
-./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
-make (or sudo make)
-mkdir lib
-cp libssl*.dylib libcrypto*.dylib lib/
+wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1f.tar.gz
+tar -xf openssl-1.1.1f.tar.gz
+cd /opt/openssl-1.1.1f
+
+./Configure darwin64-x86_64-cc shared no-ssl2 no-ssl3 no-comp  
+    // Info: With openssl version 1.1.1, configure command with rpath stopped working
+    // Last working configure command with rpath was: 
+    // ./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
+
+(make clean) 
+make (or sudo make)  
+// Verify libssl.dylib and libcrypto.dylib file are created 
+
+// Due to broken configure command with rpath, these extra steps are also required:
+install_name_tool -id "@rpath/lib/libssl.1.1.dylib" libssl.dylib
+install_name_tool -change /usr/local/lib/libcrypto.1.1.dylib @rpath/lib/libcrypto.1.1.dylib libssl.dylib
+install_name_tool -id "@rpath/lib/libcrypto.1.1.dylib" libcrypto.dylib
+// Finally, we should have this output using otool:
+otool -L libssl.dylib 
+libssl.dylib:
+	@rpath/lib/libssl.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
+	@rpath/lib/libcrypto.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1281.100.1)
+
+otool -L libcrypto.dylib 
+libcrypto.dylib:
+	@rpath/lib/libcrypto.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1281.100.1)
 ```
-Helper Commands
-  ```sh
-// to start fresh build
-make clean
-```
 
-Steps to build OpenSSL on Linux:
+**Linux:**
 
   ```sh
-Download openssl-1.0.x (ftp://ftp.openssl.org/source/old/1.0.x/openssl-1.0.x.tar.gz)
-tar -xvzf openssl-1.0.x.tar.gz
-cd /home/<user>/Downloads/openssl-1.0.x
+wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2o.tar.gz
+tar -xf openssl-1.0.2o.tar.gz
+cd /opt/openssl-1.0.2o
 ./config shared
 make
-mkdir lib
-cp libssl* libcrypto* lib/
+// Verify libssl.so and libcrypto.so are created
 ```
 
-#### Step 2. Build Robo 3T Shell (fork of MongoDB)
+#### 2. Build Robo 3T Shell (fork of MongoDB)
 
 Clone Robo 3T Shell and make sure you are on latest branch:
 
@@ -110,10 +128,11 @@ directories:
 
 Separate directories by semicolon `;` (not colon):
 
-    // MAC OSX example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.y/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.xy"
+    // macOS example:
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.y/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-x.y.z"
+    
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.y/5.x.y/gcc_64/;/home/<user>/robomongo-shell;/home/<user>/Downloads/openssl-1.0.xy"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.y/5.x.y/gcc_64/;/home/<user>/robomongo-shell;/home/<user>/Downloads/openssl-x.y.z"
 
 Install pip requirements
 
@@ -154,7 +173,7 @@ Clean build files for debug mode:
   
 For more information refer to [Building Robo 3T Shell](BuildRobo3TShell.md) 
 
-#### Step 3. Build Robo 3T
+#### 3. Build Robo 3T
 
 Download Robo 3T: 
 

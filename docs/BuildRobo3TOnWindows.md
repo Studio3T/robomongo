@@ -67,35 +67,30 @@ We use CMake 3.10.0
  Download and install Qt from http://download.qt.io/archive/qt 
  Run the installer and select only 'msvc2015 64-bit'
 
-#### 6. OpenSSL (1.0.2o)
-Download openssl from (https://www.openssl.org/source/old/1.0.2/)
-  
+#### 6. OpenSSL (1.1.1f)
+Download openssl from https://www.openssl.org/source/old/1.1.1/openssl-1.1.1f.tar.gz  
 
 B. Building Robo 3T and Dependencies
--------------
+-------------  
 
 #### 1. Build OpenSSL
 
-Steps to build OpenSSL on windows:
-  ```sh
+Steps to build OpenSSL on windows:  
+- Ensure you have perl installed on your machine (e.g. ActiveState or Strawberry), and available on your %PATH%  
+- Ensure you have NASM installed on your machine, and available on your %PATH%  
+
+```sh
 Open Visual Studio tool x64 Cross Tools Command prompt
 cd to the directory where you have openssl sources cd c:\myPath\openssl
 perl Configure VC-WIN64A
-ms\do_win64a
-nmake -f ms\ntdll.mak
-```
-
-**Check Point:**
-After successful build, newly created sub directory out32dll should contain dynamic lib files libeay32.lib (and libeay32.dll) and ssleay32.lib (and ssleay32.dll); and associated include files will be in newly created folder "inc32".
-
-Helper Commands:
-  ```sh
-// clean to start fresh build
-nmake -f ms\ntdll.mak clean
-```
+(nmake clean)
+nmake
+// Verify these files are created: 
+libcrypto-1_1x64.dll, libssl-1_1-x64.dll (with all the build additionals such as .pdb .lik or static .lib)
+```  
 
 Refer to OpenSSL documentation for more information:  
-https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
+https://wiki.openssl.org/index.php/Compilation_and_Installation#OpenSSL_1.1.0  
 
 #### 2. Build Robo 3T Shell (fork of MongoDB)
 
@@ -113,9 +108,12 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shel
 2. Location of Robo 3T Shell
 3. Location of OpenSSL
 
+**Important:**   
+Make sure to move openssl and robomongo-shell repos into root directory of your drives (e.g. e:\robomongo-shell)
+
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.2o"  
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "e:\Qt\Qt5.9.3\5.9.3\msvc2015_64;e:\robomongo-shell;e:\openssl-x.y.z"  
 
 Open '**a new**' VS2017 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 

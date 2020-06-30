@@ -129,15 +129,16 @@ directories:
 Separate directories by semicolon `;` (not colon):
 
     // macOS example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.y/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-x.y.z"
+    export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.y/5.x/clang_64;/opt/robo-shell;/opt/openssl-x.y.z"
     
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.y/5.x.y/gcc_64/;/home/<user>/robomongo-shell;/home/<user>/Downloads/openssl-x.y.z"
+    export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.y/5.x.y/gcc_64/;/opt/<user>/robo-shell;/opt/openssl-x.y.z"
 
 Install pip requirements
 
 ```
-// macOS / Linux assuming python = python 3.7
+// macOS / Linux
+pip3 install --user -r etc/pip/compile-requirements.txt
 pip3 install --user -r etc/pip/dev-requirements.txt
 ```
 

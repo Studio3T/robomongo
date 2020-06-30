@@ -351,6 +351,10 @@ namespace Robomongo
             dbNames = client->getDatabaseNames();
         } 
         catch(const std::exception &ex) {
+#if defined(__clang__) 
+#pragma clang diagnostic push    
+#pragma clang diagnostic ignored "-Wlogical-op-parentheses"
+#endif
             bool const informUser {
                 event != nullptr &&
                 event->connectionType == ConnectionType::ConnectionPrimary &&
@@ -358,7 +362,9 @@ namespace Robomongo
                 !_connSettings->primaryCredential()->useManuallyVisibleDbs() ||
                 _connSettings->primaryCredential()->manuallyVisibleDbs().empty()
             };
-
+#if defined(__clang__) 
+#pragma clang diagnostic pop
+#endif
             std::string const hint {
                 "\n\nHint: If this user has access to a specific database, "
                 "please use \"Manually specify visible databases\" option in "

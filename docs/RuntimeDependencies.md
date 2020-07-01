@@ -68,7 +68,7 @@ openssl-1.0.2o: nm -gD libssl.so | grep SSL_library_init
 0000000000055520 T SSL_library_init
 ```  
 
-#### e. Update path of a dependency of an executable
+#### g. Update path of a dependency of an executable
 
 ```
 ldd exec_file | grep libcurlpp

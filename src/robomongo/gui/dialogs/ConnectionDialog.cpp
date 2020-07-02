@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDialogButtonBox>
+#include <QSettings>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -22,9 +23,8 @@ namespace Robomongo
     /**
      * @brief Constructs dialog with specified connection
      */
-    ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) 
-        : QDialog(),
-        _connection(connection)
+    ConnectionDialog::ConnectionDialog(ConnectionSettings *connection, QWidget *parent /* = nullptr */)
+        : QDialog(parent), _connection(connection)
     {
         setWindowTitle("Connection Settings");
         setWindowIcon(GuiRegistry::instance().serverIcon());
@@ -72,6 +72,8 @@ namespace Robomongo
 #elif __linux__        
         setMinimumWidth(900);
 #endif
+
+        restoreWindowSettings();
     }
 
     /**
@@ -79,8 +81,22 @@ namespace Robomongo
      */
     void ConnectionDialog::accept()
     {
+        saveWindowSettings();
+
         if (validateAndApply())
             QDialog::accept();
+    }
+
+    void ConnectionDialog::reject()
+    {
+        saveWindowSettings();
+        QDialog::reject();
+    }
+
+    void ConnectionDialog::closeEvent(QCloseEvent *event)
+    {
+        saveWindowSettings();
+        QWidget::closeEvent(event);
     }
 
     void ConnectionDialog::setAuthTab(QString const& db, QString const& username, QString const& pwd)
@@ -96,6 +112,18 @@ namespace Robomongo
     void ConnectionDialog::setDefaultDb(QString const& defaultDb)
     {
         _advancedTab->setDefaultDb(defaultDb);
+    }
+
+    void ConnectionDialog::restoreWindowSettings()
+    {
+        QSettings settings("3T", "Robomongo");
+        resize(settings.value("ConnectionDialog/size").toSize());
+    }
+
+    void ConnectionDialog::saveWindowSettings() const
+    {
+        QSettings settings("3T", "Robomongo");
+        settings.setValue("ConnectionDialog/size", size());
     }
 
     bool ConnectionDialog::validateAndApply()

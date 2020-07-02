@@ -266,7 +266,7 @@ namespace Robomongo
     void ConnectionsDialog::add()
     {       
         auto newConnSettings = std::unique_ptr<ConnectionSettings>(new ConnectionSettings(false));
-        ConnectionDialog editDialog(newConnSettings.get());
+        ConnectionDialog editDialog(newConnSettings.get(), this);
 
         // Do nothing if not accepted
         if (editDialog.exec() != QDialog::Accepted) {
@@ -292,7 +292,7 @@ namespace Robomongo
 
         auto connection = currentItem->connection();
         boost::scoped_ptr<ConnectionSettings> clonedConnection(connection->clone());
-        ConnectionDialog editDialog(clonedConnection.get());
+        ConnectionDialog editDialog(clonedConnection.get(), this);
 
         // Do nothing if not accepted
         if (editDialog.exec() != QDialog::Accepted) {
@@ -370,7 +370,7 @@ namespace Robomongo
         connection->setConnectionName(newConnectionName);
         connection->replicaSetSettings()->setCachedSetName("");
 
-        ConnectionDialog editDialog(connection);
+        ConnectionDialog editDialog(connection, this);
 
         // Cleanup newly created connection and return, if not accepted.
         if (editDialog.exec() != QDialog::Accepted) {

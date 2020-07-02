@@ -23,7 +23,7 @@ namespace Robomongo
         /**
          * @brief Constructs dialog with specified connection
          */
-        ConnectionDialog(ConnectionSettings *connection);
+        ConnectionDialog(ConnectionSettings *connection, QWidget *parent = nullptr);
         
         ConnectionSettings *const connection() const { return _connection; }        
         void setAuthTab(QString const& db, QString const& username, QString const& pwd);
@@ -43,7 +43,12 @@ namespace Robomongo
         void testConnection();
 
     private:
+        void reject();
+        void closeEvent(QCloseEvent *event);
+        void restoreWindowSettings();
+        void saveWindowSettings() const;
         bool validateAndApply();
+        
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;

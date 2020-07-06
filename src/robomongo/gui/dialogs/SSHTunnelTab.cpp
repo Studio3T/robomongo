@@ -62,7 +62,11 @@ namespace Robomongo
         VERIFY(connect(_passwordEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePasswordEchoMode())));
 
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info->privateKeyFile()));
-        
+        _privateKeyBox->setPlaceholderText(
+            "DSA, RSA, ECDSA and Ed25519 keys are supported."
+            " PPK keys must be converted to OPENSSH format."
+        );
+
         _passphraseBox = new QLineEdit(QtUtils::toQString(info->passphrase()));
         _passphraseBox->setEchoMode(QLineEdit::Password);
         _passphraseEchoModeButton = new QPushButton;

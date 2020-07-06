@@ -115,6 +115,36 @@ View LC_RPATH records of executable or shared library:
 
 For Robomongo binary it should be `$executable_path/../Frameworks`
 
+More about `otool -l`
+
+```				
+$ otool -l /opt/robo/build/release/src/robomongo/Robo\ 3T.app/Contents/MacOS/Robo\ 3T 
+....
+Load command 23
+          cmd LC_LOAD_DYLIB
+      cmdsize 56
+         name @rpath/lib/libssl.1.1.dylib (offset 24)
+   time stamp 2 Thu Jan  1 03:00:02 1970
+      current version 1.1.0
+compatibility version 1.1.0
+Load command 24
+          cmd LC_LOAD_DYLIB
+      cmdsize 56
+         name @rpath/lib/libcrypto.1.1.dylib (offset 24)
+   time stamp 2 Thu Jan  1 03:00:02 1970
+      current version 1.1.0
+compatibility version 1.1.0
+....
+Load command 27
+          cmd LC_RPATH
+      cmdsize 48
+         path /opt/Qt5.9.3/5.9.3/clang_64/lib (offset 12)
+Load command 28
+          cmd LC_RPATH
+      cmdsize 32
+         path /opt/openssl-1.1.1f (offset 12)
+```	 
+
 #### b. Edit dependencies of executable or shared library:
 ```
 // Before 

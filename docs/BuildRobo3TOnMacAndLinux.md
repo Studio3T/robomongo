@@ -80,8 +80,10 @@ cd /opt/openssl-1.1.1f
 (make clean) 
 make (or sudo make)  
 // Verify libssl.dylib and libcrypto.dylib file are created 
+mkdir lib
+cp lib*.dylib lib/
 
-// Due to broken configure command with rpath, these extra steps are also required:
+// Due to broken './Configure' command with rpath above, these extra steps are also required:
 install_name_tool -id "@rpath/lib/libssl.1.1.dylib" libssl.dylib
 install_name_tool -change /usr/local/lib/libcrypto.1.1.dylib @rpath/lib/libcrypto.1.1.dylib libssl.dylib
 install_name_tool -id "@rpath/lib/libcrypto.1.1.dylib" libcrypto.dylib

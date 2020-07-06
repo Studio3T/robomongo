@@ -67,7 +67,7 @@ Version 1.1.1f (Mar/2020) for macOS
 Version 1.0.2o (Mar/2018) for Linux  
 
 **macOS:**  
-  ```sh
+```sh
 wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1f.tar.gz
 tar -xf openssl-1.1.1f.tar.gz
 cd /opt/openssl-1.1.1f

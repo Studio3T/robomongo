@@ -114,7 +114,7 @@ namespace Robomongo
         _srvButton = new QPushButton("From SRV");
 #ifdef _WIN32
         _srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _srvButton->setMaximumWidth(60);
+        _srvButton->setMinimumWidth(60);
 #else   // MacOS
         _srvButton->setMaximumHeight(HighDpiConstants::MACOS_HIGH_DPI_BUTTON_HEIGHT);   
         _srvButton->setMaximumWidth(90);

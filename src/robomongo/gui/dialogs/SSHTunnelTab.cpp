@@ -63,7 +63,7 @@ namespace Robomongo
 
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info->privateKeyFile()));
         _privateKeyBox->setPlaceholderText(
-            "DSA, RSA, ECDSA and Ed25519 keys are supported."
+            "DSA, RSA, and on Windows/macOS ECDSA, Ed25519 keys are supported."
             " PPK keys must be converted to OPENSSH format."
         );
 

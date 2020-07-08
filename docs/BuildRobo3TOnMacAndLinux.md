@@ -72,12 +72,12 @@ wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1f.tar.gz
 tar -xf openssl-1.1.1f.tar.gz
 cd /opt/openssl-1.1.1f
 
+(make clean) 
 ./Configure darwin64-x86_64-cc shared no-ssl2 no-ssl3 no-comp  
     // Info: With openssl version 1.1.1, configure command with rpath stopped working
     // Last working configure command with rpath was: 
     // ./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
 
-(make clean) 
 make (or sudo make)  
 // Verify libssl.dylib and libcrypto.dylib file are created 
 mkdir lib
@@ -106,6 +106,7 @@ libcrypto.dylib:
 wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2o.tar.gz
 tar -xf openssl-1.0.2o.tar.gz
 cd /opt/openssl-1.0.2o
+(make clean)
 ./config shared
 make
 // Verify libssl.so and libcrypto.so are created

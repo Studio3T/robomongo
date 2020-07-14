@@ -51,6 +51,8 @@ set(QJSON_VERSION 0.8.1)
 set(QJSON_DIR src/third-party/qjson-${QJSON_VERSION})
 set(QSCINTILLA_VERSION 2.8.4)
 set(QSCINTILLA_DIR src/third-party/qscintilla-${QSCINTILLA_VERSION})
+set(ESPRIMA_VERSION 2.7.3)
+set(ESPRIMA_DIR src/third-party/esprima-${ESPRIMA_VERSION})
 # todo: Use equivalent vars from googletest cmake files. Currently they are somehow not working.
 set(GOOGLE_TEST_VERSION 1.8.1)
 set(GOOGLE_TEST_DIR src/third-party/googletest-${GOOGLE_TEST_VERSION})

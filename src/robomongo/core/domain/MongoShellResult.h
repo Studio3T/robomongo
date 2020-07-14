@@ -9,10 +9,9 @@ namespace Robomongo
     class MongoShellResult
     {
     public:
-        typedef std::vector<MongoDocumentPtr> MongoDocumentPtrContainerType;
         MongoShellResult(
             const std::string &type, const std::string &response,
-            const MongoDocumentPtrContainerType &documents,
+            const std::vector<MongoDocumentPtr> &documents,
             const MongoQueryInfo &queryInfo, const std::string &statement,
             qint64 elapsedms, AggrInfo aggrInfo = AggrInfo()) :
             _type(type),
@@ -26,7 +25,7 @@ namespace Robomongo
 
         std::string response() const { return _response; }
         std::string type() const { return _type; }
-        MongoDocumentPtrContainerType documents() const { return _documents; }
+        std::vector<MongoDocumentPtr> documents() const { return _documents; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
         std::string statement() const { return _statement; }
         std::string statementShort() const {
@@ -42,7 +41,7 @@ namespace Robomongo
     private:
         std::string _type;
         std::string _response;
-        MongoDocumentPtrContainerType _documents;
+        std::vector<MongoDocumentPtr> _documents;
         MongoQueryInfo _queryInfo;
         std::string const _statement;
         qint64 _elapsedms;

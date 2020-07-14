@@ -44,7 +44,7 @@ namespace Robomongo
         _mechanismComboBox->addItem("MONGODB-CR");
 
         _manuallyVisibleDbs = new QLineEdit;
-        _manuallyVisibleDbs->setPlaceholderText("Comma-separated e.g. production, test");
+        _manuallyVisibleDbs->setPlaceholderText("Comma-separated e.g. products, users");
         _manuallyVisibleDbsLabel = new QLabel("Databases");
         _manuallyVisibleDbsInfo = new QLabel(
             "Some MongoDB users might not have the permission to get the list of"

@@ -1,5 +1,6 @@
 #include "robomongo/gui/dialogs/AboutDialog.h"
 
+#include <QDate>
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QLabel>
@@ -7,32 +8,44 @@
 #include <QTabWidget>
 #include <QTextBrowser>
 #include <QFile>
+#include <Qsci/qsciglobal.h>
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace
-{
-    const QString description = QObject::tr(
+{    
+    const QString description {
         "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION "</h3>"
-        "Shell-centric MongoDB management tool."
+        "Shell-centric MongoDB management tool.<br/>"
+        "<a href=\"https://" PROJECT_GITHUB_ISSUES "\">Submit</a> issues/proposals on GitHub.<br/>"
         "<br/>"
+
+        "<a href=\"https://" PROJECT_DOMAIN "\">" PROJECT_DOMAIN "</a> <br/>"
+        "Copyright 2014-" + QString::number(QDate::currentDate().year()) +
+        " <a href= " PROJECT_COMPANYNAME_DOMAIN " >" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
         "<br/>"
-        "Visit " PROJECT_NAME_TITLE " website: <a href=\"https://" PROJECT_DOMAIN "\">" PROJECT_DOMAIN "</a> <br/>"
-        "<br/>"
-        "<a href=\"https://" PROJECT_GITHUB_ISSUES "\">Submit</a> issues/proposals on GitHub.  <br/>"
-        "<br/>"
-        "Copyright 2014-2017 <a href= " PROJECT_COMPANYNAME_DOMAIN " >" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
-        "<br/>"
+
         "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
         "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
         "PARTICULAR PURPOSE.<br/>"
         "<br>"
-        "Credits: "
+
+        "<b>Dependencies: <br></b>"
+        "Mongo-Shell " MongoDB_VERSION "<br>"
+        "Qt " PROJECT_QT_VERSION "<br>"
+        "OpenSSL " 	   OPENSSL_VERSION "<br>"
+        "libssh2 " 	   LIBSSH2_VERSION "<br>"
+        "QJson "   	   QJSON_VERSION "<br>"
+        "QScintilla "  QSCINTILLA_VERSION_STR "<br>"
+        "Google Test " GOOGLE_TEST_VERSION "<br>"
+        "ESPRIMA "      ESPRIMA_VERSION "<br>"
+        "<br>"
+
+        "<b>Credits: <br/></b>"
+        "Some icons are designed by Freepik <a href=http://www.flaticon.com>www.flaticon.com</a>"
         "<br/>"
-        "Some icons are designed by Freepik from <a href=http://www.flaticon.com>www.flaticon.com</a>"
-        "<br/>"
-        );
+    };        
 }
 
 namespace Robomongo

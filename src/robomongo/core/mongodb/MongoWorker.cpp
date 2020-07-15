@@ -339,16 +339,19 @@ namespace Robomongo
 
     std::vector<std::string> MongoWorker::getDatabaseNamesSafe(EstablishConnectionRequest* event /*= nullptr*/)
     {
-        std::vector<std::string> dbNames;
+        std::set<std::string> dbNames;
         std::string const authBase = getAuthBase();
+        auto const primaryCredential { _connSettings->primaryCredential() };
+
         if (!_isAdmin && !authBase.empty()) {
-            dbNames.push_back(_connSettings->primaryCredential()->databaseName());
-            return dbNames;
+            dbNames.insert(primaryCredential->databaseName());
+            return std::vector<std::string> { dbNames.cbegin(), dbNames.cend() };
         }
 
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            dbNames = client->getDatabaseNames();
+            std::vector<std::string> dbNamesFetched { client->getDatabaseNames() };
+            dbNames = std::set<std::string> { dbNamesFetched.cbegin(), dbNamesFetched.cend() };
         } 
         catch(const std::exception &ex) {
 #if defined(__clang__) 
@@ -359,8 +362,8 @@ namespace Robomongo
                 event != nullptr &&
                 event->connectionType == ConnectionType::ConnectionPrimary &&
                 _connSettings->credentialCount() > 0 &&
-                !_connSettings->primaryCredential()->useManuallyVisibleDbs() ||
-                _connSettings->primaryCredential()->manuallyVisibleDbs().empty()
+                !primaryCredential->useManuallyVisibleDbs() ||
+                primaryCredential->manuallyVisibleDbs().empty()
             };
 #if defined(__clang__) 
 #pragma clang diagnostic pop
@@ -371,28 +374,25 @@ namespace Robomongo
                 "Connection Settings window -> Authentication tab."
             };
             sendLog(this, LogEvent::RBM_WARN, ex.what() + hint, informUser);
-
-            if (_connSettings->credentialCount() > 0 &&                
-                _connSettings->primaryCredential()->useManuallyVisibleDbs() && 
-                !_connSettings->primaryCredential()->manuallyVisibleDbs().empty())
-            {
-                CredentialSettings const *primCred = _connSettings->primaryCredential();
-                auto const dbList {
-                    QString::fromStdString(primCred->manuallyVisibleDbs())
-                    .split(',').toStdList()
-                };
-
-                for (auto const& db : dbList)
-                    dbNames.push_back(db.toStdString());
-            }
-
-            if (!authBase.empty() &&
-                find(dbNames.cbegin(), dbNames.cend(), authBase) == dbNames.cend()
-            ) {
-                dbNames.push_back(authBase);
-            }
         }
-        return dbNames;
+
+        if (_connSettings->credentialCount() > 0 &&
+            primaryCredential->useManuallyVisibleDbs() &&
+            !primaryCredential->manuallyVisibleDbs().empty()
+        )
+        {        
+            QString const manuallyVisibleDbs {
+                QString::fromStdString(primaryCredential->manuallyVisibleDbs())
+            };
+
+            for (auto const& db : manuallyVisibleDbs.split(',').toStdList())
+                dbNames.insert(db.toStdString());
+        }
+
+        if (!authBase.empty())
+            dbNames.insert(authBase);
+
+        return std::vector<std::string> { dbNames.cbegin(), dbNames.cend() };
     }
 
     /**

@@ -94,9 +94,10 @@ string(STRIP "${MongoDB_RELATIVE_LIBS}" MongoDB_RELATIVE_LIBS)
 # Convert string to list
 string(REPLACE " " ";" MongoDB_RELATIVE_LIBS ${MongoDB_RELATIVE_LIBS})
 
-# todo: Find better/permanent solution
+# todo: Find a better solution
 # Robo 1.4: Added as workaround fix for build error: 
 # fatal error LNK1170: line in command file contains 131071 or more characters
+# Happens when the path of robo-shell is a long string (e.g. "E:/user/code/robomongo-shell")
 set(MongoDB_OBJECTS_DIR_ENV $ENV{MongoDB_OBJECTS})
 if(MongoDB_OBJECTS_DIR_ENV)
   set(MongoDB_OBJECTS_DIR ${MongoDB_OBJECTS_DIR_ENV})

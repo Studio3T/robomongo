@@ -26,10 +26,18 @@
 namespace Robomongo
 {
     // 3T config files
-    auto const Studio3T_PropertiesDat = QString("%1/.3T/studio-3t/properties.dat").arg(QDir::homePath());
-    auto const DataMongodb_PropertiesDat = QString("%1/.3T/data-man-mongodb/properties.dat").arg(QDir::homePath());
-    auto const MongoChefPro_PropertiesDat = QString("%1/.3T/mongochef-pro/properties.dat").arg(QDir::homePath());
-    auto const MongoChefEnt_PropertiesDat = QString("%1/.3T/mongochef-enterprise/properties.dat").arg(QDir::homePath());
+    auto const Studio3T_PropertiesDat {
+        QString("%1/.3T/studio-3t/properties.dat").arg(QDir::homePath())
+    };
+    auto const DataMongodb_PropertiesDat { 
+        QString("%1/.3T/data-man-mongodb/properties.dat").arg(QDir::homePath())
+    };
+    auto const MongoChefPro_PropertiesDat {
+        QString("%1/.3T/mongochef-pro/properties.dat").arg(QDir::homePath())
+    };
+    auto const MongoChefEnt_PropertiesDat {
+        QString("%1/.3T/mongochef-enterprise/properties.dat").arg(QDir::homePath())
+    };
 
     const std::vector<std::pair<QString, QString>> S_3T_ZipFile_And_ConfigFile_List
     {
@@ -50,27 +58,33 @@ namespace Robomongo
     */
     const QString SchemaVersion = "2.0";
 
-    const auto CONFIG_FILE_0_8_5 = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_0_RC1 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_1_0_BETA = QString("%1/.3T/robomongo/1.1.0-Beta/robomongo.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_0_8_5 {
+        QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath())
+    };
+    const auto CONFIG_FILE_1_0_RC1 {
+        QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath())
+    };
+    const auto CONFIG_FILE_1_1_0_BETA {
+        QString("%1/.3T/robomongo/1.1.0-Beta/robomongo.json").arg(QDir::homePath())
+    };
 
     /**
     * @brief Robomongo config. files of old versions
     */
     // Important: In order to import connections from a version, config. file path must
-    //            be defined and placed into the  vector initializer list below in order.
+    //            be defined and placed into the vector initializer list below in order.
     std::vector<QString> const SettingsManager::_configFilesOfOldVersions
     {
-        QString("%1/.3T/robo-3t/1.3.1/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_3_1
-        QString("%1/.3T/robo-3t/1.3.0/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_3_0_BETA
-        QString("%1/.3T/robo-3t/1.2.1/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_2_1
-        QString("%1/.3T/robo-3t/1.2.0/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_2_0_BETA
-        QString("%1/.3T/robo-3t/1.1.1/robo3t.json").arg(QDir::homePath()),          // CONFIG_FILE_1_1_1
-        CONFIG_FILE_1_1_0_BETA,                                                     // CONFIG_FILE_1_1_0_BETA 
-        QString("%1/.3T/robomongo/1.0.0/robomongo.json").arg(QDir::homePath()),     // CONFIG_FILE_1_0_0     
-        CONFIG_FILE_1_0_RC1,                                                        // CONFIG_FILE_1_0_RC1
-        QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath()),   // CONFIG_FILE_0_9
-        CONFIG_FILE_0_8_5                                                           // CONFIG_FILE_0_8_5
+        QString("%1/.3T/robo-3t/1.3.1/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_3_1
+        QString("%1/.3T/robo-3t/1.3.0/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_3_0_BETA
+        QString("%1/.3T/robo-3t/1.2.1/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_2_1
+        QString("%1/.3T/robo-3t/1.2.0/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_2_0_BETA
+        QString("%1/.3T/robo-3t/1.1.1/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_1_1
+        CONFIG_FILE_1_1_0_BETA,                                            // CONFIG_FILE_1_1_0_BETA 
+        QString("%1/.3T/robomongo/1.0.0/robomongo.json").arg(QDir::homePath()),   // CONFIG_FILE_1_0_0     
+        CONFIG_FILE_1_0_RC1,                                               // CONFIG_FILE_1_0_RC1
+        QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath()), // CONFIG_FILE_0_9
+        CONFIG_FILE_0_8_5                                                  // CONFIG_FILE_0_8_5
     };
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;

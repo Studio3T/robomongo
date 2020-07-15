@@ -186,10 +186,12 @@ namespace Robomongo
 
     void MongoClient::addEditIndex(const IndexInfo &oldInfo, const IndexInfo &newInfo) const
     {   
+        bool const editIndex = !oldInfo._name.empty();
+
         // 1.Step: Drop Index (if this is an Edit Index action).
         // MongoDB docs: To modify an existing index, you need to drop and recreate the index.
         std::string const ns = newInfo._collection.ns().toString();
-        if (!oldInfo._name.empty())
+        if (editIndex)
             _dbclient->dropIndex(ns, oldInfo._name);
 
         // 2.Step: Add/Edit Index
@@ -228,9 +230,9 @@ namespace Robomongo
         try {
             _dbclient->createIndex(ns, createIndexSpec(newInfo));
         } 
-        catch (std::exception const& /*ex*/) {  // todo: log this -> ex.what()            
-            if (!oldInfo._name.empty()) {
-                // If we are here, index that is being edited, must have been already dropped and 
+        catch (std::exception const& /*ex*/) { // Logging of "ex" is done in upper scope
+            if (editIndex) {
+                // If we are here, index that is being edited, must have already been dropped and 
                 // creation of new index failed. So, we try to at least recover the dropped (old) index
                 _dbclient->createIndex(ns, createIndexSpec(oldInfo));
             }

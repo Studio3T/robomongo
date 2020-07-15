@@ -30,4 +30,9 @@ namespace Robomongo
         return fileInfo.exists() && fileInfo.isFile();
     }
 
+    template<typename T>
+    bool vectorContains(std::vector<T> const& vec, T const& value) {
+        return find(vec.cbegin(), vec.cend(), value) != vec.cend();
+    }
+
 }   // end of name space Robomongo

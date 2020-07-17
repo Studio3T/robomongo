@@ -37,7 +37,6 @@ namespace Robomongo
                              double mongoTimeoutSec, int shellTimeoutSec, QObject *parent) 
         : QObject(parent),
         _scriptEngine(nullptr),
-        _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
         _timerId(-1),
@@ -241,28 +240,23 @@ namespace Robomongo
             }
 
             if (_connSettings->hasEnabledPrimaryCredential()) {
-                CredentialSettings *credentials = _connSettings->primaryCredential();
+                CredentialSettings const * const credentials = _connSettings->primaryCredential();
 
                 // Building BSON object:
-                mongo::BSONObj authParams(mongo::BSONObjBuilder()
+                mongo::BSONObj const authParams { 
+                    mongo::BSONObjBuilder()
                     .append("user", credentials->userName())
                     .append("db", credentials->databaseName())
                     .append("pwd", credentials->userPassword())
                     .append("mechanism", credentials->mechanism())
-                    .obj());
+                    .obj()
+                };
 
                 conn->auth(authParams);
-
-                // If authentication succeed and database name is 'admin' -
-                // then user is admin, otherwise user is not admin
-                std::string dbName = credentials->databaseName();
-                std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
-                if (dbName.compare("admin") != 0) // dbName is NOT "admin"
-                    _isAdmin = false;
             }
 
             boost::scoped_ptr<MongoClient> client(getClient());
-            std::vector<std::string> dbNames = getDatabaseNamesSafe(event);
+            std::vector<std::string> const dbNames = getDatabaseNamesSafe(event);
 
             // If we do not have databases, it means that we are unable to
             // execute "listdatabases" command and we have nothing to show.
@@ -340,13 +334,7 @@ namespace Robomongo
     std::vector<std::string> MongoWorker::getDatabaseNamesSafe(EstablishConnectionRequest* event /*= nullptr*/)
     {
         std::set<std::string> dbNames;
-        std::string const authBase = getAuthBase();
         auto const primaryCredential { _connSettings->primaryCredential() };
-
-        if (!_isAdmin && !authBase.empty()) {
-            dbNames.insert(primaryCredential->databaseName());
-            return std::vector<std::string> { dbNames.cbegin(), dbNames.cend() };
-        }
 
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
@@ -389,6 +377,7 @@ namespace Robomongo
                 dbNames.insert(db.toStdString());
         }
 
+        std::string const authBase = getAuthBase();
         if (!authBase.empty())
             dbNames.insert(authBase);
 

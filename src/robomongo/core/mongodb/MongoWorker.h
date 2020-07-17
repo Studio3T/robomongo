@@ -183,7 +183,6 @@ namespace Robomongo
 
         std::unique_ptr<ScriptEngine> _scriptEngine;
 
-        bool _isAdmin;
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;

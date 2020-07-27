@@ -109,11 +109,11 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shel
 3. Location of OpenSSL
 
 **Important:**   
-Make sure to move openssl and robomongo-shell repos into root directory of your drives (e.g. e:\robomongo-shell)
+Make sure to move all your repos (robo, openssl, robo-shell etc..) into root directory of your drives (e.g. e:\robo-shell) and keep short repo names (e.g. robo-shell instead of robomongo-shell) otherwise you might end up with this error `If you see fatal error LNK1170: line in command file contains 131071 or more characters`
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "e:\Qt\Qt5.9.3\5.9.3\msvc2015_64;e:\robomongo-shell;e:\openssl-x.y.z"  
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "e:\Qt\Qt5.9.3\5.9.3\msvc2015_64;e:\robo-shell;e:\openssl-x.y.z"  
 
 Open '**a new**' VS2017 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
@@ -181,7 +181,11 @@ And finally, build Robo 3T:
 
 ```
 // If you see fatal error LNK1170: line in command file contains 131071 or more characters
-Solution: 
+Solution-1: 
+1. Move all your repos (robo, openssl, robo-shell etc..) into root directory of your drives.
+2. Keep short names e.g. robo-shell instead of robomongo-shell.
+
+Solution-2: 
 1. Create environment variable MongoDB_OBJECTS, set a short path e.g. "C:/"
 2. Open a new VS2017 x64 Native Tools Command Prompt and build Robo 3T Shell 
 3. Robo 3T Shell build script will copy the object files into MongoDB_OBJECTS directory

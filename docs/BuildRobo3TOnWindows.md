@@ -183,7 +183,8 @@ And finally, build Robo 3T:
 // If you see fatal error LNK1170: line in command file contains 131071 or more characters
 Solution-1: 
 1. Move all your repos (robo, openssl, robo-shell etc..) into root directory of your drives.
-2. Keep short names e.g. robo-shell instead of robomongo-shell.
+2. Use short names e.g. robo-shell instead of robomongo-shell.
+3. Update ROBOMONGO_CMAKE_PREFIX_PATH env. variable and try a fresh (clean) build.
 
 Solution-2: 
 1. Create environment variable MongoDB_OBJECTS, set a short path e.g. "C:/"

@@ -12,6 +12,10 @@ Runtime dependencies that are not privided by platforms but required by Robomong
 Diagnostic of dependencies
 --------------------------
 
+### Windows 
+
+GUI: http://dependencywalker.com/
+
 ### Linux
 
 #### a. View dependencies of executable or shared library: 

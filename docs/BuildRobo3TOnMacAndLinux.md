@@ -63,6 +63,8 @@ Ref: https://wiki.openssl.org/index.php/Compilation_and_Installation#OS_X
 
 #### 1. Build OpenSSL 
 
+(Todo: Can we find pre-built OpenSSL? To check => https://wiki.openssl.org/index.php/Binaries)
+
 Version 1.1.1f (Mar/2020) for macOS  
 Version 1.0.2o (Mar/2018) for Linux  
 

@@ -75,6 +75,8 @@ B. Building Robo 3T and Dependencies
 
 #### 1. Build OpenSSL
 
+(Todo: Can we find pre-built OpenSSL? To check => https://wiki.openssl.org/index.php/Binaries)
+
 Steps to build OpenSSL on windows:  
 - Ensure you have perl installed on your machine (e.g. ActiveState or Strawberry), and available on your %PATH%  
 - Ensure you have NASM installed on your machine, and available on your %PATH%  

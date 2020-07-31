@@ -1470,15 +1470,15 @@ namespace Robomongo
 
         // Build dbVersionsConnected in following format: "3.4.3,2.6.0,..."
         QString dbVersionsConnected;
-        for (auto const& version : settingsManager->dbVersionsConnected())
+        for (auto const& version : settings->dbVersionsConnected())
             dbVersionsConnected.append(version + ',');
         
         if (dbVersionsConnected.endsWith(','))
             dbVersionsConnected.chop(1);
 
         // softwareId=8: Robomongo product ID 
-        QUrl url("http://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
-                  QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + settingsManager->anonymousID() + 
+        QUrl url("https://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
+                  QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + settings->anonymousID() + 
                   "&dbVersionsConnected=" + dbVersionsConnected + "&notify=true#");
 
         _networkAccessManager->get(QNetworkRequest(url));

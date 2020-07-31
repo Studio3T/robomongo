@@ -246,9 +246,7 @@ namespace Robomongo
         QUrlQuery postData(jsonDoc.toJson());
         postData = QUrlQuery("rd=" + postData.toString(QUrl::FullyEncoded).toUtf8());
       
-        QString const prefix = AppRegistry::instance().settingsManager()->useHttps() ? "https" : "http";
-        QNetworkRequest request(QUrl(prefix + "://rm-form.3t.io/"));
-
+        QNetworkRequest request(QUrl("https://rm-form.3t.io/"));
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
         auto networkManager = new QNetworkAccessManager;

@@ -43,7 +43,7 @@ namespace
         "<br>"
 
         "<b>Credits: <br/></b>"
-        "Some icons are designed by Freepik <a href=http://www.flaticon.com>www.flaticon.com</a>"
+        "Some icons are designed by Freepik <a href=https://www.flaticon.com>www.flaticon.com</a>"
         "<br/>"
     };        
 }

@@ -122,10 +122,9 @@ namespace Robomongo
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
-        QString const prefix = AppRegistry::instance().settingsManager()->useHttps() ? "https" : "http";
-        _pic1_URL = prefix + QString("://rm-feed.3t.io/") + IMAGE_PATH;
-        _text1_URL = prefix + QString("://rm-feed.3t.io/") + CONTENTS_PATH;
-        _rss_URL = prefix + QString("://blog.robomongo.org/rss/");
+        _pic1_URL = "https://rm-feed.3t.io/" + IMAGE_PATH;
+        _text1_URL = "https://rm-feed.3t.io/" + CONTENTS_PATH;
+        _rss_URL = "https://blog.robomongo.org/rss/";
 
         /* Temporarily disabling Recent Connections feature
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);

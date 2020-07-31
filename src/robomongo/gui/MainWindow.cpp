@@ -502,12 +502,6 @@ namespace Robomongo
         duplicateAction->setVisible(true);
         VERIFY(connect(duplicateAction, SIGNAL(triggered()), SLOT(duplicateTab())));
 
-        // Open welcome tab action
-        auto openWelcomeTabAction = new QAction("Open/Refresh Welcome Tab", this);
-        openWelcomeTabAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W);
-        openWelcomeTabAction->setVisible(true);
-        VERIFY(connect(openWelcomeTabAction, SIGNAL(triggered()), SLOT(openWelcomeTab())));
-
         // Window menu
         QMenu *windowMenu = menuBar()->addMenu("Window");
         //minimize
@@ -520,7 +514,16 @@ namespace Robomongo
         windowMenu->addAction(reloadAction);
         windowMenu->addAction(duplicateAction);
         windowMenu->addSeparator();
-        windowMenu->addAction(openWelcomeTabAction);
+
+        auto const& settings { AppRegistry::instance().settingsManager() };
+        if (!settings->disableHttpsFeatures()) {
+            // Open welcome tab action
+            auto openWelcomeTabAction = new QAction("Open/Refresh Welcome Tab", this);
+            openWelcomeTabAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W);
+            openWelcomeTabAction->setVisible(true);
+            VERIFY(connect(openWelcomeTabAction, SIGNAL(triggered()), SLOT(openWelcomeTab())));
+            windowMenu->addAction(openWelcomeTabAction);
+        }        
 
         auto toolbarsSettings = AppRegistry::instance().settingsManager()->toolbars();
 
@@ -643,16 +646,19 @@ namespace Robomongo
         // Catch application windows focus changes
         VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
 
-        _networkAccessManager = new QNetworkAccessManager;
-        VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_networkReply(QNetworkReply*))));
-        
-        // First check for updates 30 secs after program start
-        QTimer::singleShot(30000, this, SLOT(checkUpdates()));   // 30000 for 30secs
+        if (!settings->disableHttpsFeatures() && settings->checkForUpdates()) {
+            _networkAccessManager = new QNetworkAccessManager;
+            VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)), 
+                this, SLOT(on_networkReply(QNetworkReply*))));
 
-        // Check for updates every 1 hour
-        auto timer = new QTimer(this);
-        VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
-        timer->start(3600000);     // 1 hour = (3600000 msec = 60 * 60 * 1000 msec)
+            // First check for updates 30 secs after program start            
+            QTimer::singleShot(30'000, this, SLOT(checkUpdates()));   // 30'000 for 30secs
+
+            // Then, check for updates every 1 hour
+            auto const timer { new QTimer(this) };
+            VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
+            timer->start(3600000);     // 1 hour = (3600000 msec = 60 * 60 * 1000 msec)
+        }
     }
 
     void MainWindow::createStylesMenu()
@@ -1295,7 +1301,8 @@ namespace Robomongo
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
         LogWidget *log = new LogWidget(this);        
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::logger::LogSeverity)), log, SLOT(addMessage(const QString&, mongo::logger::LogSeverity))));
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::logger::LogSeverity)), 
+            log, SLOT(addMessage(const QString&, mongo::logger::LogSeverity))));
         _logDock = new QDockWidget(tr("Logs"));
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
@@ -1454,8 +1461,8 @@ namespace Robomongo
 
     void MainWindow::checkUpdates()
     {
-        auto const& settingsManager = Robomongo::AppRegistry::instance().settingsManager();
-        if (!settingsManager->checkForUpdates())
+        auto const& settings { AppRegistry::instance().settingsManager() };
+        if (!settings->checkForUpdates() || settings->disableHttpsFeatures())
             return;
 
 #ifdef _WIN32

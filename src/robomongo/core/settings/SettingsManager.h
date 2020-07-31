@@ -198,8 +198,8 @@ namespace Robomongo
         void setProgramExitedNormally(bool value) { _programExitedNormally = value; }
         bool programExitedNormally() const { return _programExitedNormally; }
 
-        bool useHttps() const { return _useHttps; }
-        void setUseHttps(bool status) { _useHttps = status; }
+        // Designed to be set only by human users
+        bool disableHttpsFeatures() const { return _disableHttpsFeatures; }        
 
         /**
          * Returns number of imported connections
@@ -248,7 +248,7 @@ namespace Robomongo
         bool _lineNumbers;
         bool _disableConnectionShortcuts;
         bool _programExitedNormally = true;
-        bool _useHttps = true;
+        bool _disableHttpsFeatures = false;
         QSet<QString> _acceptedEulaVersions;
         QSet<QString> _dbVersionsConnected;
         int _batchSize;

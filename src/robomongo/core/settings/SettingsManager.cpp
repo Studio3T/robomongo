@@ -223,7 +223,7 @@ namespace Robomongo
         _programExitedNormally = map.contains("programExitedNormally") ? 
                                  map.value("programExitedNormally").toBool() : true;
 
-        _useHttps = map.contains("useHttps") ? map.value("useHttps").toBool() : true;
+        _disableHttpsFeatures = map.contains("disableHttpsFeatures") ? map.value("disableHttpsFeatures").toBool() : false;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
@@ -409,7 +409,7 @@ namespace Robomongo
         map.insert("anonymousID", _anonymousID);
         map.insert("cacheData", _cacheData);
         map.insert("programExitedNormally", _programExitedNormally);
-        map.insert("useHttps", _useHttps);
+        map.insert("disableHttpsFeatures", _disableHttpsFeatures);
 
         return map;
     }

@@ -152,8 +152,7 @@ namespace Robomongo
     {
         saveWindowSettings();
 
-        // Build post data and send
-        if(_showFormPage)
+        if(_showFormPage) 
             postUserData();
 
         QDialog::accept();
@@ -210,9 +209,11 @@ namespace Robomongo
 
     void EulaDialog::postUserData() const
     {
-        if (_emailEdit->text().isEmpty())
+        if (_emailEdit->text().isEmpty() || 
+            AppRegistry::instance().settingsManager()->disableHttpsFeatures()
+        )
             return;
-        
+
         // OS string
 #ifdef _WIN32
         QString const OS = "win";

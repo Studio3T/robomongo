@@ -3,9 +3,11 @@
 #include <QKeyEvent>
 #include <QScrollArea>
 
+#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/KeyboardManager.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
@@ -69,11 +71,13 @@ namespace Robomongo
         scrollArea->setWidget(_welcomeTab);
         scrollArea->setBackgroundRole(QPalette::Base);
 
+        if (!AppRegistry::instance().settingsManager()->disableHttpsFeatures()) {
 #ifdef __APPLE__
-        addTab(scrollArea, QIcon(), "Welcome");
+            addTab(scrollArea, QIcon(), "Welcome");
 #else
-        addTab(scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
-#endif
+            addTab(scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
+#endif        
+        }
         scrollArea->setFrameShape(QFrame::NoFrame);
     }
 
@@ -207,7 +211,7 @@ namespace Robomongo
     {
         QTabWidget::resizeEvent(event);
 
-        if (_welcomeTab->isVisible())
+        if (_welcomeTab && _welcomeTab->isVisible())
             _welcomeTab->resize();
     }
 

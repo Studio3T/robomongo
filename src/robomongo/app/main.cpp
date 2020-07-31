@@ -71,42 +71,32 @@ int main(int argc, char *argv[], char** envp)
 #ifdef Q_OS_MAC
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
-
-    auto const& settingsManager = Robomongo::AppRegistry::instance().settingsManager();    
-    // Disable HTTPS and do not show EULA form if program exited abnormally
-    bool showEulaDialogForm = true;
-    if (!settingsManager->programExitedNormally()) {
-        showEulaDialogForm = false;
-        settingsManager->setUseHttps(false);
-        settingsManager->save();
-    }
-    
-    if (!settingsManager->useHttps())
-        showEulaDialogForm = false;
-    
+     
     // EULA License Agreement
-    if (!settingsManager->acceptedEulaVersions().contains(PROJECT_VERSION)) {
-        Robomongo::EulaDialog eulaDialog(showEulaDialogForm);
-        settingsManager->setProgramExitedNormally(false);
-        settingsManager->save();
+    auto const& settings { Robomongo::AppRegistry::instance().settingsManager() };
+    if (!settings->acceptedEulaVersions().contains(PROJECT_VERSION)) {
+        bool const showFormPage { settings->programExitedNormally() && !settings->disableHttpsFeatures() };
+        Robomongo::EulaDialog eulaDialog(showFormPage);
+        settings->setProgramExitedNormally(false);
+        settings->save();
         int const result = eulaDialog.exec();
-        settingsManager->setProgramExitedNormally(true);
-        settingsManager->save();
+        settings->setProgramExitedNormally(true);
+        settings->save();
         if (QDialog::Rejected == result) {
             rbm_ssh_cleanup();
             return 1;
         }
         // EULA accepted
-        settingsManager->addAcceptedEulaVersion(PROJECT_VERSION);
-        settingsManager->save();
+        settings->addAcceptedEulaVersion(PROJECT_VERSION);
+        settings->save();
     }  
 
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();
 
     // To be set true at normal program exit
-    settingsManager->setProgramExitedNormally(false);
-    settingsManager->save();
+    settings->setProgramExitedNormally(false);
+    settings->save();
 
     // Application main window
     Robomongo::MainWindow mainWindow;

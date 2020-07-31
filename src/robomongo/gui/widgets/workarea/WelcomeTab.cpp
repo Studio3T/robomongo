@@ -196,20 +196,22 @@ namespace Robomongo
         _blogsHeader->setHidden(true);
 
         //// --- Network Access Managers
-        auto text1Downloader = new QNetworkAccessManager;
-        VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), 
-                       this, SLOT(on_downloadTextReply(QNetworkReply*))));
-        text1Downloader->head(QNetworkRequest(_text1_URL));
+        if (!AppRegistry::instance().settingsManager()->disableHttpsFeatures()) {
+            auto text1Downloader = new QNetworkAccessManager;
+            VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(on_downloadTextReply(QNetworkReply*))));
+            text1Downloader->head(QNetworkRequest(_text1_URL));
 
-        auto pic1Downloader = new QNetworkAccessManager;
-        VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)), 
-               this, SLOT(on_downloadPictureReply(QNetworkReply*))));
-        pic1Downloader->head(QNetworkRequest(_pic1_URL));
+            auto pic1Downloader = new QNetworkAccessManager;
+            VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(on_downloadPictureReply(QNetworkReply*))));
+            pic1Downloader->head(QNetworkRequest(_pic1_URL));
 
-        auto rssDownloader = new QNetworkAccessManager;
-        VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), 
-                       this, SLOT(on_downloadRssReply(QNetworkReply*))));
-        rssDownloader->get(QNetworkRequest(_rss_URL));
+            auto rssDownloader = new QNetworkAccessManager;
+            VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(on_downloadRssReply(QNetworkReply*))));
+            rssDownloader->get(QNetworkRequest(_rss_URL));
+        }
 
         //// --- Layouts
         _allBlogsButton = new QPushButton("All Blog Posts");

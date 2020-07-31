@@ -40,5 +40,6 @@ namespace Robomongo
     // Sends LogEvent to main thread (App class) 
     void sendLog(
         QObject *sender, LogEvent::LogLevel const& severity,
-        std::string const& msg, bool const informUser = false);
+        std::string const& msg, bool const informUser = false
+    );
 }

@@ -42,4 +42,6 @@ namespace Robomongo
         QObject *sender, LogEvent::LogLevel const& severity,
         std::string const& msg, bool const informUser = false
     );
+
+    void debugLog(std::string_view msg);
 }

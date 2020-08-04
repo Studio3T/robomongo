@@ -6,20 +6,11 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
-    void sendLog(
-        QObject *sender, LogEvent::LogLevel const& severity,
-        std::string const& msg, bool const informUser /*= false*/)
-    {
-        AppRegistry::instance().bus()->send(
-            AppRegistry::instance().app(),
-            new LogEvent(sender, msg, severity, informUser)
-        );
-    }
-
     Logger::Logger()
     {
         QFile file {
@@ -57,5 +48,22 @@ namespace Robomongo
             logLevelStr += ": ";
         }
         emit printed(logLevelStr + msg.simplified(), level);
+    }
+
+    void sendLog(
+        QObject *sender, LogEvent::LogLevel const& severity,
+        std::string const& msg, bool const informUser /*= false*/)
+    {
+        AppRegistry::instance().bus()->send(
+            AppRegistry::instance().app(),
+            new LogEvent(sender, msg, severity, informUser)
+        );
+    }
+
+    void debugLog(std::string_view msg) {
+        if (!AppRegistry::instance().settingsManager()->debugMode())
+            return;
+
+        std::cout << msg << std::endl;
     }
 }

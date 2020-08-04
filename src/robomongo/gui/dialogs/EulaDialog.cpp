@@ -22,11 +22,11 @@
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
-
     EulaDialog::EulaDialog(bool showFormPage, QWidget *parent)
         : QWizard(parent), _showFormPage(showFormPage)
     {
@@ -252,6 +252,7 @@ namespace Robomongo
 
         auto networkManager = new QNetworkAccessManager;
         _reply = networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+        debugLog("EulaDialog: Form posted");
     }
 
     void EulaDialog::saveWindowSettings() const

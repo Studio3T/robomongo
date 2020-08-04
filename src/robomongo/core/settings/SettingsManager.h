@@ -199,7 +199,8 @@ namespace Robomongo
         bool programExitedNormally() const { return _programExitedNormally; }
 
         // Designed to be set only by human users
-        bool disableHttpsFeatures() const { return _disableHttpsFeatures; }        
+        bool disableHttpsFeatures() const { return _disableHttpsFeatures; }
+        bool debugMode() const { return _debugMode; }
 
         /**
          * Returns number of imported connections
@@ -249,6 +250,7 @@ namespace Robomongo
         bool _disableConnectionShortcuts;
         bool _programExitedNormally = true;
         bool _disableHttpsFeatures = false;
+        bool _debugMode = false;
         QSet<QString> _acceptedEulaVersions;
         QSet<QString> _dbVersionsConnected;
         int _batchSize;

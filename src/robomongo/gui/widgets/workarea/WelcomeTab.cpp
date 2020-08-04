@@ -129,7 +129,7 @@ namespace Robomongo
         /* Temporarily disabling Recent Connections feature
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
 
-       _recentConnsLay = new QVBoxLayout;       
+       _recentConnsLay = new QVBoxLayout;
         auto recentConnHeader = new QLabel(Recent_Connections_Header);
         //recentConnHeader->setMinimumWidth(_parent->width()*0.6);
 
@@ -175,10 +175,20 @@ namespace Robomongo
         connectButtonLay->addWidget(_connectButton);
         connectButtonLay->addStretch();
         */
-
+        
+#ifdef __APPLE__
+        constexpr int HEADER_POINT_SIZE = 10;
+#else 
+        constexpr int HEADER_POINT_SIZE = 7;
+#endif                
         //// What's new section
         _whatsNewHeader = new QLabel;
         _whatsNewHeader->setHidden(true);
+        QFont headerFont { _whatsNewHeader->font() };
+        headerFont.setPointSize(HEADER_POINT_SIZE);
+        _whatsNewHeader->setFont(headerFont);
+
+        // _whatsNewHeader->setFont
         _whatsNewText = new QLabel;
         _whatsNewText->setTextInteractionFlags(Qt::TextSelectableByMouse);
         _whatsNewText->setTextFormat(Qt::RichText);
@@ -194,6 +204,7 @@ namespace Robomongo
 
         _blogsHeader = new QLabel(BlogsHeader);
         _blogsHeader->setHidden(true);
+        _blogsHeader->setFont(headerFont);
 
         //// --- Network Access Managers
         if (!AppRegistry::instance().settingsManager()->disableHttpsFeatures()) {

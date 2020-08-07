@@ -5,8 +5,8 @@
 
 #include <QThread>
 
-#include "mongo/client/global_conn_pool.h"
-#include "mongo/client/replica_set_monitor.h"
+#include <mongo/client/global_conn_pool.h>
+#include <mongo/client/replica_set_monitor.h>
 #include <mongo/util/net/ssl_manager.h>
 #include <mongo/util/net/ssl_options.h>
 

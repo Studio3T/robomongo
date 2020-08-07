@@ -48,10 +48,11 @@ int main(int argc, char *argv[], char** envp)
     // Todo from mongo repo: This should use a TransportLayerManager or TransportLayerFactory
     auto serviceContext = mongo::getGlobalServiceContext();
     mongo::transport::TransportLayerASIO::Options opts;
-    opts.enableIPv6 = mongo::shellGlobalParams.enableIPv6;
+    opts.enableIPv6 = true;
     opts.mode = mongo::transport::TransportLayerASIO::Options::kEgress;
     serviceContext->setTransportLayer(
-        std::make_unique<mongo::transport::TransportLayerASIO>(opts, nullptr));
+        std::make_unique<mongo::transport::TransportLayerASIO>(opts, nullptr)
+    );
     auto tlPtr = serviceContext->getTransportLayer();
     uassertStatusOK(tlPtr->setup());
     uassertStatusOK(tlPtr->start());    

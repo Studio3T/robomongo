@@ -117,6 +117,12 @@ namespace Robomongo
     };
 
 /* -------------------------------- MainWindow --------------------------------- */
+
+    // In milliseconds
+    constexpr int ONE_HOUR = 3'600'000;     // (3'600'000 msec = 60 * 60 * 1000 msec)
+    constexpr int THIRTY_SECONDS = 30'000;
+    constexpr int ONE_SECOND = 1'000;
+
     MainWindow::MainWindow()
         : BaseClass(),
         _logDock(nullptr), _workArea(nullptr), _explorer(nullptr), _app(AppRegistry::instance().app()), 
@@ -646,18 +652,18 @@ namespace Robomongo
         // Catch application windows focus changes
         VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
 
-        if (!settings->disableHttpsFeatures() && settings->checkForUpdates()) {
-            _networkAccessManager = new QNetworkAccessManager;
-            VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)), 
-                this, SLOT(on_networkReply(QNetworkReply*))));
+        _networkAccessManager = new QNetworkAccessManager;
+        VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)),
+               this, SLOT(on_networkReply(QNetworkReply*))));
 
-            // First check for updates 30 secs after program start            
-            QTimer::singleShot(30'000, this, SLOT(checkUpdates()));   // 30'000 for 30secs
+        if (!settings->disableHttpsFeatures() && settings->checkForUpdates()) {
+            // First check for updates THIRTY_SECONDS after program start            
+            QTimer::singleShot(THIRTY_SECONDS, this, SLOT(checkUpdates()));
 
             // Then, check for updates every 1 hour
             auto const timer { new QTimer(this) };
             VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
-            timer->start(3600000);     // 1 hour = (3600000 msec = 60 * 60 * 1000 msec)
+            timer->start(ONE_HOUR);
         }
     }
 
@@ -972,6 +978,7 @@ namespace Robomongo
         auto action = qobject_cast<QAction*>(sender());
         AppRegistry::instance().settingsManager()->setCheckForUpdates(action->isChecked());
         AppRegistry::instance().settingsManager()->save();
+        QTimer::singleShot(ONE_SECOND, this, SLOT(checkUpdates()));
     }
 
     void MainWindow::openShellTimeoutDialog()
@@ -1438,9 +1445,12 @@ namespace Robomongo
 
     void MainWindow::on_networkReply(QNetworkReply* reply)
     {
-        QString str(QUrl::fromPercentEncoding(reply->readAll()));
+        QString str(QUrl::fromPercentEncoding(reply->readAll()));	
 
-        if ("NO-UPDATES-ANNOUNCED.\n" == str || reply->error() != QNetworkReply::NoError || str.isEmpty()) {
+        if (str.contains("No Updates")
+            || reply->error() != QNetworkReply::NoError 
+            || str.isEmpty()
+        ) {
             _updateLabel->setText("");
             _updateBar->setVisible(false);
             return;
@@ -1484,11 +1494,10 @@ namespace Robomongo
             dbVersionsConnected.chop(1);
 
         // softwareId=8: Robomongo product ID 
-        QUrl url("https://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
+        QUrl url("https://dev.3t.io/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
                   QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + settings->anonymousID() + 
                   "&dbVersionsConnected=" + dbVersionsConnected + "&notify=true#");
 
         _networkAccessManager->get(QNetworkRequest(url));
     }
-
 }

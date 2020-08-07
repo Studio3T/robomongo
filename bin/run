@@ -8,5 +8,7 @@ if [ "$(uname -s)" == "Darwin" ]; then
     # On Mac OS we should run executable from bundle
     "$BUILD_DIR/src/robomongo/Robo 3T.app/Contents/MacOS/Robo 3T"
 else
+    echo "Note: ./install must be executed before this script."
+    echo "Starting $BUILD_DIR/install/bin/robo3t..."
     "$BUILD_DIR/install/bin/robo3t"    
 fi

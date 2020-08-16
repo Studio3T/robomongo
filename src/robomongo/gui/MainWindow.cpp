@@ -1494,7 +1494,7 @@ namespace Robomongo
             dbVersionsConnected.chop(1);
 
         // softwareId=8: Robomongo product ID 
-        QUrl url("https://dev.3t.io/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
+        QUrl url("https://updates.3t.io/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
                   QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + settings->anonymousID() + 
                   "&dbVersionsConnected=" + dbVersionsConnected + "&notify=true#");
 

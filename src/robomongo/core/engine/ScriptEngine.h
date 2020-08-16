@@ -53,7 +53,7 @@ namespace Robomongo
 
         int _timeoutSec;
         mongo::ScriptEngine *_engine;
-        std::unique_ptr<mongo::Scope> _scope;
+        std::unique_ptr<mongo::Scope> _scope; // MozJSProxyScope
         bool _failedScope = false;
         QMutex _mutex;
         bool _initialized;

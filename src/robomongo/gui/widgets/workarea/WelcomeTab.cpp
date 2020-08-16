@@ -122,8 +122,8 @@ namespace Robomongo
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
-        _pic1_URL = "https://rm-feed.3t.io/" + IMAGE_PATH;
-        _text1_URL = "https://rm-feed.3t.io/" + CONTENTS_PATH;
+        _pic1_URL = "https://files.studio3t.com/rm-feed_3t_io/" + IMAGE_PATH;
+        _text1_URL = "https://files.studio3t.com/rm-feed_3t_io/" + CONTENTS_PATH;
         _rss_URL = "https://blog.robomongo.org/rss/";
 
         /* Temporarily disabling Recent Connections feature

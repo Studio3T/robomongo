@@ -39,7 +39,10 @@ cd scons-**
 python setup.py install
 ```
    
-4. Install Qt 5.9.3
+4. Install Qt 
+
+macOS: Qt 5.12.8   
+Linux: Qt 5.9.3  
 
   ```sh
 Example installation for macOS and Ubuntu:
@@ -65,8 +68,8 @@ Ref: https://wiki.openssl.org/index.php/Compilation_and_Installation#OS_X
 
 (Todo: Can we find pre-built OpenSSL? To check => https://wiki.openssl.org/index.php/Binaries)
 
-Version 1.1.1f (Mar/2020) for macOS  
-Version 1.0.2o (Mar/2018) for Linux  
+Version 1.1.1f (Mar/2020) on macOS  
+Version 1.0.2o (Mar/2018) on Linux  
 
 **macOS:**  
 ```sh

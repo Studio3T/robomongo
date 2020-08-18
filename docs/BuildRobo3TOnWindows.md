@@ -62,10 +62,10 @@ We use CMake 3.10.0
  command will be available from Command Prompt. For this set "Add CMake to the system
  PATH for current user" in the installer wizard page. 
    
-#### 5. Qt 5.9.3
+#### 5. Qt 5.12.8
 
  Download and install Qt from http://download.qt.io/archive/qt 
- Run the installer and select only 'msvc2015 64-bit'
+ Run the installer and select only 'msvc2017 64-bit'
 
 #### 6. OpenSSL (1.1.1f)
 Download openssl from https://www.openssl.org/source/old/1.1.1/openssl-1.1.1f.tar.gz  

@@ -289,8 +289,8 @@ namespace Robomongo
                         "This means if the recreate step fails, the index being edited might "
                         "have already been dropped. "
                         "In this case, Robo 3T will try to recover (recreate) the index being edited. "
-                        "Please do consider to backup your index first. "
-                        "\n\nAre you sure to proceed?"
+                        "Please consider backing up your index first. "
+                        "\n\nAre you sure you want to proceed?"
                     ),
                     QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton
                 );

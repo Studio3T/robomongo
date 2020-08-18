@@ -1447,7 +1447,7 @@ namespace Robomongo
     {
         QString str(QUrl::fromPercentEncoding(reply->readAll()));	
 
-        if (str.contains("No Updates")
+        if (str.contains("NO-UPDATES")
             || reply->error() != QNetworkReply::NoError 
             || str.isEmpty()
         ) {

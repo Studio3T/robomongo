@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+echo "Configuring with scan-build in debug mode..."
+echo "------------------------------------------------"
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get directory of this file
+PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
+source $BIN_DIR/common/setup debug # debug
+
+cd $BUILD_DIR
+BUILD_TYPE=Debug    # $BUILD_TYPE: Release or Debug
+scan-build -v --use-analyzer /usr/local/opt/llvm/bin/clang++ cmake -D "CMAKE_PREFIX_PATH=$PREFIX_PATH" -D "CMAKE_BUILD_TYPE=$BUILD_TYPE" -D "CMAKE_INSTALL_PREFIX=$INSTALL_PREFIX" "${@:2}" $PROJECT_DIR

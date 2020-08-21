@@ -2,7 +2,8 @@
 
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get directory of this file
 PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
-source $BIN_DIR/common/setup $1
+source $BIN_DIR/common/setup $1 # $1: release or debug
 
 cd $BUILD_DIR
+# $BUILD_TYPE: Release or Debug
 cmake -D "CMAKE_PREFIX_PATH=$PREFIX_PATH" -D "CMAKE_BUILD_TYPE=$BUILD_TYPE" -D "CMAKE_INSTALL_PREFIX=$INSTALL_PREFIX" "${@:2}" $PROJECT_DIR

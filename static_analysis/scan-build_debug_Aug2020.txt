@@ -1,0 +1,2697 @@
+gman-mac:bin gsimsek$ ./build_scan-build 
+scan-build: Using '/usr/local/opt/llvm/bin/clang++' for static analysis
+[  0%] Automatic MOC, UIC and RCC for target qjson
+[  2%] Building CXX object src/third-party/googletest-1.8.1/googlemock/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+[  2%] Automatic MOC, UIC and RCC for target qscintilla
+[  2%] Built target qjson_autogen
+[  2%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/openssl.c.o
+[  2%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/bcrypt_pbkdf.c.o
+[  3%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/agent.c.o
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/blowfish.c.o
+[  4%] Built target qscintilla_autogen
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/channel.c.o
+Scanning dependencies of target qjson
+Scanning dependencies of target qscintilla
+[  5%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/parser.cpp.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:84:46: warning: expression does not compute the number of elements in this
+      array; element type is 'uint32_t' (aka 'unsigned int'), not 'uint64_t' (aka 'unsigned long long') [-Wsizeof-array-div]
+        blf_enc(&state, cdata, sizeof(cdata) / sizeof(uint64_t));
+                                      ~~~~~  ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:65:14: note: array 'cdata' declared here
+    uint32_t cdata[BCRYPT_BLOCKS];
+             ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:84:46: note: place parentheses around the 'sizeof(uint64_t)' expression to
+      silence this warning
+        blf_enc(&state, cdata, sizeof(cdata) / sizeof(uint64_t));
+                                             ^
+1 warning generated.
+[  5%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/qobjecthelper.cpp.o
+[  6%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/json_scanner.cpp.o
+[  6%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/json_parser.cc.o
+^Cmake[2]: *** Deleting file `src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/channel.c.o'
+make[2]: *** Deleting file `src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/openssl.c.o'
+make[2]: *** [src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/depend] Interrupt: 2
+make[1]: *** [src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/all] Interrupt: 2
+make[2]: *** wait: Interrupted system call.  Stop.
+make[2]: *** Waiting for unfinished jobs....
+make[2]: *** wait: Interrupted system call.  Stop.
+make[1]: *** [src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/all] Error 2
+make[1]: *** [src/third-party/googletest-1.8.1/googlemock/gtest/CMakeFiles/gtest.dir/all] Interrupt: 2
+make[2]: *** wait: Interrupted system call.  Stop.
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/all] Error 2
+make: *** [all] Interrupt: 2
+scan-build: 0 bugs found.
+scan-build: The analyzer encountered problems on some source files.
+scan-build: Preprocessed versions of these sources were deposited in '/var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-21-171451-87959-1/failures'.
+scan-build: Please consider submitting a bug report using these files:
+scan-build:   http://clang-analyzer.llvm.org/filing_bugs.html
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ ./build_scan-build 
+Building with scan-build in debug mode...
+------------------------------------------------
+scan-build: Using '/usr/local/opt/llvm/bin/clang++' for static analysis
+[  0%] Automatic MOC, UIC and RCC for target qjson
+[  1%] Automatic MOC, UIC and RCC for target qscintilla
+[  2%] Building CXX object src/third-party/googletest-1.8.1/googlemock/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+[  2%] Built target qjson_autogen
+[  2%] Built target qscintilla_autogen
+[  2%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/openssl.c.o
+[  3%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/crypt.c.o
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/comp.c.o
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/channel.c.o
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/global.c.o
+Scanning dependencies of target qscintilla
+[  5%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/parser.cpp.o
+[  5%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/qobjecthelper.cpp.o
+[  6%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/json_scanner.cpp.o
+[  6%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/json_parser.cc.o
+^Cmake[2]: *** Deleting file `src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/channel.c.o'
+make[2]: *** Deleting file `src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/openssl.c.o'
+make[2]: *** [src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/depend] Interrupt: 2
+make[1]: *** [src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/all] Interrupt: 2
+make[2]: *** wait: Interrupted system call.  Stop.
+make[2]: *** Waiting for unfinished jobs....
+make[2]: *** wait: Interrupted system call.  Stop.
+make[1]: *** [src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/all] Error 2
+make[1]: *** [src/third-party/googletest-1.8.1/googlemock/gtest/CMakeFiles/gtest.dir/all] Interrupt: 2
+make[2]: *** wait: Interrupted system call.  Stop.
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/all] Error 2
+make: *** [all] Interrupt: 2
+scan-build: 0 bugs found.
+scan-build: The analyzer encountered problems on some source files.
+scan-build: Preprocessed versions of these sources were deposited in '/var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-21-171525-88118-1/failures'.
+scan-build: Please consider submitting a bug report using these files:
+scan-build:   http://clang-analyzer.llvm.org/filing_bugs.html
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ git diff
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ pw
+-bash: pw: command not found
+gman-mac:bin gsimsek$ pwd
+/opt/robo/bin
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ git add -f build_scan-build 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ git add -f configure_scan-build 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ ./clean debug
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ ./configure_scan-build 
+Configuring with scan-build in debug mode...
+------------------------------------------------
+scan-build: Using '/usr/local/opt/llvm/bin/clang++' for static analysis
+scan-build: Emitting reports for this run to '/var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-22-120933-92552-1'.
+-- The C compiler identification is Clang 10.0.1
+-- The CXX compiler identification is Clang 10.0.1
+-- Check for working C compiler: /usr/local/Cellar/llvm/10.0.1/libexec/ccc-analyzer
+-- Check for working C compiler: /usr/local/Cellar/llvm/10.0.1/libexec/ccc-analyzer -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/local/Cellar/llvm/10.0.1/libexec/c++-analyzer
+-- Check for working CXX compiler: /usr/local/Cellar/llvm/10.0.1/libexec/c++-analyzer -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Looking for pthread_create
+-- Looking for pthread_create - found
+-- Found Threads: TRUE  
+-- Found MongoDB: /opt/robo-shell (found version "r4.2.6") 
+-- Looking for include file unistd.h
+-- Looking for include file unistd.h - found
+-- Looking for include file inttypes.h
+-- Looking for include file inttypes.h - found
+-- Looking for include file stdlib.h
+-- Looking for include file stdlib.h - found
+-- Looking for include file sys/select.h
+-- Looking for include file sys/select.h - found
+-- Looking for include file sys/uio.h
+-- Looking for include file sys/uio.h - found
+-- Looking for include file sys/socket.h
+-- Looking for include file sys/socket.h - found
+-- Looking for include file sys/ioctl.h
+-- Looking for include file sys/ioctl.h - found
+-- Looking for include file sys/time.h
+-- Looking for include file sys/time.h - found
+-- Looking for include file sys/un.h
+-- Looking for include file sys/un.h - found
+-- Looking for include file windows.h
+-- Looking for include file windows.h - not found
+-- Looking for include file ws2tcpip.h
+-- Looking for include file ws2tcpip.h - not found
+-- Looking for include file winsock2.h
+-- Looking for include file winsock2.h - not found
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of long long
+-- Check size of long long - done
+-- Looking for gettimeofday
+-- Looking for gettimeofday - found
+-- Looking for strtoll
+-- Looking for strtoll - found
+-- Looking for snprintf
+-- Looking for snprintf - found
+poll use is disabled on this platform
+-- Looking for socket
+-- Looking for socket - found
+-- Looking for select
+-- Looking for select - found
+-- Looking for inet_addr
+-- Looking for inet_addr - found
+-- Performing Test HAVE_O_NONBLOCK
+-- Performing Test HAVE_O_NONBLOCK - Success
+-- Looking for include file arpa/inet.h
+-- Looking for include file arpa/inet.h - found
+-- Looking for include file netinet/in.h
+-- Looking for include file netinet/in.h - found
+-- Looking for strcasecmp
+-- Looking for strcasecmp - found
+-- Looking for _stricmp
+-- Looking for _stricmp - not found
+-- Looking for _snprintf
+-- Looking for _snprintf - not found
+-- Looking for __func__
+-- Looking for __func__ - found
+-- Looking for __FUNCTION__
+-- Looking for __FUNCTION__ - found
+-- Found PythonInterp: /usr/local/bin/python (found version "3.7.3") 
+
+ _______________[ Robo 3T configuration summary ]________________
+| 
+|-- Dependencies:
+| 
+|   Qt5 Core:           5.12.8    /opt/Qt5.12.8/5.12.8/clang_64/lib/cmake/Qt5Core
+|   Qt5 Gui:            5.12.8    /opt/Qt5.12.8/5.12.8/clang_64/lib/cmake/Qt5Gui
+|   Qt5 Widgets:        5.12.8    /opt/Qt5.12.8/5.12.8/clang_64/lib/cmake/Qt5Widgets
+|   Qt5 PrintSupport:   5.12.8    /opt/Qt5.12.8/5.12.8/clang_64/lib/cmake/Qt5PrintSupport
+|   Qt5 Network:        5.12.8    /opt/Qt5.12.8/5.12.8/clang_64/lib/cmake/Qt5Network
+|   Qt5 Xml:            5.12.8    /opt/Qt5.12.8/5.12.8/clang_64/lib/cmake/Qt5Xml
+|   MongoDB:            r4.2.6    /opt/robo-shell/build/debug
+|   MongoDB Objects:    r4.2.6    /opt/robo-shell/build
+|   OpenSSL:            1.1.1f    /opt/openssl-1.1.1f
+|   libssh2:            1.9.0     src/third-party/libssh2-1.9.0
+|   QJson:              0.8.1     src/third-party/qjson-0.8.1
+|   QScintilla:         2.8.4     src/third-party/qscintilla-2.8.4
+|   Google Test:        1.8.1     src/third-party/googletest-1.8.1
+|   ESPRIMA:            2.7.3     src/third-party/esprima-2.7.3
+|
+|-- Summary:
+|
+|   System:           Darwin
+|   Target SDK:       10.13
+|   Build type:       Debug
+|   Install path:     /opt/robo/build/debug/install
+|
+|-- Build, Run and Install:
+| 
+|     $ bin/build
+|     $ bin/run
+|     $ bin/install
+|
+|-- Run Unit Tests:
+| 
+|     $ bin/build_and_run_tests
+|     $ bin/run_tests (without building)
+|__________________________________________________________________
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /opt/robo/build/debug
+scan-build: 2 bugs found.
+scan-build: Run 'scan-view /var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-22-120933-92552-1' to examine bug reports.
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ ./build_scan-build 
+Building with scan-build in debug mode...
+------------------------------------------------
+scan-build: Using '/usr/local/opt/llvm/bin/clang++' for static analysis
+Scanning dependencies of target gtest
+Scanning dependencies of target qscintilla_autogen
+Scanning dependencies of target qjson_autogen
+Scanning dependencies of target libssh2
+[  1%] Automatic MOC, UIC and RCC for target qjson
+[  1%] Automatic MOC, UIC and RCC for target qscintilla
+[  2%] Building CXX object src/third-party/googletest-1.8.1/googlemock/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+[  2%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/blowfish.c.o
+[  2%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/openssl.c.o
+[  3%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/bcrypt_pbkdf.c.o
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/channel.c.o
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/agent.c.o
+[  4%] Built target qscintilla_autogen
+[  4%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/comp.c.o
+[  4%] Built target qjson_autogen
+[  5%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/crypt.c.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:84:46: warning: expression does not compute the number of elements in this
+      array; element type is 'uint32_t' (aka 'unsigned int'), not 'uint64_t' (aka 'unsigned long long') [-Wsizeof-array-div]
+        blf_enc(&state, cdata, sizeof(cdata) / sizeof(uint64_t));
+                                      ~~~~~  ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:65:14: note: array 'cdata' declared here
+    uint32_t cdata[BCRYPT_BLOCKS];
+             ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:84:46: note: place parentheses around the 'sizeof(uint64_t)' expression to
+      silence this warning
+        blf_enc(&state, cdata, sizeof(cdata) / sizeof(uint64_t));
+                                             ^
+1 warning generated.
+[  6%] Generating sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp
+[  7%] Generating sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp
+[  7%] Generating sources/Qt4Qt5/Qsci/moc_qsciapis.cpp
+[  8%] Generating sources/Qt4Qt5/Qsci/moc_qscilexer.cpp
+[  8%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/global.c.o
+[  8%] Generating sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp
+[  8%] Generating sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp
+[  8%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/hostkey.c.o
+[  9%] Generating sources/Qt4Qt5/Qsci/moc_qscimacro.cpp
+[ 10%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/keepalive.c.o
+[ 10%] Generating sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp
+Scanning dependencies of target qscintilla
+[ 10%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/kex.c.o
+[ 11%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/knownhost.c.o
+[ 11%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/mac.c.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/hostkey.c:411:5: warning: Value stored to 'sig_len' is never read
+    sig_len -= 15;
+    ^          ~~
+1 warning generated.
+[ 11%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/misc.c.o
+[ 12%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/packet.c.o
+[ 12%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp.o
+[ 12%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qsciapis.cpp.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:328:9: warning: Value stored to 'ret' is never read
+        ret = EC_POINT_oct2point(ec_group, point, k, k_len, NULL);
+        ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1605:9: warning: Value stored to 'ret' is never read
+        ret = -1;
+        ^     ~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1613:9: warning: Value stored to 'ret' is never read
+        ret = -1;
+        ^     ~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1633:9: warning: Value stored to 'ret' is never read
+        ret = -1;
+        ^     ~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1656:13: warning: Value stored to 'ret' is never read
+            ret = -1;
+            ^     ~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:2384:9: warning: Although the value stored to 'rc' is used in the enclosing expression, the value is never actually read from 'rc'
+    if((rc = _libssh2_ecdsa_curve_name_with_octal_new(&ec_key, point_buf,
+        ^    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:2393:9: warning: Value stored to 'rc' is never read
+        rc = -1;
+        ^    ~~
+7 warnings generated.
+[ 13%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qscilexer.cpp.o
+[ 13%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/pem.c.o
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciabstractapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciabstractapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciapis.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciapis.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+[ 14%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/publickey.c.o
+1 error generated.
+[ 14%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/scp.c.o
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexer.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexer.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qcolor.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexer.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexer.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qcolor.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 14%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp.o
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexercpp.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexercpp.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 15%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp.o
+[ 15%] Linking CXX static library libgtestd.a
+[ 15%] Built target gtest
+[ 15%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/session.c.o
+[ 15%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qscimacro.cpp.o
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexerjavascript.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexerjavascript.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+Scanning dependencies of target qjson
+[ 16%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/parser.cpp.o
+[ 16%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp.o
+[ 16%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/qobjecthelper.cpp.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2191:9: warning: Value stored to 's' is never read
+        s += host_sig_len;
+        ^    ~~~~~~~~~~~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2607:15: warning: 2nd function call argument is an uninitialized value
+        ret = ecdh_sha2_nistp(session, type, key_state->data,
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:3526:13: warning: Value stored to 'p' is never read
+            p += lang_sc_len + 4;
+            ^    ~~~~~~~~~~~~~~~
+3 warnings generated.
+[ 17%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp.o
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscimacro.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscimacro.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscimacro.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscimacro.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 18%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/json_scanner.cpp.o
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/qobjecthelper.cpp:23:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/qobjecthelper.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/qobjecthelper.cpp:23:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/qobjecthelper.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+Scanning dependencies of target gmock
+[ 18%] Building CXX object src/third-party/googletest-1.8.1/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.cpp:21:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.cpp:21:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintilla.h:36:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintilla.h:36:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+[ 20%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/sftp.c.o
+[ 20%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/json_parser.cc.o
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintillabase.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/../../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintillabase.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 20%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/StyleContext.cpp.o
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cpp:21:
+In file included from json_scanner.yy:29:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.h:24:10: fatal error: 'QtCore/QIODevice' file not found
+#include <QtCore/QIODevice>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cpp:21:
+In file included from json_scanner.yy:29:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.h:24:10: fatal error: 'QtCore/QIODevice' file not found
+#include <QtCore/QIODevice>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+Scanning dependencies of target gtest_main
+[ 20%] Building CXX object src/third-party/googletest-1.8.1/googlemock/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:181:42: warning: Null pointer passed as 1st argument to string length function
+                                   salt, strlen(salt));
+                                         ^~~~~~~~~~~~
+1 warning generated.
+[ 21%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/WordList.cpp.o
+[ 21%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/parserrunnable.cpp.o
+[ 21%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/transport.c.o
+In file included from json_parser.cc:40:
+In file included from json_parser.yy:27:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser_p.h:25:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from json_parser.cc:40:
+In file included from json_parser.yy:27:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser_p.h:25:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 21%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/Accessor.cpp.o
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parserrunnable.cpp:21:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parserrunnable.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parserrunnable.cpp:21:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/parserrunnable.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 22%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/serializer.cpp.o
+[ 23%] Linking CXX static library libgtest_maind.a
+[ 23%] Built target gtest_main
+[ 24%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/userauth.c.o
+[ 24%] Linking CXX static library libgmockd.a
+[ 24%] Built target gmock
+[ 25%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/LexerBase.cpp.o
+[ 25%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/sources/src/serializerrunnable.cpp.o
+[ 25%] Building C object src/third-party/libssh2-1.9.0/CMakeFiles/libssh2.dir/sources/src/version.c.o
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializer.cpp:21:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializer.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializer.cpp:21:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializer.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+[ 26%] Building CXX object src/third-party/qjson-0.8.1/CMakeFiles/qjson.dir/qjson_autogen/mocs_compilation.cpp.o
+1 error generated.
+[ 26%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/LexerModule.cpp.o
+Scanning dependencies of target gmock_main
+[ 26%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/CharacterSet.cpp.o
+[ 27%] Building CXX object src/third-party/googletest-1.8.1/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializerrunnable.cpp:1:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializerrunnable.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializerrunnable.cpp:1:
+In file included from /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializerrunnable.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 28%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/CharacterCategory.cpp.o
+[ 28%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/PropSetSimple.cpp.o
+In file included from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/mocs_compilation.cpp:2:
+In file included from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/5DVHYYFRXG/moc_parserrunnable.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/5DVHYYFRXG/../../../../../../../src/third-party/qjson-0.8.1/sources/src/parserrunnable.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/mocs_compilation.cpp:2:
+In file included from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/5DVHYYFRXG/moc_parserrunnable.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/5DVHYYFRXG/../../../../../../../src/third-party/qjson-0.8.1/sources/src/parserrunnable.h:24:
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/qjson_export.h:23:10: fatal error: 'QtCore/qglobal.h' file not found
+#include <QtCore/qglobal.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 28%] Linking CXX static library libqjson.a
+[ 28%] Built target qjson
+[ 29%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/LexerSimple.cpp.o
+[ 29%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexlib/LexerNoExceptions.cpp.o
+[ 29%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscilexer.cpp.o
+[ 30%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscilexerjavascript.cpp.o
+[ 30%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscilexercpp.cpp.o
+[ 31%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscistyle.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexerjavascript.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexerjavascript.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexerjavascript.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexerjavascript.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 31%] Linking CXX static library libgmock_maind.a
+[ 31%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/InputMethod.cpp.o
+[ 31%] Built target gmock_main
+[ 31%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qsciabstractapis.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexercpp.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexercpp.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexercpp.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexercpp.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 32%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/ScintillaQt.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexer.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexer.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qcolor.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexer.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscilexer.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qcolor.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 32%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscidocument.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscistyle.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscistyle.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qcolor.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscistyle.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscistyle.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qcolor.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 33%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qsciscintilla.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciabstractapis.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciabstractapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciabstractapis.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciabstractapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 33%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qsciscintillabase.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/InputMethod.cpp:9:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/InputMethod.cpp:9:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 33%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscicommand.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscidocument.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscidocument.h:33:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscidocument.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscidocument.h:33:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 34%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/ListBoxQt.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:28:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:28:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 34%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscistyledtext.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:28:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintilla.h:36:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:28:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintilla.h:36:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 35%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/SciClasses.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintillabase.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintillabase.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintillabase.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintillabase.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 35%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qsciprinter.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscicommand.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscicommand.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscicommand.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscicommand.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 35%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/PlatQt.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscistyledtext.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscistyledtext.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscistyledtext.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscistyledtext.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 36%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/MacPasteboardMime.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ListBoxQt.cpp:27:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ListBoxQt.h:27:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qmap.h:43:10: fatal error: 'QtCore/qiterator.h' file not found
+#include <QtCore/qiterator.h>
+         ^~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ListBoxQt.cpp:27:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ListBoxQt.h:27:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qmap.h:43:10: fatal error: 'QtCore/qiterator.h' file not found
+#include <QtCore/qiterator.h>
+         ^~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 36%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscimacro.cpp.o
+[ 37%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qsciapis.cpp.o
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:765:8: warning: Access to field 'signv' results in a dereference of a null pointer (loaded from variable 'privkeyobj')
+    if(privkeyobj->signv(session, sig, sig_len, 1, &datavec,
+       ^~~~~~~~~~~~~~~~~
+1 warning generated.
+[ 37%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/Qt4Qt5/qscicommandset.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciprinter.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciprinter.h:38:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtPrintSupport.framework/Headers/qprinter.h:43:10: fatal error: 'QtPrintSupport/qtprintsupportglobal.h' file not found
+#include <QtPrintSupport/qtprintsupportglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciprinter.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciprinter.h:38:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtPrintSupport.framework/Headers/qprinter.h:43:10: fatal error: 'QtPrintSupport/qtprintsupportglobal.h' file not found
+#include <QtPrintSupport/qtprintsupportglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 37%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/lexers/LexCPP.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.cpp:28:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.h:30:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.cpp:28:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.h:30:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 38%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/AutoComplete.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/MacPasteboardMime.cpp:28:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/MacPasteboardMime.cpp:28:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 38%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/CallTip.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/PlatQt.cpp:30:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/PlatQt.cpp:30:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 40%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/CaseConvert.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscimacro.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscimacro.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscimacro.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscimacro.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 40%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/CaseFolder.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscicommandset.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscicommandset.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciapis.cpp:28:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscicommandset.cpp:26:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qscicommandset.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciapis.cpp:28:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciapis.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/AutoComplete.cpp:17:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 40%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Catalogue.cpp.o
+1 error generated.
+[ 41%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/CellBuffer.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/AutoComplete.cpp:17:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 41%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/CharClassify.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CallTip.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CallTip.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 42%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/ContractionState.cpp.o
+[ 42%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Decoration.cpp.o
+[ 42%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Document.cpp.o
+[ 43%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Editor.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CellBuffer.cpp:15:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CellBuffer.cpp:15:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 43%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/ExternalLexer.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Decoration.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ContractionState.cpp:12:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Decoration.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ContractionState.cpp:12:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 44%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Indicator.cpp.o
+[ 44%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/KeyMap.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Document.cpp:18:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Document.cpp:18:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 44%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/LineMarker.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ExternalLexer.cpp:16:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ExternalLexer.cpp:16:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 45%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/PerLine.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/KeyMap.cpp:12:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/KeyMap.cpp:12:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 45%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/PositionCache.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Indicator.cpp:11:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Indicator.cpp:11:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 46%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/RESearch.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PerLine.cpp:12:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PerLine.cpp:12:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 46%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/RunStyles.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/LineMarker.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/LineMarker.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 46%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/ScintillaBase.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:21:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:21:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 47%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Selection.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/RunStyles.cpp:15:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/RunStyles.cpp:15:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 47%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/Style.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PositionCache.cpp:18:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PositionCache.cpp:18:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 48%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/UniConversion.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Style.cpp:10:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Style.cpp:10:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 48%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/ViewStyle.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Selection.cpp:13:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Selection.cpp:13:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 48%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/sources/src/XPM.cpp.o
+[ 49%] Building CXX object src/third-party/qscintilla-2.8.4/CMakeFiles/qscintilla.dir/qscintilla_autogen/mocs_compilation.cpp.o
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ScintillaBase.cpp:19:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ScintillaBase.cpp:19:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:148:12: warning: The result of the left shift is undefined because the right operand is negative
+                return 1 << level;
+                         ^  ~~~~~
+1 warning generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/XPM.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/XPM.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ViewStyle.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ViewStyle.cpp:14:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/include/Platform.h:45:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciglobal.h:33:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/mocs_compilation.cpp:2:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/J2OMSJFIBT/moc_SciClasses.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/J2OMSJFIBT/../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.h:30:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:927:9: warning: Value stored to 'rc' is never read
+        rc = LIBSSH2_ERROR_BUFFER_TOO_SMALL;
+        ^    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3661:21: warning: The left operand of '>' is a garbage value
+        if(data_len > 0) {
+           ~~~~~~~~ ^
+2 warnings generated.
+[ 49%] Linking C static library libssh2.a
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/mocs_compilation.cpp:2:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/J2OMSJFIBT/moc_SciClasses.cpp:9:
+In file included from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/J2OMSJFIBT/../../../../../../../src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.h:30:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:66:10: fatal error: 'QtCore/qconfig.h' file not found
+#include <QtCore/qconfig.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 49%] Built target libssh2
+Scanning dependencies of target ssh
+[ 49%] Building C object src/robomongo/ssh/CMakeFiles/ssh.dir/array.c.o
+[ 50%] Building C object src/robomongo/ssh/CMakeFiles/ssh.dir/ssh.c.o
+[ 50%] Building C object src/robomongo/ssh/CMakeFiles/ssh.dir/log.c.o
+[ 50%] Linking CXX static library libqscintilla.a
+[ 50%] Built target qscintilla
+/opt/robo/src/robomongo/ssh/ssh.c:111:16: warning: Potential leak of memory pointed to by 'session'
+        return NULL;
+               ^~~~
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:200:16: warning: Potential leak of memory pointed to by 'channel'
+        return NULL;
+               ^~~~
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:200:16: warning: Potential leak of memory pointed to by 'inbuf'
+        return NULL;
+               ^~~~
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: warning: Use of memory after it is freed
+        rbm_channel_close(session->channels[0]);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/opt/robo/src/robomongo/ssh/ssh.c:429:13: warning: Value stored to 'errsave' during its initialization is never read
+        int errsave = errno;
+            ^~~~~~~   ~~~~~
+/opt/robo/src/robomongo/ssh/ssh.c:510:17: warning: Value stored to 'result' is never read
+                result = RBM_ERROR;
+                ^        ~~~~~~~~~
+/opt/robo/src/robomongo/ssh/ssh.c:730:5: warning: Value stored to 'fingerprint' is never read
+    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+7 warnings generated.
+[ 51%] Linking C static library libssh.a
+[ 51%] Built target ssh
+Scanning dependencies of target robomongo_autogen
+Scanning dependencies of target ssh_test
+Scanning dependencies of target server
+[ 52%] Building C object src/robomongo/ssh/CMakeFiles/server.dir/server.c.o
+[ 52%] Automatic MOC, UIC and RCC for target robomongo
+[ 52%] Building C object src/robomongo/ssh/CMakeFiles/ssh_test.dir/test.c.o
+[ 52%] Linking C executable server
+[ 52%] Linking C executable ssh_test
+[ 52%] Built target server
+[ 52%] Built target ssh_test
+[ 52%] Built target robomongo_autogen
+Scanning dependencies of target robomongo
+[ 52%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/app/main.cpp.o
+[ 52%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/utils/QtUtils.cpp.o
+[ 53%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/utils/StdUtils.cpp.o
+[ 54%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/HexUtils.cpp.o
+[ 54%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/utils/Logger.cpp.o
+[ 55%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/utils/BsonUtils.cpp.o
+[ 55%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/settings/CredentialSettings.cpp.o
+[ 55%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/settings/ConnectionSettings.cpp.o
+[ 55%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/Event.cpp.o
+In file included from /opt/robo/src/robomongo/core/settings/CredentialSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/CredentialSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/CredentialSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/CredentialSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 56%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/Enums.cpp.o
+In file included from /opt/robo/src/robomongo/core/utils/QtUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/core/utils/QtUtils.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/utils/QtUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/core/utils/QtUtils.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 56%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/EventError.cpp.o
+[ 57%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/EventBusSubscriber.cpp.o
+In file included from /opt/robo/src/robomongo/core/EventBusSubscriber.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventBusSubscriber.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/EventBusSubscriber.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventBusSubscriber.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 57%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/EventBusDispatcher.cpp.o
+In file included from /opt/robo/src/robomongo/core/Event.cpp:1:
+In file included from /opt/robo/src/robomongo/core/Event.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/Event.cpp:1:
+In file included from /opt/robo/src/robomongo/core/Event.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 57%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/EventWrapper.cpp.o
+[ 58%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/EventBus.cpp.o
+In file included from /opt/robo/src/robomongo/core/utils/Logger.cpp:1:
+In file included from /opt/robo/src/robomongo/core/utils/Logger.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/utils/Logger.cpp:1:
+In file included from /opt/robo/src/robomongo/core/utils/Logger.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 58%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/KeyboardManager.cpp.o
+In file included from /opt/robo/src/robomongo/app/main.cpp:1:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QApplication:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/app/main.cpp:1:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QApplication:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/core/EventBusDispatcher.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventBusDispatcher.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/EventBusDispatcher.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventBusDispatcher.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 60%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoNamespace.cpp.o
+1 error generated.
+[ 60%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoFunction.cpp.o
+In file included from /opt/robo/src/robomongo/core/EventWrapper.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventWrapper.h:3:
+In file included from /opt/robo/src/robomongo/core/Event.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/ConnectionSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/ConnectionSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/EventWrapper.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventWrapper.h:3:
+In file included from /opt/robo/src/robomongo/core/Event.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/core/settings/ConnectionSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/ConnectionSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+[ 60%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoUtils.cpp.o
+1 error generated.
+[ 61%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoCollection.cpp.o
+In file included from /opt/robo/src/robomongo/core/KeyboardManager.cpp:1:
+In file included from /opt/robo/src/robomongo/core/KeyboardManager.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/QKeyEvent:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qevent.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/KeyboardManager.cpp:1:
+In file included from /opt/robo/src/robomongo/core/KeyboardManager.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/QKeyEvent:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qevent.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 61%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoCollectionInfo.cpp.o
+[ 62%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoQueryInfo.cpp.o
+1 error generated.
+[ 62%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/CursorPosition.cpp.o
+[ 62%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/ScriptInfo.cpp.o
+In file included from /opt/robo/src/robomongo/core/EventBus.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventBus.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/EventBus.cpp:1:
+In file included from /opt/robo/src/robomongo/core/EventBus.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/utils/BsonUtils.cpp:8:
+In file included from /opt/robo/src/robomongo/core/utils/Logger.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 63%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/events/MongoEventsInfo.cpp.o
+In file included from /opt/robo/src/robomongo/core/utils/BsonUtils.cpp:8:
+In file included from /opt/robo/src/robomongo/core/utils/Logger.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 63%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/shell/db/ptimeutil.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/ScriptInfo.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/ScriptInfo.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/ScriptInfo.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/ScriptInfo.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 64%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/shell/bson/json.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/MongoUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoUtils.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/MongoUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoUtils.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 64%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/engine/ScriptEngine.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/MongoCollection.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoCollection.h:3:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDatabase.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/MongoCollection.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoCollection.h:3:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDatabase.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+[ 64%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/events/MongoEvents.cpp.o
+[ 65%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoDocument.cpp.o
+1 error generated.
+[ 65%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/AppStyle.cpp.o
+[ 66%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoServer.cpp.o
+[ 66%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoShell.cpp.o
+In file included from /opt/robo/src/robomongo/gui/AppStyle.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/AppStyle.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QStyle:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qstyle.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/AppStyle.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/AppStyle.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QStyle:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qstyle.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 66%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/MongoDatabase.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/MongoDocument.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDocument.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QStringList:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h:41:10: fatal error: 'QtCore/qlist.h' file not found
+#include <QtCore/qlist.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/MongoDocument.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDocument.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QStringList:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h:41:10: fatal error: 'QtCore/qlist.h' file not found
+#include <QtCore/qlist.h>
+         ^~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/core/engine/ScriptEngine.cpp:1:
+In file included from /opt/robo/src/robomongo/core/engine/ScriptEngine.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/engine/ScriptEngine.cpp:1:
+In file included from /opt/robo/src/robomongo/core/engine/ScriptEngine.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 67%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/App.cpp.o
+1 error generated.
+[ 67%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/mongodb/MongoClient.cpp.o
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.cpp:1:
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.cpp:1:
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 68%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/mongodb/MongoWorker.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/MongoShell.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoShell.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/MongoShell.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoShell.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/core/domain/MongoServer.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoServer.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/MongoServer.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoServer.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 68%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/mongodb/ReplicaSet.cpp.o
+1 error generated.
+[ 68%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/settings/SettingsManager.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/MongoDatabase.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDatabase.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/MongoDatabase.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDatabase.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 69%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/AppRegistry.cpp.o
+[ 69%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/utils/StringOperations.cpp.o
+[ 70%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/utils/common.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/App.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/App.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/App.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/App.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 70%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/utils/SimpleCrypt.cpp.o
+In file included from /opt/robo/src/robomongo/core/mongodb/MongoClient.cpp:5:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDocument.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QStringList:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h:41:10: fatal error: 'QtCore/qlist.h' file not found
+#include <QtCore/qlist.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/mongodb/MongoClient.cpp:5:
+In file included from /opt/robo/src/robomongo/core/domain/MongoDocument.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QStringList:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h:41:10: fatal error: 'QtCore/qlist.h' file not found
+#include <QtCore/qlist.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 70%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/utils/RoboCrypt.cpp.o
+In file included from /opt/robo/src/robomongo/core/settings/SettingsManager.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/SettingsManager.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/SettingsManager.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/SettingsManager.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/utils/SimpleCrypt.cpp:27:
+In file included from /opt/robo/src/robomongo/utils/SimpleCrypt.h:30:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/utils/SimpleCrypt.cpp:27:
+In file included from /opt/robo/src/robomongo/utils/SimpleCrypt.h:30:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 71%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/GuiRegistry.cpp.o
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/AppRegistry.cpp:3:
+In file included from /opt/robo/src/robomongo/core/EventBus.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 71%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/AboutDialog.cpp.o
+In file included from /opt/robo/src/robomongo/core/AppRegistry.cpp:3:
+In file included from /opt/robo/src/robomongo/core/EventBus.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/core/mongodb/MongoWorker.cpp:1:
+In file included from /opt/robo/src/robomongo/core/mongodb/MongoWorker.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/mongodb/MongoWorker.cpp:1:
+In file included from /opt/robo/src/robomongo/core/mongodb/MongoWorker.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 72%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/EulaDialog.cpp.o
+1 error generated.
+[ 72%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ConnectionAdvancedTab.cpp.o
+[ 72%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ConnectionAuthTab.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/AboutDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/AboutDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/AboutDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/AboutDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 73%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ConnectionBasicTab.cpp.o
+In file included from /opt/robo/src/robomongo/gui/GuiRegistry.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/GuiRegistry.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/QIcon:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qicon.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/GuiRegistry.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/GuiRegistry.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/QIcon:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtGui.framework/Headers/qicon.h:43:10: fatal error: 'QtGui/qtguiglobal.h' file not found
+#include <QtGui/qtguiglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 73%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ConnectionDiagnosticDialog.cpp.o
+In file included from /opt/robo/src/robomongo/utils/common.cpp:1:
+In file included from /opt/robo/src/robomongo/utils/common.h:6:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/utils/common.cpp:1:
+In file included from /opt/robo/src/robomongo/utils/common.h:6:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+[ 74%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ConnectionDialog.cpp.o
+1 error generated.
+[ 74%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/CopyCollectionDialog.cpp.o
+In file included from /opt/robo/src/robomongo/utils/RoboCrypt.cpp:1:
+In file included from /opt/robo/src/robomongo/utils/RoboCrypt.h:1:
+In file included from /opt/robo/src/robomongo/utils/SimpleCrypt.h:30:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/utils/RoboCrypt.cpp:1:
+In file included from /opt/robo/src/robomongo/utils/RoboCrypt.h:1:
+In file included from /opt/robo/src/robomongo/utils/SimpleCrypt.h:30:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+[ 74%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/IndicatorLabel.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/IndicatorLabel.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/IndicatorLabel.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/EulaDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/EulaDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWizard:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwizard.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/IndicatorLabel.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/IndicatorLabel.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/EulaDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/EulaDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWizard:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwizard.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 75%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/CreateCollectionDialog.cpp.o
+1 error generated.
+1 error generated.
+[ 75%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/CreateDatabaseDialog.cpp.o
+[ 76%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/CreateUserDialog.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 76%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/utils/ComboBoxUtils.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 76%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/utils/DialogUtils.cpp.o
+In file included from /opt/robo/src/robomongo/gui/utils/ComboBoxUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/utils/ComboBoxUtils.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QComboBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/utils/ComboBoxUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/utils/ComboBoxUtils.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QComboBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+[ 77%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/PreferencesDialog.cpp.o
+[ 77%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ConnectionsDialog.cpp.o
+1 error generated.
+[ 78%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ExportDialog.cpp.o
+1 error generated.
+[ 78%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/ChangeShellTimeoutDialog.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 78%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/editors/PlainJavaScriptEditor.cpp.o
+In file included from /opt/robo/src/robomongo/gui/utils/DialogUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/utils/DialogUtils.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/utils/DialogUtils.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/utils/DialogUtils.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 80%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/editors/JSLexer.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateUserDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateUserDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/PreferencesDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/PreferencesDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateUserDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateUserDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/PreferencesDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/PreferencesDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 80%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/editors/FindFrame.cpp.o
+1 error generated.
+[ 81%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/AddEditIndexDialog.cpp.o
+In file included from /opt/robo/src/robomongo/gui/editors/JSLexer.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/editors/JSLexer.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/editors/JSLexer.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/editors/JSLexer.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 81%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/ScriptWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/editors/PlainJavaScriptEditor.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/editors/PlainJavaScriptEditor.h:3:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintilla.h:36:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/editors/PlainJavaScriptEditor.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/editors/PlainJavaScriptEditor.h:3:
+In file included from /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/qsciscintilla.h:36:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 82%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 82%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/ChangeShellTimeoutDialog.cpp:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ChangeShellTimeoutDialog.cpp:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/dialogs/ExportDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ExportDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/ExportDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/ExportDialog.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 82%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerCollectionIndexItem.cpp.o
+1 error generated.
+[ 83%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/editors/FindFrame.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/editors/FindFrame.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QFrame:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qframe.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/editors/FindFrame.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/editors/FindFrame.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QFrame:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qframe.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 83%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp.o
+1 error generated.
+[ 84%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 84%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QFrame:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qframe.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QFrame:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qframe.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 84%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/core/Event.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/core/Event.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+[ 85%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerUserTreeItem.cpp.o
+1 error generated.
+[ 85%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 86%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/DocumentTextEditor.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.h:4:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.h:4:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 86%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/FunctionTextEditor.cpp.o
+1 error generated.
+[ 86%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerServerTreeItem.cpp.o
+1 error generated.
+[ 87%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerTreeWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+[ 87%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/explorer/ExplorerWidget.cpp.o
+[ 88%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/BsonTableModel.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h:4:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h:4:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h:4:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 88%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/BsonTableView.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h:4:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 88%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/BsonTreeItem.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 89%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/BsonTreeModel.cpp.o
+In file included from /opt/robo/src/robomongo/gui/dialogs/FunctionTextEditor.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/FunctionTextEditor.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/FunctionTextEditor.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/FunctionTextEditor.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QDialog:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qdialog.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 89%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/BsonTreeView.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h:3:
+In file included from /opt/robo/src/robomongo/core/events/MongoEvents.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMessageBox:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableModel.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableModel.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QAbstractProxyModel:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qabstractproxymodel.h:43:10: fatal error: 'QtCore/qabstractitemmodel.h' file not found
+#include <QtCore/qabstractitemmodel.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableModel.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableModel.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QAbstractProxyModel:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qabstractproxymodel.h:43:10: fatal error: 'QtCore/qabstractitemmodel.h' file not found
+#include <QtCore/qabstractitemmodel.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 90%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/domain/Notifier.cpp.o
+1 error generated.
+1 error generated.
+[ 90%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/CollectionStatsTreeItem.cpp.o
+[ 90%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/CollectionStatsTreeWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableView.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableView.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTableView:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtableview.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableView.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableView.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTableView:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtableview.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 91%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/JsonPrepareThread.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+[ 91%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/OutputItemContentWidget.cpp.o
+[ 92%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/OutputItemHeaderWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 92%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/OutputWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeView:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreeview.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeView:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreeview.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 92%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/PagingWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QAbstractItemModel:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qabstractitemmodel.h:43:10: fatal error: 'QtCore/qvariant.h' file not found
+#include <QtCore/qvariant.h>
+         ^~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QAbstractItemModel:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qabstractitemmodel.h:43:10: fatal error: 'QtCore/qvariant.h' file not found
+#include <QtCore/qvariant.h>
+         ^~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 93%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/ProgressBarPopup.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeItem.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTreeWidgetItem:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 93%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/QueryWidget.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/JsonPrepareThread.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/JsonPrepareThread.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QThread:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qthread.h:44:10: fatal error: 'QtCore/qobject.h' file not found
+#include <QtCore/qobject.h>
+         ^~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/JsonPrepareThread.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/JsonPrepareThread.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QThread:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qthread.h:44:10: fatal error: 'QtCore/qobject.h' file not found
+#include <QtCore/qobject.h>
+         ^~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/PagingWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/PagingWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/PagingWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/PagingWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ProgressBarPopup.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ProgressBarPopup.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QFrame:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qframe.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ProgressBarPopup.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/ProgressBarPopup.h:2:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QFrame:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qframe.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 94%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/WorkAreaTabBar.cpp.o
+1 error generated.
+[ 94%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/WorkAreaTabWidget.cpp.o
+1 error generated.
+[ 94%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/workarea/WelcomeTab.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemHeaderWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemHeaderWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTabBar:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtabbar.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTabBar:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtabbar.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 95%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/widgets/LogWidget.cpp.o
+1 error generated.
+[ 95%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/MainWindow.cpp.o
+In file included from /opt/robo/src/robomongo/core/domain/Notifier.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/Notifier.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QModelIndex:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qabstractitemmodel.h:43:10: fatal error: 'QtCore/qvariant.h' file not found
+#include <QtCore/qvariant.h>
+         ^~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTabWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtabwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/domain/Notifier.cpp:1:
+In file included from /opt/robo/src/robomongo/core/domain/Notifier.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QModelIndex:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qabstractitemmodel.h:43:10: fatal error: 'QtCore/qvariant.h' file not found
+#include <QtCore/qvariant.h>
+         ^~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTabWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtabwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QStackedWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qstackedwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QStackedWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qstackedwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 96%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/SSHTunnelTab.cpp.o
+1 error generated.
+[ 96%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/gui/dialogs/SSLTab.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/LogWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/LogWidget.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/LogWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/LogWidget.h:4:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 96%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/settings/SshSettings.cpp.o
+1 error generated.
+[ 97%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/settings/SslSettings.cpp.o
+In file included from /opt/robo/src/robomongo/core/settings/SshSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/SshSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/SshSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/SshSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/SslSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/SslSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/SslSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/SslSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+[ 97%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/settings/ReplicaSetSettings.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTabWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtabwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QTabWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qtabwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+[ 98%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/core/mongodb/SshTunnelWorker.cpp.o
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+1 error generated.
+[ 98%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/robomongo_autogen/mocs_compilation.cpp.o
+[ 98%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/robomongo_autogen/3YJK5W5UP7/qrc_robo.cpp.o
+1 error generated.
+[100%] Building CXX object src/robomongo/CMakeFiles/robomongo.dir/robomongo_autogen/YHP5W5E6RA/qrc_gui.cpp.o
+In file included from /opt/robo/src/robomongo/gui/MainWindow.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/MainWindow.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMainWindow:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/MainWindow.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/MainWindow.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QMainWindow:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSLTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSLTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSLTab.cpp:1:
+In file included from /opt/robo/src/robomongo/gui/dialogs/SSLTab.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/QWidget:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtWidgets.framework/Headers/qwidget.h:43:10: fatal error: 'QtWidgets/qtwidgetsglobal.h' file not found
+#include <QtWidgets/qtwidgetsglobal.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.cpp:1:
+In file included from /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QString:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qstring.h:48:10: fatal error: 'QtCore/qchar.h' file not found
+#include <QtCore/qchar.h>
+         ^~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.cpp:1:
+In file included from /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+In file included from /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.cpp:1:
+In file included from /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.h:3:
+In file included from /opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/QObject:1:
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qobject.h:46:10: fatal error: 'QtCore/qobjectdefs.h' file not found
+#include <QtCore/qobjectdefs.h>
+         ^~~~~~~~~~~~~~~
+1 error generated.
+[100%] Linking CXX executable "Robo 3T.app/Contents/MacOS/Robo 3T"
+ld: warning: option -noall_load is obsolete and being ignored
+[100%] Built target robomongo
+scan-build: 23 bugs found.
+scan-build: Run 'scan-view /var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-22-121013-93295-1' to examine bug reports.
+scan-build: The analyzer encountered problems on some source files.
+scan-build: Preprocessed versions of these sources were deposited in '/var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-22-121013-93295-1/failures'.
+scan-build: Please consider submitting a bug report using these files:
+scan-build:   http://clang-analyzer.llvm.org/filing_bugs.html
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ 
+gman-mac:bin gsimsek$ scan-view /var/folders/38/3l23x7_52t991w22sk9639h00000gn/T/scan-build-2020-08-22-121013-93295-1
+/usr/local/opt/llvm/bin/scan-view:9: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
+  import imp
+Starting scan-view at: http://127.0.0.1:8181
+  Use Ctrl-C to exit.
+

@@ -3,38 +3,38 @@ About Robo 3T
 
 [Robo 3T](http://www.robomongo.org) (formerly Robomongo *) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robo 3T embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
-From version 1.3, Robo 3T embeds the **MongoDB 4.0** shell (including support for SCRAM-SHA-256 auth and MongoDB SRV connection strings).
+Latest Robo 3T 1.4 embeds **MongoDB 4.2** shell.
 
 **MongoDB shell history:**   
-From version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.  
-From version 0.9, Robo 3T embeds the **MongoDB 3.2** shell (including SCRAM-SHA-1 auth and support for WiredTiger storage engine).  
-From version 0.8.x, Robo 3T embeds the **MongoDB 2.4.0** shell.  
+Robo 3T 1.3 embeds the **MongoDB 4.0** shell.  
+Robo 3T 1.1 embeds the **MongoDB 3.4** shell.  
+Robo 3T 0.9 embeds **MongoDB 3.2** shell (including SCRAM-SHA-1 auth and support for WiredTiger storage engine).  
+Robo 3T 0.8.x embeds **MongoDB 2.4.0** shell  
 
 \* [Robomongo has been acquired by 3T](https://studio3t.com/press/3t-software-labs-acquires-robomongo-the-most-widely-used-mongodb-tool/)
 
-What's new in latest Robo 3T 1.3?
+What's new in latest Robo 3T 1.4?
 ====================================
 
-New Features:  
-  - Mongo Shell upgrade from version 3.4 to 4.0.5  
-  - Support for importing from MongoDB SRV connection strings   
-  - Query results window now supports tabbed output ([#1591](https://github.com/Studio3T/robomongo/issues/1591),  [#1403](https://github.com/Studio3T/robomongo/issues/1403))
-  - Adding support for SCRAM-SHA-256 auth mechanism ([#1569](https://github.com/Studio3T/robomongo/issues/1569))  
-  - Support for creating version 4 UUID ([#1554](https://github.com/Studio3T/robomongo/issues/1554))  
-  - Support for Ubuntu 18.04 and Mac 10.14 ([#731](https://github.com/Studio3T/robomongo/issues/731))  
-  
-Bug Fixes:  
-  - 'Create/Edit/View User' features fixed and updated #638 #1041  
-  - Pagination does not work when the aggregation queries have dotted fields #1529   
-  - Fix for application crash when adding index with invalid JSON  
-  - 'Repair Database' in Robo3T needs a confirm dialog box #1568  
-  - Robo 3T the input space causes connection failure #1551  
-  - Crash on right click when loading results #1547  
-  - Attempt to fix #1581: For CRUD ops showing progress bar and disabling context menu while waiting for edit op to finish  
-  - Fixing UI issue where Functions folder freezing with "Functions..." when fails to refresh  
-  - Attempt to fix #1547: Crash when right click on existing results plus a new long running query  
+New Features:   
+  - Mongo shell 4.2 upgrade  
+  - Support for Ubuntu 20.04 and macOS 10.15 (Catalina)   
+  - SSH: ECDSA and Ed25519 keys support on Windows & macOS (issues #1719, #1530, #1590)  
+  - Manually specify visible databases (issues #1696, #1368, #389)  
+   
+Improvements:  
+  - Qt Upgrade (v5.12.8 - Apr/2020, Windows & macOS only)  
+  - OpenSSL upgrade (v1.1.1f - Mar/2020, Windows & macOS only)  
+  - libssh2 upgrade (v1.9.0 - Jun/2019, Windows & macOS only)  
 
-Blog:     http://blog.robomongo.org/robo-3t-1-3/  
+Fixes:  
+  - Authentication database option isn't used properly (#1696)  
+  - Add/Edit index ops fixed (re-written) (#1692)   
+  - Crash when expanding admin users (#1728)   
+  - IPv6 support (previously broken) restored   
+  - Unable to run query after shell timeout reached (#1529)  
+
+Blog:     http://blog.robomongo.org/robo-3t-1-4/  
 Download: https://robomongo.org/download  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
@@ -45,28 +45,18 @@ Supported Platforms
 Note: This sections is for Robo 3T and it directly depends on what MongoDB suppports  
 (See: https://docs.mongodb.com/manual/administration/production-notes/#prod-notes-supported-platforms)
 
-| MongoDB Versions      |
-| :-------------------- |
+| MongoDB Versions      | MongoDB Cloud Platforms |
+| :-------------------- | :--------------------   | 
+| 4.2                   | Mongo Atlas             |
 | 4.0                   |
-| 3.4                   |
-| 3.2                   |
-| 3.0                   |
-
-| MongoDB Cloud Platforms|
-| :------------ |
-| MongoDB Atlas |
-| Compose       |
-| mLab          |
-| ObjectRocket  | 
-| ScaleGrid     |
-| Amazon EC2    |
+| 3.6                   |
 
 | Windows                |   Mac                            | Linux                       |        
 |:---------------------- | :--------------------------------| :---------------------------|
-| Windows 64-bit 10      |  Mac OS X 10.14 (Mojave)     	  | Linux Ubuntu 18.04 64-bit*  |
-  Windows 64-bit 8.1     |  Mac OS X 10.13 (High Sierra)    | Linux Ubuntu 16.04 64-bit*  |
-| Windows 64-bit 7       |  Mac OS X 10.12 (Sierra)         | Linux CentOS 7 64-bit* **   |
-|                        |                                  | Linux CentOS 6 64-bit*  **  |
+| Windows 64-bit 10      |  Mac OS X 10.15 (Catalina)     	  | Linux Ubuntu 20.04 64-bit*  |
+  Windows 64-bit 8.1     |  Mac OS X 10.14 (Mojave)           | Linux Ubuntu 18.04 64-bit*  |
+| Windows 64-bit 7       |  Mac OS X 10.13 (High Sierra)      | Linux CentOS 7 64-bit* **   |
+|                        |                                    | Linux CentOS 6 64-bit*  **  |
 
 \* Latest stable build  
 \** Support for CentOS temporarily dropped starting from version 1.1  
@@ -76,7 +66,7 @@ Download
 
 You can download tested installer packages for macOS, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robo 3T 1.3**](http://blog.robomongo.org/robo-3t-1-3/).
+The latest stable release is currently [**Robo 3T 1.4**](http://blog.robomongo.org/robo-3t-1-4/).
 
 Support
 =======
@@ -127,7 +117,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright 2014-2019 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
+Copyright 2014-2020 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

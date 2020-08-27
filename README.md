@@ -7,6 +7,7 @@ The latest stable release is currently **Robo 3T 1.4** which embeds **MongoDB 4.
 
 Blog:     http://blog.robomongo.org/robo-3t-1-4/  
 Download: https://robomongo.org/download  
+Older Releases: https://github.com/Studio3T/robomongo/releases  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
 

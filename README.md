@@ -6,10 +6,10 @@ About Robo 3T
 Latest Robo 3T 1.4 embeds **MongoDB 4.2** shell.
 
 **MongoDB shell history:**   
-Robo 3T 1.3: MongoDB 4.0 shell  
-Robo 3T 1.1: MongoDB 3.4 shell
-Robo 3T 0.9: MongoDB 3.2 shell
-Robo 3T 0.8.x: MongoDB 2.4.0 shell  
+Robo 3T 1.3: MongoDB 4.0     
+Robo 3T 1.1: MongoDB 3.4    
+Robo 3T 0.9: MongoDB 3.2  
+Robo 3T 0.8.x: MongoDB 2.4.0  
 
 \* [Robomongo has been acquired by 3T](https://studio3t.com/press/3t-software-labs-acquires-robomongo-the-most-widely-used-mongodb-tool/)
 

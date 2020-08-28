@@ -3,7 +3,7 @@ About Robo 3T
 
 [Robo 3T](http://www.robomongo.org) (formerly Robomongo *) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robo 3T embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
-The latest stable release is currently **Robo 3T 1.4** which embeds **MongoDB 4.2** shell.   
+The latest stable release **Robo 3T 1.4** embeds **MongoDB 4.2** shell.   
 
 Blog:     http://blog.robomongo.org/robo-3t-1-4/  
 Download: https://robomongo.org/download  

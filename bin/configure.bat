@@ -11,5 +11,6 @@ call "%BIN_DIR%\common\setup.bat" %*
 if %ERRORLEVEL% neq 0 (exit /b 1)
 
 rem Run CMake configuration step
+rem BUILD_TYPE: Release or Debug
 cd "%BUILD_DIR%"
 cmake -G "Visual Studio 15 2017 Win64" -D "CMAKE_PREFIX_PATH=%PREFIX_PATH%" -D "CMAKE_BUILD_TYPE=%BUILD_TYPE%" -D "CMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%" %PROJECT_DIR%

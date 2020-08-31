@@ -1,0 +1,2151 @@
+
+Enabled checks:
+    clang-analyzer-apiModeling.StdCLibraryFunctions
+    clang-analyzer-apiModeling.TrustNonnull
+    clang-analyzer-apiModeling.google.GTest
+    clang-analyzer-apiModeling.llvm.CastValue
+    clang-analyzer-apiModeling.llvm.ReturnValue
+    clang-analyzer-core.CallAndMessage
+    clang-analyzer-core.DivideZero
+    clang-analyzer-core.DynamicTypePropagation
+    clang-analyzer-core.NonNullParamChecker
+    clang-analyzer-core.NonnilStringConstants
+    clang-analyzer-core.NullDereference
+    clang-analyzer-core.StackAddrEscapeBase
+    clang-analyzer-core.StackAddressEscape
+    clang-analyzer-core.UndefinedBinaryOperatorResult
+    clang-analyzer-core.VLASize
+    clang-analyzer-core.builtin.BuiltinFunctions
+    clang-analyzer-core.builtin.NoReturnFunctions
+    clang-analyzer-core.uninitialized.ArraySubscript
+    clang-analyzer-core.uninitialized.Assign
+    clang-analyzer-core.uninitialized.Branch
+    clang-analyzer-core.uninitialized.CapturedBlockVariable
+    clang-analyzer-core.uninitialized.UndefReturn
+    clang-analyzer-cplusplus.InnerPointer
+    clang-analyzer-cplusplus.Move
+    clang-analyzer-cplusplus.NewDelete
+    clang-analyzer-cplusplus.NewDeleteLeaks
+    clang-analyzer-cplusplus.PureVirtualCall
+    clang-analyzer-cplusplus.SelfAssignment
+    clang-analyzer-cplusplus.SmartPtr
+    clang-analyzer-cplusplus.VirtualCallModeling
+    clang-analyzer-deadcode.DeadStores
+    clang-analyzer-fuchsia.HandleChecker
+    clang-analyzer-nullability.NullPassedToNonnull
+    clang-analyzer-nullability.NullReturnedFromNonnull
+    clang-analyzer-nullability.NullabilityBase
+    clang-analyzer-nullability.NullableDereferenced
+    clang-analyzer-nullability.NullablePassedToNonnull
+    clang-analyzer-nullability.NullableReturnedFromNonnull
+    clang-analyzer-optin.cplusplus.UninitializedObject
+    clang-analyzer-optin.cplusplus.VirtualCall
+    clang-analyzer-optin.mpi.MPI-Checker
+    clang-analyzer-optin.osx.OSObjectCStyleCast
+    clang-analyzer-optin.osx.cocoa.localizability.EmptyLocalizationContextChecker
+    clang-analyzer-optin.osx.cocoa.localizability.NonLocalizedStringChecker
+    clang-analyzer-optin.performance.GCDAntipattern
+    clang-analyzer-optin.performance.Padding
+    clang-analyzer-optin.portability.UnixAPI
+    clang-analyzer-osx.API
+    clang-analyzer-osx.MIG
+    clang-analyzer-osx.NSOrCFErrorDerefChecker
+    clang-analyzer-osx.NumberObjectConversion
+    clang-analyzer-osx.OSObjectRetainCount
+    clang-analyzer-osx.ObjCProperty
+    clang-analyzer-osx.SecKeychainAPI
+    clang-analyzer-osx.cocoa.AtSync
+    clang-analyzer-osx.cocoa.AutoreleaseWrite
+    clang-analyzer-osx.cocoa.ClassRelease
+    clang-analyzer-osx.cocoa.Dealloc
+    clang-analyzer-osx.cocoa.IncompatibleMethodTypes
+    clang-analyzer-osx.cocoa.Loops
+    clang-analyzer-osx.cocoa.MissingSuperCall
+    clang-analyzer-osx.cocoa.NSAutoreleasePool
+    clang-analyzer-osx.cocoa.NSError
+    clang-analyzer-osx.cocoa.NilArg
+    clang-analyzer-osx.cocoa.NonNilReturnValue
+    clang-analyzer-osx.cocoa.ObjCGenerics
+    clang-analyzer-osx.cocoa.RetainCount
+    clang-analyzer-osx.cocoa.RetainCountBase
+    clang-analyzer-osx.cocoa.RunLoopAutoreleaseLeak
+    clang-analyzer-osx.cocoa.SelfInit
+    clang-analyzer-osx.cocoa.SuperDealloc
+    clang-analyzer-osx.cocoa.UnusedIvars
+    clang-analyzer-osx.cocoa.VariadicMethodTypes
+    clang-analyzer-osx.coreFoundation.CFError
+    clang-analyzer-osx.coreFoundation.CFNumber
+    clang-analyzer-osx.coreFoundation.CFRetainRelease
+    clang-analyzer-osx.coreFoundation.containers.OutOfBounds
+    clang-analyzer-osx.coreFoundation.containers.PointerSizedValues
+    clang-analyzer-security.FloatLoopCounter
+    clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
+    clang-analyzer-security.insecureAPI.SecuritySyntaxChecker
+    clang-analyzer-security.insecureAPI.UncheckedReturn
+    clang-analyzer-security.insecureAPI.bcmp
+    clang-analyzer-security.insecureAPI.bcopy
+    clang-analyzer-security.insecureAPI.bzero
+    clang-analyzer-security.insecureAPI.decodeValueOfObjCType
+    clang-analyzer-security.insecureAPI.getpw
+    clang-analyzer-security.insecureAPI.gets
+    clang-analyzer-security.insecureAPI.mkstemp
+    clang-analyzer-security.insecureAPI.mktemp
+    clang-analyzer-security.insecureAPI.rand
+    clang-analyzer-security.insecureAPI.strcpy
+    clang-analyzer-security.insecureAPI.vfork
+    clang-analyzer-unix.API
+    clang-analyzer-unix.DynamicMemoryModeling
+    clang-analyzer-unix.Malloc
+    clang-analyzer-unix.MallocSizeof
+    clang-analyzer-unix.MismatchedDeallocator
+    clang-analyzer-unix.Vfork
+    clang-analyzer-unix.cstring.BadSizeArg
+    clang-analyzer-unix.cstring.CStringModeling
+    clang-analyzer-unix.cstring.NullArg
+    clang-analyzer-valist.CopyToSelf
+    clang-analyzer-valist.Uninitialized
+    clang-analyzer-valist.Unterminated
+    clang-analyzer-valist.ValistBase
+
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/global.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/comp.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/crypt.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:84:46: 
+warning: expression does not compute the number of elements in this array; element type is 'uint32_t' 
+  (aka 'unsigned int'), not 'uint64_t' (aka 'unsigned long long') [clang-diagnostic-sizeof-array-div]
+        blf_enc(&state, cdata, sizeof(cdata) / sizeof(uint64_t));
+                                             ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:65:14: note: array 'cdata' declared here
+    uint32_t cdata[BCRYPT_BLOCKS];
+             ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/bcrypt_pbkdf.c:84:46: note: place parentheses around the 'sizeof(uint64_t)' expression to silence this warning
+        blf_enc(&state, cdata, sizeof(cdata) / sizeof(uint64_t));
+                                             ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/blowfish.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/agent.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/keepalive.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/mac.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/hostkey.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/hostkey.c:411:5: warning: Value stored to 'sig_len' is never read [clang-analyzer-deadcode.DeadStores]
+    sig_len -= 15;
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/hostkey.c:411:5: note: Value stored to 'sig_len' is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/misc.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/packet.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:328:9: warning: Value stored to 'ret' is never read [clang-analyzer-deadcode.DeadStores]
+        ret = EC_POINT_oct2point(ec_group, point, k, k_len, NULL);
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:328:9: note: Value stored to 'ret' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1605:9: warning: Value stored to 'ret' is never read [clang-analyzer-deadcode.DeadStores]
+        ret = -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1605:9: note: Value stored to 'ret' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1613:9: warning: Value stored to 'ret' is never read [clang-analyzer-deadcode.DeadStores]
+        ret = -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1613:9: note: Value stored to 'ret' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1633:9: warning: Value stored to 'ret' is never read [clang-analyzer-deadcode.DeadStores]
+        ret = -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1633:9: note: Value stored to 'ret' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1656:13: warning: Value stored to 'ret' is never read [clang-analyzer-deadcode.DeadStores]
+            ret = -1;
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:1656:13: note: Value stored to 'ret' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:2384:9: warning: Although the value stored to 'rc' is used in the enclosing expression, the value is never actually read from 'rc' [clang-analyzer-deadcode.DeadStores]
+    if((rc = _libssh2_ecdsa_curve_name_with_octal_new(&ec_key, point_buf,
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:2384:9: note: Although the value stored to 'rc' is used in the enclosing expression, the value is never actually read from 'rc'
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:2393:9: warning: Value stored to 'rc' is never read [clang-analyzer-deadcode.DeadStores]
+        rc = -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/openssl.c:2393:9: note: Value stored to 'rc' is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/publickey.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/publickey.c:51:16: warning: Excessive padding in 'struct _LIBSSH2_PUBLICKEY_CODE_LIST' (8 padding bytes, where 0 is optimal). 
+Optimal fields order: 
+name, 
+code, 
+name_len, 
+consider reordering the fields or adding explicit padding members [clang-analyzer-optin.performance.Padding]
+typedef struct _LIBSSH2_PUBLICKEY_CODE_LIST
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/publickey.c:51:16: note: Excessive padding in 'struct _LIBSSH2_PUBLICKEY_CODE_LIST' (8 padding bytes, where 0 is optimal). Optimal fields order: name, code, name_len, consider reordering the fields or adding explicit padding members
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/pem.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/scp.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/version.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/test.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/server.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/ssh.c
+/opt/robo/src/robomongo/ssh/ssh.c:111:16: warning: Potential leak of memory pointed to by 'session' [clang-analyzer-unix.Malloc]
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:88:58: note: Memory is allocated
+    struct rbm_session *session = (struct rbm_session *) malloc(sizeof(struct rbm_session));
+                                                         ^
+/opt/robo/src/robomongo/ssh/ssh.c:89:9: note: Assuming 'session' is non-null
+    if (!session)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:89:5: note: Taking false branch
+    if (!session)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:101:9: note: Assuming field 'loglevel' is equal to RBM_SSH_LOG_TYPE_ERROR
+    if (config->loglevel != RBM_SSH_LOG_TYPE_ERROR &&
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:101:52: note: Left side of '&&' is false
+    if (config->loglevel != RBM_SSH_LOG_TYPE_ERROR &&
+                                                   ^
+/opt/robo/src/robomongo/ssh/ssh.c:110:9: note: Assuming 'publicsession' is null
+    if (!publicsession)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:110:5: note: Taking true branch
+    if (!publicsession)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:111:16: note: Potential leak of memory pointed to by 'session'
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:196:16: warning: Potential leak of memory pointed to by 'channel' [clang-analyzer-unix.Malloc]
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:142:5: note: Loop condition is true.  Entering loop body
+    while (1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:143:14: note: Calling 'rbm_open_tunnel'
+        rc = rbm_open_tunnel(connection);
+             ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: Assuming 'local_socket' is <= 'ssh_socket'
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: '?' condition is false
+/opt/robo/src/robomongo/ssh/ssh.c:331:5: note: Loop condition is true.  Entering loop body
+    while (errors < maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:13: note: Assuming the condition is false
+        if (!FD_ISSET(local_socket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:9: note: Taking false branch
+        if (!FD_ISSET(local_socket, &readset))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:13: note: Assuming the condition is false
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:9: note: Taking false branch
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:26: note: Assuming 'isocket' is <= 'fdmax'
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+                         ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:9: note: Loop condition is true.  Entering loop body
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:17: note: Assuming the condition is false
+            if (!FD_ISSET(isocket, &readset))
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:13: note: Taking false branch
+            if (!FD_ISSET(isocket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:17: note: Assuming 'isocket' is equal to 'local_socket'
+            if (isocket == local_socket) {
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:13: note: Taking true branch
+            if (isocket == local_socket) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:355:22: note: Calling 'handle_new_client_connections'
+                rc = handle_new_client_connections(connection, &fdmax, &masterset);
+                     ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:9: note: Assuming the condition is false
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:5: note: Taking false branch
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:13: note: Assuming the condition is false
+        if (newfd > *fdmax) {       // keep track of the maximum
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:9: note: Taking false branch
+        if (newfd > *fdmax) {       // keep track of the maximum
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:424:5: note: Loop condition is true.  Entering loop body
+    while (attempts < maxattempts) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:13: note: Assuming 'channel' is non-null
+        if (!channel) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:9: note: Taking false branch
+        if (!channel) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:446:9: note:  Execution continues on line 449
+        break;
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:10: note: 'channel' is non-null
+    if (!channel) {
+         ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:5: note: Taking false branch
+    if (!channel) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:454:9: note: Calling 'rbm_channel_create'
+    if (rbm_channel_create(connection, newfd, channel) == NULL) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:190:35: note: Memory is allocated
+    struct rbm_channel *channel = malloc(sizeof(struct rbm_channel));
+                                  ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:9: note: Assuming 'channel' is non-null
+    if (!channel)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:5: note: Taking false branch
+    if (!channel)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:9: note: Assuming 'inbuf' is null
+    if (!inbuf)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:5: note: Taking true branch
+    if (!inbuf)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:196:16: note: Potential leak of memory pointed to by 'channel'
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:200:16: warning: Potential leak of memory pointed to by 'inbuf' [clang-analyzer-unix.Malloc]
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:142:5: note: Loop condition is true.  Entering loop body
+    while (1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:143:14: note: Calling 'rbm_open_tunnel'
+        rc = rbm_open_tunnel(connection);
+             ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: Assuming 'local_socket' is <= 'ssh_socket'
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: '?' condition is false
+/opt/robo/src/robomongo/ssh/ssh.c:331:5: note: Loop condition is true.  Entering loop body
+    while (errors < maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:13: note: Assuming the condition is false
+        if (!FD_ISSET(local_socket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:9: note: Taking false branch
+        if (!FD_ISSET(local_socket, &readset))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:13: note: Assuming the condition is false
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:9: note: Taking false branch
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:26: note: Assuming 'isocket' is <= 'fdmax'
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+                         ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:9: note: Loop condition is true.  Entering loop body
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:17: note: Assuming the condition is false
+            if (!FD_ISSET(isocket, &readset))
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:13: note: Taking false branch
+            if (!FD_ISSET(isocket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:17: note: Assuming 'isocket' is equal to 'local_socket'
+            if (isocket == local_socket) {
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:13: note: Taking true branch
+            if (isocket == local_socket) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:355:22: note: Calling 'handle_new_client_connections'
+                rc = handle_new_client_connections(connection, &fdmax, &masterset);
+                     ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:9: note: Assuming the condition is false
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:5: note: Taking false branch
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:13: note: Assuming the condition is false
+        if (newfd > *fdmax) {       // keep track of the maximum
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:9: note: Taking false branch
+        if (newfd > *fdmax) {       // keep track of the maximum
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:424:5: note: Loop condition is true.  Entering loop body
+    while (attempts < maxattempts) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:13: note: Assuming 'channel' is non-null
+        if (!channel) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:9: note: Taking false branch
+        if (!channel) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:446:9: note:  Execution continues on line 449
+        break;
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:10: note: 'channel' is non-null
+    if (!channel) {
+         ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:5: note: Taking false branch
+    if (!channel) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:454:9: note: Calling 'rbm_channel_create'
+    if (rbm_channel_create(connection, newfd, channel) == NULL) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:9: note: Assuming 'channel' is non-null
+    if (!channel)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:5: note: Taking false branch
+    if (!channel)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:194:19: note: Memory is allocated
+    char *inbuf = malloc(sizeof(char) * RBM_BUFSIZE);
+                  ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:9: note: Assuming 'inbuf' is non-null
+    if (!inbuf)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:5: note: Taking false branch
+    if (!inbuf)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:199:9: note: Assuming 'outbuf' is null
+    if (!outbuf)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:199:5: note: Taking true branch
+    if (!outbuf)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:200:16: note: Potential leak of memory pointed to by 'inbuf'
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: warning: Use of memory after it is freed [clang-analyzer-unix.Malloc]
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:142:5: note: Loop condition is true.  Entering loop body
+    while (1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:143:14: note: Calling 'rbm_open_tunnel'
+        rc = rbm_open_tunnel(connection);
+             ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: Assuming 'local_socket' is <= 'ssh_socket'
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: '?' condition is false
+/opt/robo/src/robomongo/ssh/ssh.c:331:5: note: Loop condition is true.  Entering loop body
+    while (errors < maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:13: note: Assuming the condition is true
+        if (!FD_ISSET(local_socket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:9: note: Taking true branch
+        if (!FD_ISSET(local_socket, &readset))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:338:13: note:  Execution continues on line 385
+            break;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:385:9: note: 'errors' is < 'maxerrors'
+    if (errors >= maxerrors) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:385:5: note: Taking false branch
+    if (errors >= maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:390:5: note: Calling 'rbm_ssh_session_close'
+    rbm_ssh_session_close(connection->publicsession);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:125:9: note: Assuming the condition is false
+    if (session->localsocket != rbm_socket_invalid) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:125:5: note: Taking false branch
+    if (session->localsocket != rbm_socket_invalid) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:131:5: note: Calling 'rbm_session_cleanup'
+    rbm_session_cleanup(session);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:280:9: note: 'session' is not equal to NULL
+    if (session == NULL)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:280:5: note: Taking false branch
+    if (session == NULL)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:12: note: Assuming field 'channelssize' is > 0
+    while (session->channelssize > 0) {
+           ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:5: note: Loop condition is true.  Entering loop body
+    while (session->channelssize > 0) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: note: Calling 'rbm_channel_close'
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:217:9: note: Assuming the condition is false
+    if (rbm_array_remove((void ***)&session->channels, &session->channelssize, channel))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:217:5: note: Taking false branch
+    if (rbm_array_remove((void ***)&session->channels, &session->channelssize, channel))
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:221:9: note: Assuming the condition is false
+    if (channel->socket != rbm_socket_invalid) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:221:5: note: Taking false branch
+    if (channel->socket != rbm_socket_invalid) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:227:9: note: Assuming field 'channel' is null
+    if (channel->channel) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:227:5: note: Taking false branch
+    if (channel->channel) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:239:5: note: Memory is released
+    free(channel);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: note: Returning; memory was released via 1st parameter
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:21: note: Field 'channelssize' is > 0
+    while (session->channelssize > 0) {
+                    ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:5: note: Loop condition is true.  Entering loop body
+    while (session->channelssize > 0) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: note: Use of memory after it is freed
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:322:5: warning: The bzero() function is obsoleted by memset() [clang-analyzer-security.insecureAPI.bzero]
+    FD_ZERO(&masterset);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/robomongo/ssh/ssh.c:322:5: note: The bzero() function is obsoleted by memset()
+    FD_ZERO(&masterset);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/robomongo/ssh/ssh.c:429:13: warning: Value stored to 'errsave' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+        int errsave = errno;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:429:13: note: Value stored to 'errsave' during its initialization is never read
+/opt/robo/src/robomongo/ssh/ssh.c:510:17: warning: Value stored to 'result' is never read [clang-analyzer-deadcode.DeadStores]
+                result = RBM_ERROR;
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:510:17: note: Value stored to 'result' is never read
+/opt/robo/src/robomongo/ssh/ssh.c:730:5: warning: Value stored to 'fingerprint' is never read [clang-analyzer-deadcode.DeadStores]
+    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:730:5: note: Value stored to 'fingerprint' is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/log.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/array.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2191:9: warning: Value stored to 's' is never read [clang-analyzer-deadcode.DeadStores]
+        s += host_sig_len;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2191:9: note: Value stored to 's' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2607:15: warning: 2nd function call argument is an uninitialized value [clang-analyzer-core.CallAndMessage]
+        ret = ecdh_sha2_nistp(session, type, key_state->data,
+              ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2533:5: note: 'type' declared without an initial value
+    libssh2_curve_type type;
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2535:8: note: Assuming field 'state' is not equal to libssh2_NB_state_idle
+    if(key_state->state == libssh2_NB_state_idle) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2535:5: note: Taking false branch
+    if(key_state->state == libssh2_NB_state_idle) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2541:8: note: Assuming field 'state' is not equal to libssh2_NB_state_created
+    if(key_state->state == libssh2_NB_state_created) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2541:5: note: Taking false branch
+    if(key_state->state == libssh2_NB_state_created) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2572:8: note: Assuming field 'state' is not equal to libssh2_NB_state_sent
+    if(key_state->state == libssh2_NB_state_sent) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2572:5: note: Taking false branch
+    if(key_state->state == libssh2_NB_state_sent) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2587:8: note: Assuming field 'state' is not equal to libssh2_NB_state_sent1
+    if(key_state->state == libssh2_NB_state_sent1) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2587:5: note: Taking false branch
+    if(key_state->state == libssh2_NB_state_sent1) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2603:8: note: Assuming field 'state' is equal to libssh2_NB_state_sent2
+    if(key_state->state == libssh2_NB_state_sent2) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2603:5: note: Taking true branch
+    if(key_state->state == libssh2_NB_state_sent2) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2605:15: note: Calling 'kex_session_ecdh_curve_type'
+        (void)kex_session_ecdh_curve_type(session->kex->name, &type);
+              ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:1900:8: note: Assuming 'name' is equal to NULL
+    if(name == NULL)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:1900:5: note: Taking true branch
+    if(name == NULL)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:1901:9: note: Returning without writing to '*out_type'
+        return -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2605:15: note: Returning from 'kex_session_ecdh_curve_type'
+        (void)kex_session_ecdh_curve_type(session->kex->name, &type);
+              ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:2607:15: note: 2nd function call argument is an uninitialized value
+        ret = ecdh_sha2_nistp(session, type, key_state->data,
+              ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:3526:13: warning: Value stored to 'p' is never read [clang-analyzer-deadcode.DeadStores]
+            p += lang_sc_len + 4;
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/kex.c:3526:13: note: Value stored to 'p' is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/transport.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/qobjecthelper.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/parser.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cpp
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cc:3837:2: warning: Call to virtual method 'yyFlexLexer::yy_delete_buffer' during destruction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+        yy_delete_buffer( YY_CURRENT_BUFFER );
+        ^
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cpp:46:1: note: Calling '~yyFlexLexer'
+}
+^
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cc:3837:20: note: Assuming field 'yy_buffer_stack' is null
+        yy_delete_buffer( YY_CURRENT_BUFFER );
+                          ^
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cc:274:29: note: expanded from macro 'YY_CURRENT_BUFFER'
+#define YY_CURRENT_BUFFER ( (yy_buffer_stack) \
+                            ^
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cc:3837:20: note: '?' condition is false
+        yy_delete_buffer( YY_CURRENT_BUFFER );
+                          ^
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cc:274:29: note: expanded from macro 'YY_CURRENT_BUFFER'
+#define YY_CURRENT_BUFFER ( (yy_buffer_stack) \
+                            ^
+/opt/robo/src/third-party/qjson-0.8.1/sources/src/json_scanner.cc:3837:2: note: Call to virtual method 'yyFlexLexer::yy_delete_buffer' during destruction bypasses virtual dispatch
+        yy_delete_buffer( YY_CURRENT_BUFFER );
+        ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:181:42: warning: Null pointer passed as 1st argument to string length function [clang-analyzer-unix.cstring.NullArg]
+                                   salt, strlen(salt));
+                                         ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:625:8: note: Assuming 'hostlen' is >= 1
+    if(hostlen < 1)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:625:5: note: Taking false branch
+    if(hostlen < 1)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:631:5: note: Loop condition is true.  Entering loop body
+    while(name > host) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:637:13: note: Assuming 'name' is equal to 'host'
+        if((name == host) || (*(name-1) == ',')) {
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:637:27: note: Left side of '||' is true
+        if((name == host) || (*(name-1) == ',')) {
+                          ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:642:13: note: Taking false branch
+            if(namelen >= sizeof(hostbuf)-1)
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:652:48: note: Passing null pointer value via 3rd parameter 'salt'
+            rc = knownhost_add(hosts, hostbuf, NULL,
+                                               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:16: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:652:18: note: Calling 'knownhost_add'
+            rc = knownhost_add(hosts, hostbuf, NULL,
+                 ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:148:8: note: Assuming the condition is false
+    if(!(typemask & LIBSSH2_KNOWNHOST_KEY_MASK))
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:148:5: note: Taking false branch
+    if(!(typemask & LIBSSH2_KNOWNHOST_KEY_MASK))
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:153:8: note: Assuming 'entry' is non-null
+    if(!entry)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:153:5: note: Taking false branch
+    if(!entry)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:160:5: note: Control jumps to 'case 2:'  at line 172
+    switch(entry->typemask  & LIBSSH2_KNOWNHOST_TYPE_MASK) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:175:12: note: Assuming 'rc' is 0
+        if(rc)
+           ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:175:9: note: Taking false branch
+        if(rc)
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/knownhost.c:181:42: note: Null pointer passed as 1st argument to string length function
+                                   salt, strlen(salt));
+                                         ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:655:13: warning: The bzero() function is obsoleted by memset() [clang-analyzer-security.insecureAPI.bzero]
+            FD_ZERO(&rfd);
+            ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:655:13: note: The bzero() function is obsoleted by memset()
+            FD_ZERO(&rfd);
+            ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:661:13: warning: The bzero() function is obsoleted by memset() [clang-analyzer-security.insecureAPI.bzero]
+            FD_ZERO(&wfd);
+            ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:661:13: note: The bzero() function is obsoleted by memset()
+            FD_ZERO(&wfd);
+            ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:1549:5: warning: The bzero() function is obsoleted by memset() [clang-analyzer-security.insecureAPI.bzero]
+    FD_ZERO(&rfds);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:1549:5: note: The bzero() function is obsoleted by memset()
+    FD_ZERO(&rfds);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:1550:5: warning: The bzero() function is obsoleted by memset() [clang-analyzer-security.insecureAPI.bzero]
+    FD_ZERO(&wfds);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.c:1550:5: note: The bzero() function is obsoleted by memset()
+    FD_ZERO(&wfds);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/mocs_compilation.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/mocs_compilation.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciapis.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciapis.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexer.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexer.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/parserrunnable.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscimacro.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscimacro.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/json_parser.cc
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/WordList.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/WordList.cpp:126:2: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+        strcpy(list, s);
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/WordList.cpp:126:2: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/LexerBase.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializerrunnable.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/channel.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/LexerModule.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/CharacterCategory.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/LexerSimple.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/LexerNoExceptions.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/Accessor.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/CharacterSet.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexerjavascript.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qjson-0.8.1/sources/src/serializer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/StyleContext.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexercpp.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:765:8: warning: Access to field 'signv' results in a dereference of a null pointer (loaded from variable 'privkeyobj') [clang-analyzer-core.NullDereference]
+    if(privkeyobj->signv(session, sig, sig_len, 1, &datavec,
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:752:10: note: Calling 'memory_read_privatekey'
+    rc = memory_read_privatekey(session, &privkeyobj, &hostkey_abstract,
+         ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:669:5: note: Null pointer value stored to 'privkeyobj'
+    *hostkey_method = NULL;
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:671:11: note: Assuming the condition is false
+    while(*hostkey_methods_avail && (*hostkey_methods_avail)->name) {
+          ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:671:34: note: Left side of '&&' is false
+    while(*hostkey_methods_avail && (*hostkey_methods_avail)->name) {
+                                 ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:680:5: note: Taking true branch
+    if(!*hostkey_method) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:681:9: note: Returning value, which participates in a condition later
+        return _libssh2_error(session, LIBSSH2_ERROR_METHOD_NONE,
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:752:10: note: Returning from 'memory_read_privatekey'
+    rc = memory_read_privatekey(session, &privkeyobj, &hostkey_abstract,
+         ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:758:8: note: Assuming 'rc' is 0
+    if(rc)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:758:5: note: Taking false branch
+    if(rc)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/userauth.c:765:8: note: Access to field 'signv' results in a dereference of a null pointer (loaded from variable 'privkeyobj')
+    if(privkeyobj->signv(session, sig, sig_len, 1, &datavec,
+       ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscistyle.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciabstractapis.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/InputMethod.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:116:5: warning: Call to virtual method 'QsciScintillaQt::Initialise' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    Initialise();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:116:5: note: Call to virtual method 'QsciScintillaQt::Initialise' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:123:5: warning: Call to virtual method 'QsciScintillaQt::Finalise' during destruction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    Finalise();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:123:5: note: Call to virtual method 'QsciScintillaQt::Finalise' during destruction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:130:5: warning: Call to virtual method 'QsciScintillaQt::SetTicking' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    SetTicking(true);
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:116:5: note: Calling 'QsciScintillaQt::Initialise'
+    Initialise();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:130:5: note: Call to virtual method 'QsciScintillaQt::SetTicking' during construction bypasses virtual dispatch
+    SetTicking(true);
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:137:5: warning: Call to virtual method 'QsciScintillaQt::SetTicking' during destruction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    SetTicking(false);
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:123:5: note: Calling 'QsciScintillaQt::Finalise'
+    Finalise();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ScintillaQt.cpp:137:5: note: Call to virtual method 'QsciScintillaQt::SetTicking' during destruction bypasses virtual dispatch
+    SetTicking(false);
+    ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscidocument.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintillabase.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscistyledtext.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscicommand.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/ListBoxQt.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/PropSetSimple.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/PropSetSimple.cpp:149:3: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                strcpy(result, val.c_str());
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexlib/PropSetSimple.cpp:149:3: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscilexer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/SciClasses.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/MacPasteboardMime.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/PlatQt.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/PlatQt.cpp:259:5: warning: Call to virtual method 'SurfaceImpl::Release' during destruction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    Release();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/PlatQt.cpp:259:5: note: Call to virtual method 'SurfaceImpl::Release' during destruction bypasses virtual dispatch
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscicommandset.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciprinter.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qscimacro.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CaseFolder.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Catalogue.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CallTip.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CharClassify.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:148:12: warning: The result of the left shift is undefined because the right operand is negative [clang-analyzer-core.UndefinedBinaryOperatorResult]
+                return 1 << level;
+                         ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:506:6: note: Assuming field 'identifiersAllowDollars' is false
+        if (options.identifiersAllowDollars) {
+            ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:506:2: note: Taking false branch
+        if (options.identifiersAllowDollars) {
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:520:7: note: Assuming the condition is false
+        if ((MaskActive(initStyle) == SCE_C_PREPROCESSOR) ||
+             ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:520:6: note: Left side of '||' is false
+        if ((MaskActive(initStyle) == SCE_C_PREPROCESSOR) ||
+            ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:521:8: note: Assuming the condition is false
+      (MaskActive(initStyle) == SCE_C_COMMENTLINE) ||
+       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:520:6: note: Left side of '||' is false
+        if ((MaskActive(initStyle) == SCE_C_PREPROCESSOR) ||
+            ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:522:8: note: Assuming the condition is false
+      (MaskActive(initStyle) == SCE_C_COMMENTLINEDOC)) {
+       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:520:2: note: Taking false branch
+        if ((MaskActive(initStyle) == SCE_C_PREPROCESSOR) ||
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:533:6: note: Assuming 'startPos' is <= 0
+        if (startPos > 0) {
+            ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:533:2: note: Taking false branch
+        if (startPos > 0) {
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:543:24: note: Calling 'PPStates::ForLine'
+        LinePPState preproc = vlls.ForLine(lineCurrent);
+                              ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:192:8: note: Assuming 'line' is <= 0
+                if ((line > 0) && (vlls.size() > static_cast<size_t>(line))) {
+                     ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:192:18: note: Left side of '&&' is false
+                if ((line > 0) && (vlls.size() > static_cast<size_t>(line))) {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:195:11: note: Calling default constructor for 'LinePPState'
+                        return LinePPState();
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:151:40: note: The value -1 is assigned to 'preproc.level'
+        LinePPState() : state(0), ifTaken(0), level(-1) {
+                                              ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:195:11: note: Returning from default constructor for 'LinePPState'
+                        return LinePPState();
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:543:24: note: Returning from 'PPStates::ForLine'
+        LinePPState preproc = vlls.ForLine(lineCurrent);
+                              ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:549:6: note: Assuming field 'updatePreprocessor' is true
+        if (!options.updatePreprocessor)
+            ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:549:2: note: Taking false branch
+        if (!options.updatePreprocessor)
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:553:2: note: Taking true branch
+        if (itInvalid != ppDefineHistory.end()) {
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:559:2: note: Loop condition is false. Execution continues on line 566
+        for (std::vector<PPDefinition>::iterator itDef = ppDefineHistory.begin(); itDef != ppDefineHistory.end(); ++itDef) {
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:569:20: note: '?' condition is false
+        int activitySet = preproc.IsInactive() ? activeFlag : 0;
+                          ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:576:2: note: Loop condition is true.  Entering loop body
+        for (; sc.More();) {
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:578:10: note: Field 'atLineStart' is false
+                if (sc.atLineStart) {
+                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:578:3: note: Taking false branch
+                if (sc.atLineStart) {
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:601:10: note: Field 'atLineEnd' is false
+                if (sc.atLineEnd) {
+                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:601:3: note: Taking false branch
+                if (sc.atLineEnd) {
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:611:7: note: Assuming the condition is false
+                if (sc.ch == '\\') {
+                    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:611:3: note: Taking false branch
+                if (sc.ch == '\\') {
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:630:3: note: 'Default' branch taken. Execution continues on line 861
+                switch (MaskActive(sc.state)) {
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:861:10: note: Field 'atLineEnd' is false
+                if (sc.atLineEnd && !atLineEndBeforeSwitch) {
+                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:861:20: note: Left side of '&&' is false
+                if (sc.atLineEnd && !atLineEndBeforeSwitch) {
+                                 ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:869:7: note: Assuming the condition is true
+                if (MaskActive(sc.state) == SCE_C_DEFAULT) {
+                    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:869:3: note: Taking true branch
+                if (MaskActive(sc.state) == SCE_C_DEFAULT) {
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:870:4: note: Taking false branch
+                        if (sc.Match('@', '\"')) {
+                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:873:15: note: Assuming field 'triplequotedStrings' is false
+                        } else if (options.triplequotedStrings && sc.Match("\"\"\"")) {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:873:43: note: Left side of '&&' is false
+                        } else if (options.triplequotedStrings && sc.Match("\"\"\"")) {
+                                                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:876:15: note: Assuming field 'hashquotedStrings' is false
+                        } else if (options.hashquotedStrings && sc.Match('#', '\"')) {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:876:41: note: Left side of '&&' is false
+                        } else if (options.hashquotedStrings && sc.Match('#', '\"')) {
+                                                             ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:879:15: note: Left side of '||' is false
+                        } else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:879:35: note: Assuming the condition is false
+                        } else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
+                                                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:879:48: note: Left side of '&&' is false
+                        } else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
+                                                                    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:886:19: note: Field 'atLineEnd' is false
+                        } else if (!sc.atLineEnd && (setWordStart.Contains(sc.ch) || (sc.ch == '@'))) {
+                                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:886:15: note: Left side of '&&' is true
+                        } else if (!sc.atLineEnd && (setWordStart.Contains(sc.ch) || (sc.ch == '@'))) {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:886:33: note: Assuming the condition is false
+                        } else if (!sc.atLineEnd && (setWordStart.Contains(sc.ch) || (sc.ch == '@'))) {
+                                                     ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:886:33: note: Left side of '||' is false
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:886:11: note: Taking false branch
+                        } else if (!sc.atLineEnd && (setWordStart.Contains(sc.ch) || (sc.ch == '@'))) {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:893:11: note: Taking false branch
+                        } else if (sc.Match('/', '*')) {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:900:11: note: Taking false branch
+                        } else if (sc.Match('/', '/')) {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:907:8: note: Left side of '&&' is false
+                                   && (setOKBeforeRE.Contains(chPrevNonWhite)
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:913:15: note: Assuming the condition is false
+                        } else if (sc.ch == '\"') {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:913:11: note: Taking false branch
+                        } else if (sc.ch == '\"') {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:933:15: note: 'isIncludePreprocessor' is false
+                        } else if (isIncludePreprocessor && sc.ch == '<') {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:933:37: note: Left side of '&&' is false
+                        } else if (isIncludePreprocessor && sc.ch == '<') {
+                                                         ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:935:15: note: Assuming the condition is false
+                        } else if (sc.ch == '\'') {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:935:11: note: Taking false branch
+                        } else if (sc.ch == '\'') {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:937:15: note: Assuming the condition is true
+                        } else if (sc.ch == '#' && visibleChars == 0) {
+                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:937:15: note: Left side of '&&' is true
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:937:31: note: 'visibleChars' is equal to 0
+                        } else if (sc.ch == '#' && visibleChars == 0) {
+                                                   ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:937:11: note: Taking true branch
+                        } else if (sc.ch == '#' && visibleChars == 0) {
+                               ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:943:15: note: Assuming the condition is false
+                                } while ((sc.ch == ' ' || sc.ch == '\t') && sc.More());
+                                          ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:943:15: note: Left side of '||' is false
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:943:31: note: Assuming the condition is false
+                                } while ((sc.ch == ' ' || sc.ch == '\t') && sc.More());
+                                                          ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:943:46: note: Left side of '&&' is false
+                                } while ((sc.ch == ' ' || sc.ch == '\t') && sc.More());
+                                                                         ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:941:5: note: Loop condition is false.  Exiting loop
+                                do {
+                                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:944:12: note: Field 'atLineEnd' is false
+                                if (sc.atLineEnd) {
+                                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:944:5: note: Taking false branch
+                                if (sc.atLineEnd) {
+                                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:946:12: note: Taking false branch
+                                } else if (sc.Match("include")) {
+                                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:949:10: note: Assuming field 'trackPreprocessor' is true
+                                        if (options.trackPreprocessor) {
+                                            ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:949:6: note: Taking true branch
+                                        if (options.trackPreprocessor) {
+                                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:950:11: note: Left side of '||' is false
+                                                if (sc.Match("ifdef") || sc.Match("ifndef")) {
+                                                    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:950:7: note: Taking false branch
+                                                if (sc.Match("ifdef") || sc.Match("ifndef")) {
+                                                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:956:18: note: Assuming the condition is false
+                                                } else if (sc.Match("if")) {
+                                                           ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:956:14: note: Taking false branch
+                                                } else if (sc.Match("if")) {
+                                                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:960:18: note: Assuming the condition is true
+                                                } else if (sc.Match("else")) {
+                                                           ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:960:14: note: Taking true branch
+                                                } else if (sc.Match("else")) {
+                                                       ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:961:13: note: Calling 'LinePPState::CurrentIfTaken'
+                                                        if (!preproc.CurrentIfTaken()) {
+                                                             ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:157:21: note: Calling 'LinePPState::maskLevel'
+                return (ifTaken & maskLevel()) != 0;
+                                  ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/lexers/LexCPP.cpp:148:12: note: The result of the left shift is undefined because the right operand is negative
+                return 1 << level;
+                         ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/AutoComplete.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Decoration.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:119:5: warning: Call to virtual method 'QsciScintilla::setColor' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    setColor(pal.text().color());
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:119:5: note: Call to virtual method 'QsciScintilla::setColor' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:120:5: warning: Call to virtual method 'QsciScintilla::setPaper' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    setPaper(pal.base().color());
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:120:5: note: Call to virtual method 'QsciScintilla::setPaper' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:121:5: warning: Call to virtual method 'QsciScintilla::setSelectionForegroundColor' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    setSelectionForegroundColor(pal.highlightedText().color());
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:121:5: note: Call to virtual method 'QsciScintilla::setSelectionForegroundColor' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:122:5: warning: Call to virtual method 'QsciScintilla::setSelectionBackgroundColor' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    setSelectionBackgroundColor(pal.highlight().color());
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:122:5: note: Call to virtual method 'QsciScintilla::setSelectionBackgroundColor' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:128:5: warning: Call to virtual method 'QsciScintilla::setEolMode' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    setEolMode(EolUnix);
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:128:5: note: Call to virtual method 'QsciScintilla::setEolMode' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:139:5: warning: Call to virtual method 'QsciScintilla::setLexer' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+    setLexer();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:139:5: note: Call to virtual method 'QsciScintilla::setLexer' during construction bypasses virtual dispatch
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:3289:9: warning: Call to virtual method 'QsciScintilla::setColor' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+        setColor(nl_text_colour);
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:139:5: note: Calling 'QsciScintilla::setLexer'
+    setLexer();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:3222:5: note: Taking false branch
+    if (lex)
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:3289:9: note: Call to virtual method 'QsciScintilla::setColor' during construction bypasses virtual dispatch
+        setColor(nl_text_colour);
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:3290:9: warning: Call to virtual method 'QsciScintilla::setPaper' during construction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+        setPaper(nl_paper_colour);
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:139:5: note: Calling 'QsciScintilla::setLexer'
+    setLexer();
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:3222:5: note: Taking false branch
+    if (lex)
+    ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciscintilla.cpp:3290:9: note: Call to virtual method 'QsciScintilla::setPaper' during construction bypasses virtual dispatch
+        setPaper(nl_paper_colour);
+        ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:927:9: warning: Value stored to 'rc' is never read [clang-analyzer-deadcode.DeadStores]
+        rc = LIBSSH2_ERROR_BUFFER_TOO_SMALL;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:927:9: note: Value stored to 'rc' is never read
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3661:21: warning: The left operand of '>' is a garbage value [clang-analyzer-core.UndefinedBinaryOperatorResult]
+        if(data_len > 0) {
+                    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3725:8: note: Assuming 'sftp' is non-null
+    if(!sftp)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3725:5: note: Taking false branch
+    if(!sftp)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3728:18: note: Calling 'sftp_symlink'
+                 sftp_symlink(sftp, path, path_len, target, target_len,
+                 ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/session.h:58:16: note: expanded from macro 'BLOCK_ADJUST'
+          rc = x; \
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3583:12: note: 'data_len' declared without an initial value
+    size_t data_len, link_len;
+           ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3587:11: note: Assuming 'link_type' is not equal to LIBSSH2_SFTP_SYMLINK
+        ((link_type == LIBSSH2_SFTP_SYMLINK) ? (4 + target_len) : 0);
+          ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3587:10: note: '?' condition is false
+        ((link_type == LIBSSH2_SFTP_SYMLINK) ? (4 + target_len) : 0);
+         ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3593:9: note: Assuming field 'version' is >= 3
+    if((sftp->version < 3) && (link_type != LIBSSH2_SFTP_REALPATH)) {
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3593:28: note: Left side of '&&' is false
+    if((sftp->version < 3) && (link_type != LIBSSH2_SFTP_REALPATH)) {
+                           ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3598:8: note: Assuming field 'symlink_state' is not equal to libssh2_NB_state_idle
+    if(sftp->symlink_state == libssh2_NB_state_idle) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3598:5: note: Taking false branch
+    if(sftp->symlink_state == libssh2_NB_state_idle) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3637:8: note: Assuming field 'symlink_state' is not equal to libssh2_NB_state_created
+    if(sftp->symlink_state == libssh2_NB_state_created) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3637:5: note: Taking false branch
+    if(sftp->symlink_state == libssh2_NB_state_created) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3655:15: note: Calling 'sftp_packet_requirev'
+    retcode = sftp_packet_requirev(sftp, 2, link_responses,
+              ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:580:8: note: 'data' is not equal to NULL
+    if(data == NULL || data_len == NULL || required_size == 0) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:580:8: note: Left side of '||' is false
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:580:24: note: 'data_len' is not equal to NULL
+    if(data == NULL || data_len == NULL || required_size == 0) {
+                       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:580:8: note: Left side of '||' is false
+    if(data == NULL || data_len == NULL || required_size == 0) {
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:580:44: note: 'required_size' is not equal to 0
+    if(data == NULL || data_len == NULL || required_size == 0) {
+                                           ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:580:5: note: Taking false branch
+    if(data == NULL || data_len == NULL || required_size == 0) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:585:8: note: Assuming field 'requirev_start' is not equal to 0
+    if(sftp->requirev_start == 0)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:585:5: note: Taking false branch
+    if(sftp->requirev_start == 0)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:588:11: note: Assuming field 'socket_state' is equal to LIBSSH2_SOCKET_CONNECTED
+    while(sftp->channel->session->socket_state == LIBSSH2_SOCKET_CONNECTED) {
+          ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:588:5: note: Loop condition is true.  Entering loop body
+    while(sftp->channel->session->socket_state == LIBSSH2_SOCKET_CONNECTED) {
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:589:9: note: Loop condition is true.  Entering loop body
+        for(i = 0; i < num_valid_responses; i++) {
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:590:16: note: Calling 'sftp_packet_ask'
+            if(sftp_packet_ask(sftp, valid_responses[i], request_id,
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:489:8: note: Assuming 'packet' is null
+    if(!packet)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:489:5: note: Taking true branch
+    if(!packet)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:490:9: note: Returning without writing to '*data_len'
+        return -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:590:16: note: Returning from 'sftp_packet_ask'
+            if(sftp_packet_ask(sftp, valid_responses[i], request_id,
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:590:13: note: Taking false branch
+            if(sftp_packet_ask(sftp, valid_responses[i], request_id,
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:589:9: note: Loop condition is true.  Entering loop body
+        for(i = 0; i < num_valid_responses; i++) {
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:590:16: note: Calling 'sftp_packet_ask'
+            if(sftp_packet_ask(sftp, valid_responses[i], request_id,
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:489:8: note: Assuming 'packet' is null
+    if(!packet)
+       ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:489:5: note: Taking true branch
+    if(!packet)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:490:9: note: Returning without writing to '*data_len'
+        return -1;
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:590:16: note: Returning from 'sftp_packet_ask'
+            if(sftp_packet_ask(sftp, valid_responses[i], request_id,
+               ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:590:13: note: Taking false branch
+            if(sftp_packet_ask(sftp, valid_responses[i], request_id,
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:589:9: note: Loop condition is false. Execution continues on line 606
+        for(i = 0; i < num_valid_responses; i++) {
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:607:13: note: Assuming 'rc' is < 0
+        if((rc < 0) && (rc != LIBSSH2_ERROR_EAGAIN)) {
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:607:12: note: Left side of '&&' is true
+        if((rc < 0) && (rc != LIBSSH2_ERROR_EAGAIN)) {
+           ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:607:25: note: Assuming the condition is true
+        if((rc < 0) && (rc != LIBSSH2_ERROR_EAGAIN)) {
+                        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:607:9: note: Taking true branch
+        if((rc < 0) && (rc != LIBSSH2_ERROR_EAGAIN)) {
+        ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:609:13: note: Returning without writing to '*data_len'
+            return rc;
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3655:15: note: Returning from 'sftp_packet_requirev'
+    retcode = sftp_packet_requirev(sftp, 2, link_responses,
+              ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3658:5: note: Taking false branch
+    if(retcode == LIBSSH2_ERROR_EAGAIN)
+    ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3660:13: note: Assuming the condition is true
+    else if(retcode == LIBSSH2_ERROR_BUFFER_TOO_SMALL) {
+            ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3660:10: note: Taking true branch
+    else if(retcode == LIBSSH2_ERROR_BUFFER_TOO_SMALL) {
+         ^
+/opt/robo/src/third-party/libssh2-1.9.0/sources/src/sftp.c:3661:21: note: The left operand of '>' is a garbage value
+        if(data_len > 0) {
+                    ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/qsciapis.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CaseConvert.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CaseConvert.cpp:377:4: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                        strcpy(conversion.conversion, conversion_);
+                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CaseConvert.cpp:377:4: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/KeyMap.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Indicator.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ExternalLexer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/LineMarker.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ContractionState.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ScintillaBase.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ScintillaBase.cpp:384:5: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                                strcpy(buffer, selected.c_str());
+                                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ScintillaBase.cpp:384:5: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PerLine.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PerLine.cpp:119:2: warning: Call to virtual method 'LineMarkers::Init' during destruction bypasses virtual dispatch [clang-analyzer-optin.cplusplus.VirtualCall]
+        Init();
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PerLine.cpp:119:2: note: Call to virtual method 'LineMarkers::Init' during destruction bypasses virtual dispatch
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/RESearch.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Style.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/UniConversion.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/XPM.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/mocs_compilation.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/mocs_compilation.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/PositionCache.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/googletest-1.8.1/googlemock/src/gmock-all.cc
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/CellBuffer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/googletest-1.8.1/googletest/src/gtest_main.cc
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Selection.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/robomongo/shell_autogen/mocs_compilation.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/robomongo/shell_autogen/mocs_compilation.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/googletest-1.8.1/googlemock/src/gmock_main.cc
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/RunStyles.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/robomongo/tests_autogen/mocs_compilation.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/robomongo/tests_autogen/mocs_compilation.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+8 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+8 warnings generated.
+4 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+5 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Error reading configuration from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/third-party/qjson-0.8.1/qjson_autogen/mocs_compilation.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciabstractapis.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciapis.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexer.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexercpp.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscilexerjavascript.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qscimacro.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintilla.cpp.
+Found compiler error(s).
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/sources/Qt4Qt5/Qsci/moc_qsciscintillabase.cpp.
+Found compiler error(s).
+1 warning generated.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+5 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+1 warning generated.
+8 warnings generated.
+3 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning generated.
+Error reading configuration from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/third-party/qscintilla-2.8.4/qscintilla_autogen/mocs_compilation.cpp.
+Found compiler error(s).
+1 warning generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+Suppressed 1 warnings (1 NOLINT).
+Error reading configuration from /opt/robo/build/debug/src/robomongo/shell_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/shell_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/robomongo/shell_autogen/mocs_compilation.cpp.
+Found compiler error(s).
+Error reading configuration from /opt/robo/build/debug/src/robomongo/tests_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/tests_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/robomongo/tests_autogen/mocs_compilation.cpp.
+Found compiler error(s).
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ViewStyle.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ViewStyle.cpp:59:2: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+        strcpy(nameSave, name);
+        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/ViewStyle.cpp:59:2: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/googletest-1.8.1/googletest/src/gtest-all.cc
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/StdUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/JSLexer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/QtUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/shell/shell/dbshell.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+/opt/robo/src/robomongo/shell/shell/dbshell.cpp:67:10: error: 'mongo/util/static_observer.h' file not found [clang-diagnostic-error]
+#include "mongo/util/static_observer.h"
+         ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/app/main.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/CredentialSettings.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/Logger.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/Enums.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/app/main_test.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/Event.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventBusSubscriber.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventError.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/HexUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/BsonUtils.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoNamespace.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventBusDispatcher.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/KeyboardManager.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventWrapper.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/ConnectionSettings.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventBus.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/CursorPosition.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoFunction.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/ScriptInfo.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoCollectionInfo.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoQueryInfo.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Document.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoCollection.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/events/MongoEventsInfo.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/AppStyle.cpp
+/opt/robo/src/robomongo/gui/AppStyle.cpp:19:17: warning: Potential memory leak [clang-analyzer-cplusplus.NewDeleteLeaks]
+                return;
+                ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:35:13: note: Calling 'applyStyle'
+            applyStyle(style);
+            ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:17:17: note: Assuming the condition is true
+            if (styleName == "Native") {
+                ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:17:13: note: Taking true branch
+            if (styleName == "Native") {
+            ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:18:40: note: Memory is allocated
+                QApplication::setStyle(new AppStyle);
+                                       ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:19:17: note: Potential memory leak
+                return;
+                ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoDocument.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/events/MongoEvents.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/engine/ScriptEngine.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoServer.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoShell.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/ReplicaSet.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoDatabase.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/MongoClient.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/App.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/StringOperations.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/MongoWorker.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/SimpleCrypt.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/SettingsManager.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/GuiRegistry.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/AppRegistry.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/common.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/AboutDialog.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/RoboCrypt.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/shell/bson/json.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/EulaDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:7355:4: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                        strcpy(CharPtrFromSPtr(lParam), vs.styles[wParam].fontName);
+                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:7355:4: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:7377:3: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                strcpy(ptr, val);
+                ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:7377:3: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9199:6: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                                        strcpy(CharPtrFromSPtr(lParam), repr->stringRep.c_str());
+                                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9199:6: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9320:6: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                                        strcpy(CharPtrFromSPtr(lParam), "");
+                                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9320:6: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9344:6: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                                        strcpy(CharPtrFromSPtr(lParam), "");
+                                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9344:6: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9363:6: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                                        strcpy(CharPtrFromSPtr(lParam), "");
+                                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9363:6: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9387:6: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+                                        strcpy(CharPtrFromSPtr(lParam), "");
+                                        ^
+/opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Editor.cpp:9387:6: note: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/IndicatorLabel.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:51:14: warning: Potential leak of memory pointed to by 'serverIndicator' [clang-analyzer-cplusplus.NewDeleteLeaks]
+        if (!database.isEmpty())
+             ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:27:38: note: Memory is allocated
+        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
+                                     ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:41:9: note: '?' condition is true
+        VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        ^
+/opt/robo/src/robomongo/core/utils/QtUtils.h:14:19: note: expanded from macro 'VERIFY'
+#define VERIFY(x) Q_ASSERT(x)
+                  ^
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:782:29: note: expanded from macro 'Q_ASSERT'
+#    define Q_ASSERT(cond) ((cond) ? static_cast<void>(0) : qt_assert(#cond, __FILE__, __LINE__))
+                            ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:42:9: note: '?' condition is true
+        VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        ^
+/opt/robo/src/robomongo/core/utils/QtUtils.h:14:19: note: expanded from macro 'VERIFY'
+#define VERIFY(x) Q_ASSERT(x)
+                  ^
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:782:29: note: expanded from macro 'Q_ASSERT'
+#    define Q_ASSERT(cond) ((cond) ? static_cast<void>(0) : qt_assert(#cond, __FILE__, __LINE__))
+                            ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:49:13: note: Assuming the condition is false
+        if (!serverName.isEmpty())
+            ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:49:9: note: Taking false branch
+        if (!serverName.isEmpty())
+        ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:51:14: note: Potential leak of memory pointed to by 'serverIndicator'
+        if (!database.isEmpty())
+             ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/utils/ComboBoxUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/shell/db/ptimeutil.cpp
+/opt/robo/src/robomongo/shell/db/ptimeutil.cpp:277:13: warning: Call to function 'strcat' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcat'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+            strcat(buf, utc_buff);
+            ^
+/opt/robo/src/robomongo/shell/db/ptimeutil.cpp:277:13: note: Call to function 'strcat' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcat'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/utils/DialogUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/PreferencesDialog.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CreateUserDialog.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/PlainJavaScriptEditor.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/JSLexer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ExportDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/FindFrame.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ChangeShellTimeoutDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/FunctionTextEditor.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableModel.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableView.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/JsonPrepareThread.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeItem.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/PagingWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/ProgressBarPopup.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemHeaderWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/Notifier.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp
+/opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp:143:16: warning: Value stored to 'selectedBorder' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+        QColor selectedBorder = background.darker(103);
+               ^
+/opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp:143:16: note: Value stored to 'selectedBorder' during its initialization is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:69:17: warning: Value stored to 'isSimple' is never read [clang-analyzer-deadcode.DeadStores]
+                isSimple = detail::isSimpleType(documentItem);
+                ^
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:69:17: note: Value stored to 'isSimple' is never read
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:168:13: warning: Value stored to 'count' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+        int count = indexes.count();
+            ^
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:168:13: note: Value stored to 'count' during its initialization is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/LogWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/SshSettings.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/SslSettings.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/robomongo/robomongo_autogen/mocs_compilation.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/robomongo/robomongo_autogen/mocs_compilation.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/robomongo/robomongo_autogen/3YJK5W5UP7/qrc_robo.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/robomongo/robomongo_autogen/3YJK5W5UP7/qrc_robo.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+2 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+5 warnings generated.
+Suppressed 5 warnings (5 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 errors generated.
+Error while processing /opt/robo/src/robomongo/shell/shell/dbshell.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/app/main.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/utils/Logger.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/utils/BsonUtils.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/settings/ConnectionSettings.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoFunction.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoCollectionInfo.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoQueryInfo.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoCollection.cpp.
+Found compiler error(s).
+1 warning generated.
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoDocument.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/events/MongoEvents.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/engine/ScriptEngine.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoServer.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoShell.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/MongoDatabase.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/mongodb/MongoClient.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/App.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/mongodb/MongoWorker.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/settings/SettingsManager.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/AppRegistry.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/utils/common.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/utils/RoboCrypt.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/EulaDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.cpp.
+Found compiler error(s).
+8 warnings generated.
+Suppressed 1 warnings (1 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp.
+Found compiler error(s).
+1 warning generated.
+1 warning generated.
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ExportDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/ChangeShellTimeoutDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/domain/Notifier.cpp.
+Found compiler error(s).
+1 warning generated.
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp.
+Found compiler error(s).
+2 warnings generated.
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.cpp.
+Found compiler error(s).
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/robomongo/robomongo_autogen/mocs_compilation.cpp.
+Found compiler error(s).
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen/3YJK5W5UP7: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen/3YJK5W5UP7: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/robomongo/robomongo_autogen/3YJK5W5UP7/qrc_robo.cpp.
+Found compiler error(s).
+clang-tidy -p=/opt/robo/build/debug /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA/qrc_gui.cpp
+error: no input files [clang-diagnostic-error]
+error: no such file or directory: '/opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA/qrc_gui.cpp' [clang-diagnostic-error]
+error: unable to handle compilation, expected exactly one compiler job in '' [clang-diagnostic-error]
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/MainWindow.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/SSLTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA/qrc_gui.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/MainWindow.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/SSLTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.cpp.
+Found compiler error(s).
+

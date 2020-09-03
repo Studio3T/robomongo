@@ -48,7 +48,7 @@ int main(int argc, char *argv[], char** envp)
     // Todo from mongo repo: This should use a TransportLayerManager or TransportLayerFactory
     auto serviceContext = mongo::getGlobalServiceContext();
     mongo::transport::TransportLayerASIO::Options opts;
-    opts.enableIPv6 = true;
+    opts.enableIPv6 = false; // Todo: When true, it breaks connection to localhost, github #1757
     opts.mode = mongo::transport::TransportLayerASIO::Options::kEgress;
     serviceContext->setTransportLayer(
         std::make_unique<mongo::transport::TransportLayerASIO>(opts, nullptr)

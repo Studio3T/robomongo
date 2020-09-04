@@ -20,7 +20,6 @@ blog.robomongo.org/robo-3t-1-4/
   - Authentication database option isn't used properly (#1696)
   - Add/Edit index ops fixed (re-written) (#1692) 
   - Crash when expanding admin users (#1728) 
-  - IPv6 support (previously broken) restored 
   - Unable to run query after shell timeout reached (#1529)
 
 Robo 3T 1.3.1 (Apr, 2019)

@@ -28,6 +28,7 @@ elseif(SYSTEM_MACOSX)
     set(contents_path       ${bundle_name}/Contents)
 
     set(bin_dir             ${contents_path}/MacOS)
+    set(styles_dir          ${contents_path}/MacOS/styles)
     set(lib_dir             ${contents_path}/Frameworks)
     set(resources_dir       ${contents_path}/Resources)
     set(license_dir         ${resources_dir})
@@ -37,6 +38,7 @@ elseif(SYSTEM_MACOSX)
     set(qt_conf_plugins     "PlugIns/Qt")
 elseif(SYSTEM_WINDOWS)
     set(bin_dir             .)
+    set(bin_dir             ${bin_dir}/styles)
     set(lib_dir             .)
     set(resources_dir       .)
     set(license_dir         .)
@@ -44,7 +46,6 @@ elseif(SYSTEM_WINDOWS)
     set(qt_plugins_dir      ${lib_dir})
     set(qt_conf_dir         ${bin_dir})
     set(qt_conf_plugins     .)
-    set(qt_styles_dir       ${Qt5Core_DIR}/../../../plugins/styles/)
 endif()
 
 # Generate qt.conf file
@@ -99,6 +100,7 @@ install(
 install_qt_lib(Core Gui Widgets PrintSupport Network Xml)
 install_qt_plugins(QGifPlugin QICOPlugin)
 install_icu_libs()
+set(QT_STYLES_DIR ${Qt5Core_DIR}/../../../plugins/styles/)
 
 if(SYSTEM_LINUX)
     install_qt_lib(XcbQpa DBus)
@@ -121,14 +123,17 @@ elseif(SYSTEM_MACOSX)
     install(
         FILES       "${CMAKE_SOURCE_DIR}/install/macosx/robomongo.icns"
         DESTINATION "${resources_dir}")
+
+    # Install styles    
+    install(FILES "${QT_STYLES_DIR}/libqmacstyle.dylib" DESTINATION ${styles_dir})
 elseif(SYSTEM_WINDOWS)
     install_qt_plugins(
         QWindowsIntegrationPlugin
         QMinimalIntegrationPlugin
         QOffscreenIntegrationPlugin)
 
-    # Install Qt Styles
-    install(FILES "${qt_styles_dir}/qwindowsvistastyle.dll" DESTINATION ${bin_dir}/styles)
+    # Install Styles
+    install(FILES "${QT_STYLES_DIR}/qwindowsvistastyle.dll" DESTINATION ${styles_dir})
 
     # Install runtime libraries:
     # msvcp120.dll

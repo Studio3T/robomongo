@@ -171,6 +171,23 @@ target_include_directories(robomongo
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src)
 
+# Get build number
+find_package(Git)
+if(GIT_FOUND)
+    MESSAGE( STATUS "Info: Git found" )
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short head
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE "BUILD_NUMBER"
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else(git_found)
+    MESSAGE( STATUS "Error: Unable to find Git" )
+    set(BUILD_NUMBER 0)
+endif(GIT_FOUND)
+MESSAGE( STATUS "Info: BUILD_NUMBER set as ${BUILD_NUMBER}" )
+
 target_compile_definitions(robomongo
     PRIVATE
         BUILDING_ROBO
@@ -184,6 +201,7 @@ target_compile_definitions(robomongo
         PROJECT_GITHUB_ISSUES="${PROJECT_GITHUB_ISSUES}"
         PROJECT_VERSION="${PROJECT_VERSION}"
         PROJECT_VERSION_SHORT="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+        BUILD_NUMBER="${BUILD_NUMBER}"
         PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}"
         PROJECT_QT_VERSION="${Qt5Core_VERSION}"        
         MongoDB_VERSION="${MongoDB_VERSION}"

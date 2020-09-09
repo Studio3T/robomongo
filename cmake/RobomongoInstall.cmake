@@ -44,6 +44,7 @@ elseif(SYSTEM_WINDOWS)
     set(qt_plugins_dir      ${lib_dir})
     set(qt_conf_dir         ${bin_dir})
     set(qt_conf_plugins     .)
+    set(qt_styles_dir       ${Qt5Core_DIR}/../../../plugins/styles/)
 endif()
 
 # Generate qt.conf file
@@ -125,6 +126,9 @@ elseif(SYSTEM_WINDOWS)
         QWindowsIntegrationPlugin
         QMinimalIntegrationPlugin
         QOffscreenIntegrationPlugin)
+
+    # Install Qt Styles
+    install(FILES "${qt_styles_dir}/qwindowsvistastyle.dll" DESTINATION ${bin_dir}/styles)
 
     # Install runtime libraries:
     # msvcp120.dll

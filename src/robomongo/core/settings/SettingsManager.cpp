@@ -75,6 +75,7 @@ namespace Robomongo
     //            be defined and placed into the vector initializer list below in order.
     std::vector<QString> const SettingsManager::_configFilesOfOldVersions
     {
+        QString("%1/.3T/robo-3t/1.4.0/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_4_0
         QString("%1/.3T/robo-3t/1.3.1/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_3_1
         QString("%1/.3T/robo-3t/1.3.0/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_3_0_BETA
         QString("%1/.3T/robo-3t/1.2.1/robo3t.json").arg(QDir::homePath()), // CONFIG_FILE_1_2_1

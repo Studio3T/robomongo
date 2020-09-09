@@ -62,7 +62,7 @@ namespace Robomongo
         _defaultDatabaseName = new QLineEdit(QtUtils::toQString(_settings->defaultDatabase()));
         auto defaultDbLabel = new QLabel("Default Database:");
 #ifdef _WIN32
-        defaultDbLabel->setMaximumWidth(88); // Win
+        defaultDbLabel->setMaximumWidth(100); // Win
 #elif __APPLE__
         defaultDbLabel->setMaximumWidth(110); // MacOS
 #else

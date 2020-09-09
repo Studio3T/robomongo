@@ -176,17 +176,21 @@ find_package(Git)
 if(GIT_FOUND)
     MESSAGE( STATUS "Info: Git found" )
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} rev-parse --short head
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        OUTPUT_VARIABLE "BUILD_NUMBER"
-        ERROR_QUIET
+        OUTPUT_VARIABLE "BUILD_NUMBER"        
         OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-else(git_found)
-    MESSAGE( STATUS "Error: Unable to find Git" )
+    )    
+else(GIT_FOUND)
+    MESSAGE( FATAL_ERROR "Unable to find Git" )
     set(BUILD_NUMBER 0)
 endif(GIT_FOUND)
-MESSAGE( STATUS "Info: BUILD_NUMBER set as ${BUILD_NUMBER}" )
+
+if(BUILD_NUMBER STREQUAL "")
+   MESSAGE( FATAL_ERROR "Failed to get BUILD_NUMBER" )
+endif()
+
+MESSAGE( STATUS "Info: BUILD_NUMBER set as " \"${BUILD_NUMBER}\" )
 
 target_compile_definitions(robomongo
     PRIVATE

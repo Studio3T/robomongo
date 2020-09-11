@@ -11,11 +11,11 @@ Older Releases: https://github.com/Studio3T/robomongo/releases
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
 
-**MongoDB shell history:**   
-From Robo 3T 1.3 embeds MongoDB 4.0     
-From Robo 3T 1.1 embeds MongoDB 3.4    
-From Robo 3T 0.9 embeds MongoDB 3.2  
-From Robo 3T 0.8.x embeds MongoDB 2.4.0  
+**Embedded MongoDB shell history:**  
+Robo 3T 1.3 upgraded to MongoDB 4.0     
+Robo 3T 1.1 upgraded to MongoDB 3.4    
+Robo 3T 0.9 upgraded to MongoDB 3.2  
+Robo 3T 0.8.x embeds MongoDB 2.4.0  
 
 \* [Robomongo has been acquired by 3T](https://studio3t.com/press/3t-software-labs-acquires-robomongo-the-most-widely-used-mongodb-tool/)
 

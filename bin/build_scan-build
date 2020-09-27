@@ -8,4 +8,5 @@ PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root dir
 source $BIN_DIR/common/setup debug # release or debug
 
 cd $BUILD_DIR
-scan-build --use-analyzer /usr/local/opt/llvm/bin/clang++ cmake --build . "${@:2}" -- -j8
+scan-build cmake --build . "${@:2}" -- -j8
+# Hint: Use "--use-analyzer /usr/local/opt/llvm/bin/clang++" after "-v"

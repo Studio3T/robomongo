@@ -1,0 +1,908 @@
+
+Enabled checks:
+    clang-analyzer-apiModeling.StdCLibraryFunctions
+    clang-analyzer-apiModeling.TrustNonnull
+    clang-analyzer-apiModeling.google.GTest
+    clang-analyzer-apiModeling.llvm.CastValue
+    clang-analyzer-apiModeling.llvm.ReturnValue
+    clang-analyzer-core.CallAndMessage
+    clang-analyzer-core.DivideZero
+    clang-analyzer-core.DynamicTypePropagation
+    clang-analyzer-core.NonNullParamChecker
+    clang-analyzer-core.NonnilStringConstants
+    clang-analyzer-core.NullDereference
+    clang-analyzer-core.StackAddrEscapeBase
+    clang-analyzer-core.StackAddressEscape
+    clang-analyzer-core.UndefinedBinaryOperatorResult
+    clang-analyzer-core.VLASize
+    clang-analyzer-core.builtin.BuiltinFunctions
+    clang-analyzer-core.builtin.NoReturnFunctions
+    clang-analyzer-core.uninitialized.ArraySubscript
+    clang-analyzer-core.uninitialized.Assign
+    clang-analyzer-core.uninitialized.Branch
+    clang-analyzer-core.uninitialized.CapturedBlockVariable
+    clang-analyzer-core.uninitialized.UndefReturn
+    clang-analyzer-cplusplus.InnerPointer
+    clang-analyzer-cplusplus.Move
+    clang-analyzer-cplusplus.NewDelete
+    clang-analyzer-cplusplus.NewDeleteLeaks
+    clang-analyzer-cplusplus.PureVirtualCall
+    clang-analyzer-cplusplus.SelfAssignment
+    clang-analyzer-cplusplus.SmartPtr
+    clang-analyzer-cplusplus.VirtualCallModeling
+    clang-analyzer-deadcode.DeadStores
+    clang-analyzer-fuchsia.HandleChecker
+    clang-analyzer-nullability.NullPassedToNonnull
+    clang-analyzer-nullability.NullReturnedFromNonnull
+    clang-analyzer-nullability.NullabilityBase
+    clang-analyzer-nullability.NullableDereferenced
+    clang-analyzer-nullability.NullablePassedToNonnull
+    clang-analyzer-nullability.NullableReturnedFromNonnull
+    clang-analyzer-optin.cplusplus.UninitializedObject
+    clang-analyzer-optin.cplusplus.VirtualCall
+    clang-analyzer-optin.mpi.MPI-Checker
+    clang-analyzer-optin.osx.OSObjectCStyleCast
+    clang-analyzer-optin.osx.cocoa.localizability.EmptyLocalizationContextChecker
+    clang-analyzer-optin.osx.cocoa.localizability.NonLocalizedStringChecker
+    clang-analyzer-optin.performance.GCDAntipattern
+    clang-analyzer-optin.performance.Padding
+    clang-analyzer-optin.portability.UnixAPI
+    clang-analyzer-osx.API
+    clang-analyzer-osx.MIG
+    clang-analyzer-osx.NSOrCFErrorDerefChecker
+    clang-analyzer-osx.NumberObjectConversion
+    clang-analyzer-osx.OSObjectRetainCount
+    clang-analyzer-osx.ObjCProperty
+    clang-analyzer-osx.SecKeychainAPI
+    clang-analyzer-osx.cocoa.AtSync
+    clang-analyzer-osx.cocoa.AutoreleaseWrite
+    clang-analyzer-osx.cocoa.ClassRelease
+    clang-analyzer-osx.cocoa.Dealloc
+    clang-analyzer-osx.cocoa.IncompatibleMethodTypes
+    clang-analyzer-osx.cocoa.Loops
+    clang-analyzer-osx.cocoa.MissingSuperCall
+    clang-analyzer-osx.cocoa.NSAutoreleasePool
+    clang-analyzer-osx.cocoa.NSError
+    clang-analyzer-osx.cocoa.NilArg
+    clang-analyzer-osx.cocoa.NonNilReturnValue
+    clang-analyzer-osx.cocoa.ObjCGenerics
+    clang-analyzer-osx.cocoa.RetainCount
+    clang-analyzer-osx.cocoa.RetainCountBase
+    clang-analyzer-osx.cocoa.RunLoopAutoreleaseLeak
+    clang-analyzer-osx.cocoa.SelfInit
+    clang-analyzer-osx.cocoa.SuperDealloc
+    clang-analyzer-osx.cocoa.UnusedIvars
+    clang-analyzer-osx.cocoa.VariadicMethodTypes
+    clang-analyzer-osx.coreFoundation.CFError
+    clang-analyzer-osx.coreFoundation.CFNumber
+    clang-analyzer-osx.coreFoundation.CFRetainRelease
+    clang-analyzer-osx.coreFoundation.containers.OutOfBounds
+    clang-analyzer-osx.coreFoundation.containers.PointerSizedValues
+    clang-analyzer-security.FloatLoopCounter
+    clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
+    clang-analyzer-security.insecureAPI.SecuritySyntaxChecker
+    clang-analyzer-security.insecureAPI.UncheckedReturn
+    clang-analyzer-security.insecureAPI.bcmp
+    clang-analyzer-security.insecureAPI.bcopy
+    clang-analyzer-security.insecureAPI.bzero
+    clang-analyzer-security.insecureAPI.decodeValueOfObjCType
+    clang-analyzer-security.insecureAPI.getpw
+    clang-analyzer-security.insecureAPI.gets
+    clang-analyzer-security.insecureAPI.mkstemp
+    clang-analyzer-security.insecureAPI.mktemp
+    clang-analyzer-security.insecureAPI.rand
+    clang-analyzer-security.insecureAPI.strcpy
+    clang-analyzer-security.insecureAPI.vfork
+    clang-analyzer-unix.API
+    clang-analyzer-unix.DynamicMemoryModeling
+    clang-analyzer-unix.Malloc
+    clang-analyzer-unix.MallocSizeof
+    clang-analyzer-unix.MismatchedDeallocator
+    clang-analyzer-unix.Vfork
+    clang-analyzer-unix.cstring.BadSizeArg
+    clang-analyzer-unix.cstring.CStringModeling
+    clang-analyzer-unix.cstring.NullArg
+    clang-analyzer-valist.CopyToSelf
+    clang-analyzer-valist.Uninitialized
+    clang-analyzer-valist.Unterminated
+    clang-analyzer-valist.ValistBase
+
+
+
+...
+
+
+
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/test.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/server.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/ssh.c
+/opt/robo/src/robomongo/ssh/ssh.c:111:16: warning: Potential leak of memory pointed to by 'session' [clang-analyzer-unix.Malloc]
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:88:58: note: Memory is allocated
+    struct rbm_session *session = (struct rbm_session *) malloc(sizeof(struct rbm_session));
+                                                         ^
+/opt/robo/src/robomongo/ssh/ssh.c:89:9: note: Assuming 'session' is non-null
+    if (!session)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:89:5: note: Taking false branch
+    if (!session)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:101:9: note: Assuming field 'loglevel' is equal to RBM_SSH_LOG_TYPE_ERROR
+    if (config->loglevel != RBM_SSH_LOG_TYPE_ERROR &&
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:101:52: note: Left side of '&&' is false
+    if (config->loglevel != RBM_SSH_LOG_TYPE_ERROR &&
+                                                   ^
+/opt/robo/src/robomongo/ssh/ssh.c:110:9: note: Assuming 'publicsession' is null
+    if (!publicsession)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:110:5: note: Taking true branch
+    if (!publicsession)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:111:16: note: Potential leak of memory pointed to by 'session'
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:196:16: warning: Potential leak of memory pointed to by 'channel' [clang-analyzer-unix.Malloc]
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:142:5: note: Loop condition is true.  Entering loop body
+    while (1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:143:14: note: Calling 'rbm_open_tunnel'
+        rc = rbm_open_tunnel(connection);
+             ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: Assuming 'local_socket' is <= 'ssh_socket'
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: '?' condition is false
+/opt/robo/src/robomongo/ssh/ssh.c:331:5: note: Loop condition is true.  Entering loop body
+    while (errors < maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:13: note: Assuming the condition is false
+        if (!FD_ISSET(local_socket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:9: note: Taking false branch
+        if (!FD_ISSET(local_socket, &readset))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:13: note: Assuming the condition is false
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:9: note: Taking false branch
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:26: note: Assuming 'isocket' is <= 'fdmax'
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+                         ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:9: note: Loop condition is true.  Entering loop body
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:17: note: Assuming the condition is false
+            if (!FD_ISSET(isocket, &readset))
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:13: note: Taking false branch
+            if (!FD_ISSET(isocket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:17: note: Assuming 'isocket' is equal to 'local_socket'
+            if (isocket == local_socket) {
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:13: note: Taking true branch
+            if (isocket == local_socket) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:355:22: note: Calling 'handle_new_client_connections'
+                rc = handle_new_client_connections(connection, &fdmax, &masterset);
+                     ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:9: note: Assuming the condition is false
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:5: note: Taking false branch
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:13: note: Assuming the condition is false
+        if (newfd > *fdmax) {       // keep track of the maximum
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:9: note: Taking false branch
+        if (newfd > *fdmax) {       // keep track of the maximum
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:424:5: note: Loop condition is true.  Entering loop body
+    while (attempts < maxattempts) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:13: note: Assuming 'channel' is non-null
+        if (!channel) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:9: note: Taking false branch
+        if (!channel) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:446:9: note:  Execution continues on line 449
+        break;
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:10: note: 'channel' is non-null
+    if (!channel) {
+         ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:5: note: Taking false branch
+    if (!channel) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:454:9: note: Calling 'rbm_channel_create'
+    if (rbm_channel_create(connection, newfd, channel) == NULL) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:190:35: note: Memory is allocated
+    struct rbm_channel *channel = malloc(sizeof(struct rbm_channel));
+                                  ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:9: note: Assuming 'channel' is non-null
+    if (!channel)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:5: note: Taking false branch
+    if (!channel)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:9: note: Assuming 'inbuf' is null
+    if (!inbuf)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:5: note: Taking true branch
+    if (!inbuf)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:196:16: note: Potential leak of memory pointed to by 'channel'
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:200:16: warning: Potential leak of memory pointed to by 'inbuf' [clang-analyzer-unix.Malloc]
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:142:5: note: Loop condition is true.  Entering loop body
+    while (1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:143:14: note: Calling 'rbm_open_tunnel'
+        rc = rbm_open_tunnel(connection);
+             ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: Assuming 'local_socket' is <= 'ssh_socket'
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: '?' condition is false
+/opt/robo/src/robomongo/ssh/ssh.c:331:5: note: Loop condition is true.  Entering loop body
+    while (errors < maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:13: note: Assuming the condition is false
+        if (!FD_ISSET(local_socket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:9: note: Taking false branch
+        if (!FD_ISSET(local_socket, &readset))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:13: note: Assuming the condition is false
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:341:9: note: Taking false branch
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:26: note: Assuming 'isocket' is <= 'fdmax'
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+                         ^
+/opt/robo/src/robomongo/ssh/ssh.c:348:9: note: Loop condition is true.  Entering loop body
+        for(isocket = 0; isocket <= fdmax; isocket++) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:17: note: Assuming the condition is false
+            if (!FD_ISSET(isocket, &readset))
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:351:13: note: Taking false branch
+            if (!FD_ISSET(isocket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:17: note: Assuming 'isocket' is equal to 'local_socket'
+            if (isocket == local_socket) {
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:354:13: note: Taking true branch
+            if (isocket == local_socket) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:355:22: note: Calling 'handle_new_client_connections'
+                rc = handle_new_client_connections(connection, &fdmax, &masterset);
+                     ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:9: note: Assuming the condition is false
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:408:5: note: Taking false branch
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:13: note: Assuming the condition is false
+        if (newfd > *fdmax) {       // keep track of the maximum
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:414:9: note: Taking false branch
+        if (newfd > *fdmax) {       // keep track of the maximum
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:424:5: note: Loop condition is true.  Entering loop body
+    while (attempts < maxattempts) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:13: note: Assuming 'channel' is non-null
+        if (!channel) {
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:430:9: note: Taking false branch
+        if (!channel) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:446:9: note:  Execution continues on line 449
+        break;
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:10: note: 'channel' is non-null
+    if (!channel) {
+         ^
+/opt/robo/src/robomongo/ssh/ssh.c:449:5: note: Taking false branch
+    if (!channel) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:454:9: note: Calling 'rbm_channel_create'
+    if (rbm_channel_create(connection, newfd, channel) == NULL) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:9: note: Assuming 'channel' is non-null
+    if (!channel)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:191:5: note: Taking false branch
+    if (!channel)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:194:19: note: Memory is allocated
+    char *inbuf = malloc(sizeof(char) * RBM_BUFSIZE);
+                  ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:9: note: Assuming 'inbuf' is non-null
+    if (!inbuf)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:195:5: note: Taking false branch
+    if (!inbuf)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:199:9: note: Assuming 'outbuf' is null
+    if (!outbuf)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:199:5: note: Taking true branch
+    if (!outbuf)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:200:16: note: Potential leak of memory pointed to by 'inbuf'
+        return NULL;
+               ^
+/usr/local/Cellar/llvm/10.0.1/lib/clang/10.0.1/include/stddef.h:89:24: note: expanded from macro 'NULL'
+#  define NULL ((void*)0)
+                       ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: warning: Use of memory after it is freed [clang-analyzer-unix.Malloc]
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:142:5: note: Loop condition is true.  Entering loop body
+    while (1) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:143:14: note: Calling 'rbm_open_tunnel'
+        rc = rbm_open_tunnel(connection);
+             ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: Assuming 'local_socket' is <= 'ssh_socket'
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:329:13: note: '?' condition is false
+/opt/robo/src/robomongo/ssh/ssh.c:331:5: note: Loop condition is true.  Entering loop body
+    while (errors < maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:13: note: Assuming the condition is true
+        if (!FD_ISSET(local_socket, &readset))
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:337:9: note: Taking true branch
+        if (!FD_ISSET(local_socket, &readset))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:338:13: note:  Execution continues on line 385
+            break;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:385:9: note: 'errors' is < 'maxerrors'
+    if (errors >= maxerrors) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:385:5: note: Taking false branch
+    if (errors >= maxerrors) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:390:5: note: Calling 'rbm_ssh_session_close'
+    rbm_ssh_session_close(connection->publicsession);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:125:9: note: Assuming the condition is false
+    if (session->localsocket != rbm_socket_invalid) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:125:5: note: Taking false branch
+    if (session->localsocket != rbm_socket_invalid) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:131:5: note: Calling 'rbm_session_cleanup'
+    rbm_session_cleanup(session);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:280:9: note: 'session' is not equal to NULL
+    if (session == NULL)
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:280:5: note: Taking false branch
+    if (session == NULL)
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:12: note: Assuming field 'channelssize' is > 0
+    while (session->channelssize > 0) {
+           ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:5: note: Loop condition is true.  Entering loop body
+    while (session->channelssize > 0) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: note: Calling 'rbm_channel_close'
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:217:9: note: Assuming the condition is false
+    if (rbm_array_remove((void ***)&session->channels, &session->channelssize, channel))
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:217:5: note: Taking false branch
+    if (rbm_array_remove((void ***)&session->channels, &session->channelssize, channel))
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:221:9: note: Assuming the condition is false
+    if (channel->socket != rbm_socket_invalid) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:221:5: note: Taking false branch
+    if (channel->socket != rbm_socket_invalid) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:227:9: note: Assuming field 'channel' is null
+    if (channel->channel) {
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:227:5: note: Taking false branch
+    if (channel->channel) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:239:5: note: Memory is released
+    free(channel);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: note: Returning; memory was released via 1st parameter
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:21: note: Field 'channelssize' is > 0
+    while (session->channelssize > 0) {
+                    ^
+/opt/robo/src/robomongo/ssh/ssh.c:290:5: note: Loop condition is true.  Entering loop body
+    while (session->channelssize > 0) {
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:291:9: note: Use of memory after it is freed
+        rbm_channel_close(session->channels[0]);
+        ^
+/opt/robo/src/robomongo/ssh/ssh.c:322:5: warning: The bzero() function is obsoleted by memset() [clang-analyzer-security.insecureAPI.bzero]
+    FD_ZERO(&masterset);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/robomongo/ssh/ssh.c:322:5: note: The bzero() function is obsoleted by memset()
+    FD_ZERO(&masterset);
+    ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_zero.h:29:25: note: expanded from macro 'FD_ZERO'
+#define FD_ZERO(p)      __DARWIN_FD_ZERO(p)
+                        ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/include/sys/_types/_fd_def.h:108:33: note: expanded from macro '__DARWIN_FD_ZERO'
+#define __DARWIN_FD_ZERO(p)     __builtin_bzero(p, sizeof(*(p)))
+                                ^
+/opt/robo/src/robomongo/ssh/ssh.c:429:13: warning: Value stored to 'errsave' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+        int errsave = errno;
+            ^
+/opt/robo/src/robomongo/ssh/ssh.c:429:13: note: Value stored to 'errsave' during its initialization is never read
+/opt/robo/src/robomongo/ssh/ssh.c:510:17: warning: Value stored to 'result' is never read [clang-analyzer-deadcode.DeadStores]
+                result = RBM_ERROR;
+                ^
+/opt/robo/src/robomongo/ssh/ssh.c:510:17: note: Value stored to 'result' is never read
+/opt/robo/src/robomongo/ssh/ssh.c:730:5: warning: Value stored to 'fingerprint' is never read [clang-analyzer-deadcode.DeadStores]
+    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    ^
+/opt/robo/src/robomongo/ssh/ssh.c:730:5: note: Value stored to 'fingerprint' is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/log.c
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/ssh/array.c
+
+
+
+
+...
+
+
+
+
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/StdUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/JSLexer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/QtUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/shell/shell/dbshell.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+/opt/robo/src/robomongo/shell/shell/dbshell.cpp:67:10: error: 'mongo/util/static_observer.h' file not found [clang-diagnostic-error]
+#include "mongo/util/static_observer.h"
+         ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/app/main.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/CredentialSettings.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/Logger.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/Enums.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/app/main_test.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/Event.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventBusSubscriber.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventError.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/HexUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/utils/BsonUtils.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoNamespace.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventBusDispatcher.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/KeyboardManager.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventWrapper.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/ConnectionSettings.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/EventBus.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/CursorPosition.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoFunction.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/ScriptInfo.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoCollectionInfo.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoQueryInfo.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/third-party/qscintilla-2.8.4/sources/src/Document.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoCollection.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/events/MongoEventsInfo.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/AppStyle.cpp
+/opt/robo/src/robomongo/gui/AppStyle.cpp:19:17: warning: Potential memory leak [clang-analyzer-cplusplus.NewDeleteLeaks]
+                return;
+                ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:35:13: note: Calling 'applyStyle'
+            applyStyle(style);
+            ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:17:17: note: Assuming the condition is true
+            if (styleName == "Native") {
+                ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:17:13: note: Taking true branch
+            if (styleName == "Native") {
+            ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:18:40: note: Memory is allocated
+                QApplication::setStyle(new AppStyle);
+                                       ^
+/opt/robo/src/robomongo/gui/AppStyle.cpp:19:17: note: Potential memory leak
+                return;
+                ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoDocument.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/events/MongoEvents.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/engine/ScriptEngine.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoServer.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoShell.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/ReplicaSet.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/MongoDatabase.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/MongoClient.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/App.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/StringOperations.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/MongoWorker.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/SimpleCrypt.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/SettingsManager.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/GuiRegistry.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/AppRegistry.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/common.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/AboutDialog.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/utils/RoboCrypt.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/shell/bson/json.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionAdvancedTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/EulaDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionAuthTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+
+
+
+....
+
+
+
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/IndicatorLabel.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionBasicTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:51:14: warning: Potential leak of memory pointed to by 'serverIndicator' [clang-analyzer-cplusplus.NewDeleteLeaks]
+        if (!database.isEmpty())
+             ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:27:38: note: Memory is allocated
+        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
+                                     ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:41:9: note: '?' condition is true
+        VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        ^
+/opt/robo/src/robomongo/core/utils/QtUtils.h:14:19: note: expanded from macro 'VERIFY'
+#define VERIFY(x) Q_ASSERT(x)
+                  ^
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:782:29: note: expanded from macro 'Q_ASSERT'
+#    define Q_ASSERT(cond) ((cond) ? static_cast<void>(0) : qt_assert(#cond, __FILE__, __LINE__))
+                            ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:42:9: note: '?' condition is true
+        VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        ^
+/opt/robo/src/robomongo/core/utils/QtUtils.h:14:19: note: expanded from macro 'VERIFY'
+#define VERIFY(x) Q_ASSERT(x)
+                  ^
+/opt/Qt5.12.8/5.12.8/clang_64/lib/QtCore.framework/Headers/qglobal.h:782:29: note: expanded from macro 'Q_ASSERT'
+#    define Q_ASSERT(cond) ((cond) ? static_cast<void>(0) : qt_assert(#cond, __FILE__, __LINE__))
+                            ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:49:13: note: Assuming the condition is false
+        if (!serverName.isEmpty())
+            ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:49:9: note: Taking false branch
+        if (!serverName.isEmpty())
+        ^
+/opt/robo/src/robomongo/gui/dialogs/CreateDatabaseDialog.cpp:51:14: note: Potential leak of memory pointed to by 'serverIndicator'
+        if (!database.isEmpty())
+             ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/utils/ComboBoxUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/shell/db/ptimeutil.cpp
+/opt/robo/src/robomongo/shell/db/ptimeutil.cpp:277:13: warning: Call to function 'strcat' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcat'. CWE-119 [clang-analyzer-security.insecureAPI.strcpy]
+            strcat(buf, utc_buff);
+            ^
+/opt/robo/src/robomongo/shell/db/ptimeutil.cpp:277:13: note: Call to function 'strcat' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcat'. CWE-119
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/utils/DialogUtils.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CopyCollectionDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/PreferencesDialog.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CreateCollectionDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/CreateUserDialog.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/PlainJavaScriptEditor.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/JSLexer.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ConnectionsDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ExportDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/editors/FindFrame.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/ChangeShellTimeoutDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/AddEditIndexDialog.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/ScriptWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexesDir.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerCollectionIndexItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/FunctionTextEditor.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/DocumentTextEditor.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableModel.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTableView.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/explorer/ExplorerWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeItem.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeModel.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/JsonPrepareThread.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/CollectionStatsTreeItem.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/PagingWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/ProgressBarPopup.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemHeaderWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/domain/Notifier.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp
+/opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp:143:16: warning: Value stored to 'selectedBorder' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+        QColor selectedBorder = background.darker(103);
+               ^
+/opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp:143:16: note: Value stored to 'selectedBorder' during its initialization is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:69:17: warning: Value stored to 'isSimple' is never read [clang-analyzer-deadcode.DeadStores]
+                isSimple = detail::isSimpleType(documentItem);
+                ^
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:69:17: note: Value stored to 'isSimple' is never read
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:168:13: warning: Value stored to 'count' during its initialization is never read [clang-analyzer-deadcode.DeadStores]
+        int count = indexes.count();
+            ^
+/opt/robo/src/robomongo/gui/widgets/workarea/BsonTreeView.cpp:168:13: note: Value stored to 'count' during its initialization is never read
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/OutputWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/LogWidget.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/SshSettings.cpp
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/QueryWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/SslSettings.cpp
+
+
+....
+
+
+
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/MainWindow.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/gui/dialogs/SSLTab.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+clang-tidy -p=/opt/robo/build/debug /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.cpp
+/opt/robo-shell/src/mongo/idl/basic_types.h:72:23: error: no member named 'has_value' in 'boost::optional<bool>' [clang-diagnostic-error]
+        return _value.has_value();
+                      ^
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA: directory doesn't exist.
+Error reading configuration from /opt/robo/build/debug/src/robomongo/robomongo_autogen: directory doesn't exist.
+Error while processing /opt/robo/build/debug/src/robomongo/robomongo_autogen/YHP5W5E6RA/qrc_gui.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/widgets/workarea/WelcomeTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/SSHTunnelTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/MainWindow.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/gui/dialogs/SSLTab.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/settings/ReplicaSetSettings.cpp.
+Found compiler error(s).
+1 error generated.
+Error while processing /opt/robo/src/robomongo/core/mongodb/SshTunnelWorker.cpp.
+Found compiler error(s).
+

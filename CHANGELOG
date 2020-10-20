@@ -2,6 +2,10 @@
 Download latest version: 
 https://robomongo.org/download
 
+Robo 3T 1.4.2 (Oct, 2020)
+  Fixes:
+  - Fix broken paging in DocumentDB (#1694)
+
 Robo 3T 1.4.1 (Sep, 2020)
   Fixes:
   - Force light mode on macOS (#1761, #1768, #1771)  

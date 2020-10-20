@@ -565,13 +565,35 @@ namespace Robomongo
 
     void MongoWorker::handle(ExecuteQueryRequest *event)
     {
-        try {
-            boost::scoped_ptr<MongoClient> client(getClient());
+        auto const executeQuery = [&]() {
+            boost::scoped_ptr<MongoClient> client { getClient() };
             std::vector<MongoDocumentPtr> docs = client->query(event->queryInfo());
             client->done();
+            reply(event->sender(),
+                new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs)
+            );
+        };
 
-            reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
+        try {
+            executeQuery();
         } catch(const std::exception &ex) {
+            QString const NTORETURN_ERROR { "unrecognized field: 'ntoreturn'" };
+            bool const ntoreturnError { 
+                QString(ex.what()).compare(NTORETURN_ERROR, Qt::CaseInsensitive) == 0 
+            };
+            // If we have this DocumentDB specific error, try again
+            if (ntoreturnError && _dbclient) {
+                sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));
+                try {
+                    _dbclient->tagAsDocDb(true);
+                    executeQuery();
+                    return;
+                } 
+                catch (const std::exception &ex) {
+                    sendLog(this, LogEvent::RBM_ERROR, "Re-try: " + std::string(ex.what()));
+                }
+            }
+
             reply(event->sender(), new ExecuteQueryResponse(this, EventError(ex.what())));
             sendLog(this, LogEvent::RBM_ERROR, std::string(ex.what()));
         }

@@ -174,11 +174,10 @@ target_include_directories(robomongo
 # Get build number
 find_package(Git)
 if(GIT_FOUND)
-    MESSAGE( STATUS "Info: Git found" )
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        OUTPUT_VARIABLE "BUILD_NUMBER"        
+        OUTPUT_VARIABLE BUILD_NUMBER   
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )    
 else(GIT_FOUND)
@@ -190,7 +189,7 @@ if(BUILD_NUMBER STREQUAL "")
    MESSAGE( FATAL_ERROR "Failed to get BUILD_NUMBER" )
 endif()
 
-MESSAGE( STATUS "Info: BUILD_NUMBER set as " \"${BUILD_NUMBER}\" )
+set(BUILD_NUMBER ${BUILD_NUMBER} CACHE INTERNAL "")
 
 target_compile_definitions(robomongo
     PRIVATE

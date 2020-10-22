@@ -233,6 +233,9 @@ if(SYSTEM_WINDOWS)
     # Suppress "warning C4291: ...no matching operator delete found" from third_party\mozjs-60
     set_target_properties(robomongo PROPERTIES COMPILE_FLAGS "/wd4477 /wd4291")
 
+    # Start debug program with console
+    set_target_properties(robomongo PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
+
     # Seems that we do not need to do this with recent versions of Qt
     target_link_libraries(robomongo PRIVATE Qt5::WinMain)
 

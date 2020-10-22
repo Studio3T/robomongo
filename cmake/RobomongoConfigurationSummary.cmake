@@ -1,3 +1,9 @@
+# Set MONGO_BUILD_FOLDER
+set(MONGO_BUILD_FOLDER "build/opt")  # Release
+if(CMAKE_BUILD_TYPE STREQUAL "Debug") 
+    set(MONGO_BUILD_FOLDER "build/debug") 
+endif()
+
 # Show configuration summary and build tip
 message("")
 message(" _______________[ Robo 3T configuration summary ]________________")
@@ -10,8 +16,8 @@ message("|   Qt5 Widgets:        ${Qt5Widgets_VERSION}    ${Qt5Widgets_DIR}")
 message("|   Qt5 PrintSupport:   ${Qt5Widgets_VERSION}    ${Qt5PrintSupport_DIR}")
 message("|   Qt5 Network:        ${Qt5Network_VERSION}    ${Qt5Network_DIR}")
 message("|   Qt5 Xml:            ${Qt5Xml_VERSION}    ${Qt5Xml_DIR}")
-message("|   MongoDB:            ${MongoDB_VERSION}    ${MongoDB_BUILD_DIR}")
-message("|   MongoDB Objects:    ${MongoDB_VERSION}    ${MongoDB_OBJECTS_DIR}/build")
+message("|   MongoDB:            ${MongoDB_VERSION}    ${MongoDB_DIR}")
+message("|   MongoDB Objects:    ${MongoDB_VERSION}    ${MongoDB_OBJECTS_DIR}/${MONGO_BUILD_FOLDER}")
 message("|   OpenSSL:            ${OPENSSL_VERSION}    ${OpenSSL_DIR}")
 message("|   libssh2:            ${LIBSSH2_VERSION}     ${LIBSSH2_DIR}")
 message("|   QJson:              ${QJSON_VERSION}     ${QJSON_DIR}")

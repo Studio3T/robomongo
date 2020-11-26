@@ -250,7 +250,7 @@ namespace Robomongo
                 break;
             case BinData: {
                 int len = *(int *)( elem.value() );
-                BinDataType type = BinDataType( *(char *)( (int *)( elem.value() ) + 1 ) );
+                BinDataType type = BinDataType( *(unsigned char *)( (int *)( elem.value() ) + 1 ) );
 
                 if (type == mongo::bdtUUID || type == mongo::newUUID) {
                     s << HexUtils::formatUuid(elem, uuidEncoding);

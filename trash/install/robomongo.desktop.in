@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Exec=@SHORTPRODUCTNAME@
-Name=Robomongo
-GenericName=MongoDB management tool
-Icon=@ICONNAME@
-Terminal=false
-Categories=Development;IDE;mongodb;

@@ -70,6 +70,7 @@ namespace Robomongo
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
         scrollArea->setBackgroundRole(QPalette::Base);
+        scrollArea->setWidgetResizable(true);
 
         if (!AppRegistry::instance().settingsManager()->disableHttpsFeatures()) {
 #ifdef __APPLE__

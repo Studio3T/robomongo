@@ -40,7 +40,7 @@ elseif(SYSTEM_WINDOWS)
     set(bin_dir             .)
     set(styles_dir          ${bin_dir}/styles)
     set(lib_dir             .)
-    set(resources_dir       .)
+    set(resources_dir       ./resources)
     set(license_dir         .)
 
     set(qt_plugins_dir      ${lib_dir})
@@ -97,10 +97,13 @@ install(
     DESTINATION ${license_dir})
 
 # Install common dependencies
-install_qt_lib(Core Gui Widgets PrintSupport Network Xml)
+install_qt_lib(Core Gui Widgets PrintSupport Network Xml WebEngineWidgets 
+               WebEngineCore Quick QuickWidgets WebChannel Qml Positioning)
 install_qt_plugins(QGifPlugin QICOPlugin)
 install_icu_libs()
 set(QT_STYLES_DIR ${Qt5Core_DIR}/../../../plugins/styles/)
+set(QT_BIN_DIR ${Qt5Core_DIR}/../../../bin/)
+set(QT_RESOURCES_DIR ${Qt5Core_DIR}/../../../resources/)
 
 if(SYSTEM_LINUX)
     install_qt_lib(XcbQpa DBus)
@@ -131,6 +134,15 @@ elseif(SYSTEM_WINDOWS)
         QWindowsIntegrationPlugin
         QMinimalIntegrationPlugin
         QOffscreenIntegrationPlugin)
+
+    # Qt WebEngine dependencies
+    install(DIRECTORY ${QT_RESOURCES_DIR} DESTINATION ${resources_dir})
+    install(FILES 
+                "${QT_BIN_DIR}/libEGL.dll"
+                "${QT_BIN_DIR}/libGLESv2.dll" 
+                "${QT_BIN_DIR}/opengl32sw.dll" 
+                "${QT_BIN_DIR}/QtWebEngineProcess.exe" 
+            DESTINATION ${bin_dir})
 
     # Install Styles
     install(FILES "${QT_STYLES_DIR}/qwindowsvistastyle.dll" DESTINATION ${styles_dir})

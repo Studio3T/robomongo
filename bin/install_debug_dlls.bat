@@ -31,6 +31,14 @@ for /d %%a in (
   "%Qt_DIR%\bin\Qt5Guid.dll"
   "%Qt_DIR%\bin\Qt5Networkd.dll"
   "%Qt_DIR%\bin\Qt5Widgetsd.dll"
+  "%Qt_DIR%\bin\Qt5Positioningd.dll"
+  "%Qt_DIR%\bin\Qt5Qmld.dll"
+  "%Qt_DIR%\bin\Qt5Quickd.dll"
+  "%Qt_DIR%\bin\Qt5QuickWidgetsd.dll"
+  "%Qt_DIR%\bin\Qt5WebChanneld.dll"
+  "%Qt_DIR%\bin\Qt5WebEngineCored.dll"
+  "%Qt_DIR%\bin\Qt5WebEngineWidgetsd.dll"
+  "%Qt_DIR%\bin\Qt5PrintSupportd.dll"  
 ) do (
   if not exist !INSTALL_DIR!%%~NXa (
     xcopy %%a !INSTALL_DIR! /d /y

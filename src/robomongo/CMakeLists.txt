@@ -150,6 +150,7 @@ target_link_libraries(robomongo
         Qt5::Widgets
         Qt5::Network
         Qt5::Xml
+        Qt5::WebEngineWidgets
         qjson
         qscintilla
         mongodb

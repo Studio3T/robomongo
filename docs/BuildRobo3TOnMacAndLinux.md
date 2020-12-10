@@ -78,8 +78,11 @@ tar -xf openssl-1.1.1f.tar.gz
 cd /opt/openssl-1.1.1f
 
 (make clean) 
-./Configure darwin64-x86_64-cc shared no-ssl2 no-ssl3 no-comp  
-    // Info: With openssl version 1.1.1, configure command with rpath stopped working
+./Configure darwin64-x86_64-cc shared no-ssl2 no-ssl3 no-comp -mmacosx-version-min=xy.zt
+    // Notes: 
+    // 1. Change -mmacosx-version same as CMAKE_OSX_DEPLOYMENT_TARGET in 
+    //    https://github.com/Studio3T/robomongo/blob/master/CMakeLists.txt
+    // 2. With openssl version 1.1.1, configure command with rpath stopped working  
     // Last working configure command with rpath was: 
     // ./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
 

@@ -28,6 +28,7 @@ function(install_qt_lib)
             install(
                 DIRECTORY ${qt_lib_dir}/${module_name}.framework
                 DESTINATION ${lib_dir}
+                USE_SOURCE_PERMISSIONS
                 PATTERN "*_debug" EXCLUDE      # Exclude debug libraries
                 PATTERN "Headers" EXCLUDE)     # Exclude Headers folders
         endif()

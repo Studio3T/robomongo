@@ -665,6 +665,8 @@ namespace Robomongo
             VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
             timer->start(ONE_HOUR);
         }
+
+        setUnifiedTitleAndToolBarOnMac(false); // https://bugreports.qt.io/browse/QTBUG-68946
     }
 
     void MainWindow::createStylesMenu()

@@ -10,8 +10,6 @@ namespace Robomongo {
     {
         auto webView = new QWebEngineView(this);
         QUrl url{
-            //"https://www.gismeteo.by/weather-minsk-4248/2-weeks/" 
-            // "http://www.qt.io/"
             "http://files.studio3t.com/rm-feed_3t_io/1.4.3/index.html"
         };
         webView->load(url);
@@ -22,10 +20,6 @@ namespace Robomongo {
         mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
         mainLayout->addWidget(webView);
         setLayout(mainLayout);
-
-        webView->setStyleSheet("background-color: red");        // no effect
-        //setStyleSheet("background-color: green");
-        //mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
     }
 
 }

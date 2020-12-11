@@ -87,22 +87,22 @@ cd /opt/openssl-1.1.1f
     // ./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
 
 make (or sudo make)  
-// Verify libssl.dylib and libcrypto.dylib file are created 
-mkdir lib
-cp lib*.dylib lib/
+
+// Verify libssl.dylib and libcrypto.dylib files are created 
+ll lib*.dylib
 
 // Due to broken './Configure' command with rpath above, these extra steps are also required:
-install_name_tool -id "@rpath/lib/libssl.1.1.dylib" libssl.dylib
-install_name_tool -change /usr/local/lib/libcrypto.1.1.dylib @rpath/lib/libcrypto.1.1.dylib libssl.dylib
-install_name_tool -id "@rpath/lib/libcrypto.1.1.dylib" libcrypto.dylib
+install_name_tool -id "@rpath/lib/libssl.1.1.dylib" libssl.1.1.dylib
+install_name_tool -change /usr/local/lib/libcrypto.1.1.dylib @rpath/lib/libcrypto.1.1.dylib libssl.1.1.dylib
+install_name_tool -id "@rpath/lib/libcrypto.1.1.dylib" libcrypto.1.1.dylib
 // Finally, we should have this output using otool:
-otool -L libssl.dylib 
+otool -L libssl.1.1.dylib 
 libssl.dylib:
 	@rpath/lib/libssl.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
 	@rpath/lib/libcrypto.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
 	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1281.100.1)
 
-otool -L libcrypto.dylib 
+otool -L libcrypto.1.1.dylib 
 libcrypto.dylib:
 	@rpath/lib/libcrypto.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
 	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1281.100.1)

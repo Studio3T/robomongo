@@ -10,7 +10,6 @@ set(CMAKE_AUTOUIC ON)
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${sanitize}")
 
 set(SOURCES
-
     # Isolated Scope #1
     core/utils/QtUtils.cpp
     core/utils/StdUtils.cpp
@@ -145,12 +144,18 @@ set(SOURCES
 # Robomongo target
 add_executable(robomongo MACOSX_BUNDLE WIN32 app/main.cpp ${SOURCES})
 
+# Disable WebEngineWidgets for Linux
+SET(WebEngineWidgets "Qt5::WebEngineWidgets") 
+if(SYSTEM_LINUX)
+   SET(WebEngineWidgets)  
+endif()
+ 
 target_link_libraries(robomongo
     PRIVATE
         Qt5::Widgets
         Qt5::Network
         Qt5::Xml
-        Qt5::WebEngineWidgets
+        ${WebEngineWidgets}
         qjson
         qscintilla
         mongodb

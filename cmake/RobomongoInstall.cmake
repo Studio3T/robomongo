@@ -97,8 +97,12 @@ install(
     DESTINATION ${license_dir})
 
 # Install common dependencies
-install_qt_lib(Core Gui Widgets PrintSupport Network Xml WebEngineWidgets 
-               WebEngineCore Quick QuickWidgets WebChannel Qml Positioning)
+SET(QT_LIBS Core Gui Widgets PrintSupport Network Xml)
+if(NOT SYSTEM_LINUX)
+    SET(QT_LIBS ${QT_LIBS} WebEngineWidgets WebEngineCore Quick 
+                           QuickWidgets WebChannel Qml Positioning)
+endif()
+install_qt_lib(${QT_LIBS})
 install_qt_plugins(QGifPlugin QICOPlugin)
 install_icu_libs()
 set(QT_STYLES_DIR ${Qt5Core_DIR}/../../../plugins/styles/)

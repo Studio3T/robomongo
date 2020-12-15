@@ -24,24 +24,6 @@ namespace Robomongo
     // Current config file directory
     auto const ConfigDir = QString("%1/.3T/robo-3t/%2/").arg(QDir::homePath())
                                                         .arg(PROJECT_VERSION);  
-    /* Temporarily disabling Recent Connections feature
-    struct RecentConnection
-    {
-        RecentConnection(QString const& uuid, std::string const& name)
-            : uuid(uuid), name(name) {}
-
-        // Not directly used but required by std::vector<T>::erase()
-        RecentConnection& operator=(const RecentConnection& other)
-        {
-            uuid = other.uuid;
-            name = other.name;
-            return *this;
-        }
-
-        QString uuid;
-        std::string name;
-    };
-    */
 
 /* ----------------------------- SettingsManager ------------------------------ */
 
@@ -95,15 +77,6 @@ namespace Robomongo
          */
         void removeConnection(ConnectionSettings *connection);
 
-        /**
-        * @brief Functions of Recent Connections feature
-        */
-        /* Temporarily disabling Recent Connections feature
-        static void addRecentConnection(ConnectionSettings *connection);
-        static void deleteRecentConnection(ConnectionSettings *connection);
-        static void setRecentConnections(std::vector<ConnectionSettings const*> const& recentConns);
-        static void clearRecentConnections();
-        */
 
         /**
         * @brief  Finds and returns original (non-clone) connection settings which is 
@@ -123,9 +96,6 @@ namespace Robomongo
          */
         ConnectionSettingsContainerType connections() const { return _connections; }
         
-        // Temporarily disabling Recent Connections feature
-        // std::vector<RecentConnection>& recentConnections() const { return _recentConnections; }
-
         ToolbarSettingsContainerType toolbars() const { return _toolbars; }
 
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
@@ -279,11 +249,6 @@ namespace Robomongo
          * @brief List of connections
          */
         static std::vector<ConnectionSettings*> _connections;
-
-        /* Temporarily disabling Recent Connections feature
-        // List of recent connections that are shown on Welcome Tab
-        static std::vector<RecentConnection> _recentConnections;
-        */
 
         ToolbarSettingsContainerType _toolbars;
 

@@ -95,28 +95,6 @@ namespace Robomongo
             : QLabel(args) {}
     };
 
-    /* Temporarily disabling Recent Connections feature
-    // todo: brief: Special button to use on the right side of a recent connection label
-    struct CustomDeleteButton : public QPushButton
-    {
-        // todo: use ctor. instead of two funcs.
-        void setLabelOnLeft(QLabel* lab) { label = lab; }
-        void setParentLayout(QLayout* lay) { parentLayout = lay; }
-
-        QLabel* label = nullptr;
-        QLayout* parentLayout = nullptr;
-    };   
-
-    // todo: brief
-    std::once_flag onceFlag1;
-    int CustomButtonHeight = -1;
-
-    QString const Recent_Connections_Header = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
-   
-    QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration: none;'"
-                                      "href='%1'>%2</a></p>";
-    */
-    
     QString const WhatsNew = "<p><h1><font color=\"#2d862d\">%1</h1></p>";
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
     QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
@@ -154,56 +132,6 @@ namespace Robomongo
         _text1_URL = "https://files.studio3t.com/rm-feed_3t_io/" + CONTENTS_PATH;
         _rss_URL = "https://blog.robomongo.org/rss/";
 
-        /* Temporarily disabling Recent Connections feature
-        AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
-
-       _recentConnsLay = new QVBoxLayout;
-        auto recentConnHeader = new QLabel(Recent_Connections_Header);
-        //recentConnHeader->setMinimumWidth(_parent->width()*0.6);
-
-        auto _connectButton = new QToolButton;
-        _connectButton->setText("Connect");
-        _connectButton->setIcon(GuiRegistry::instance().connectIcon().pixmap(16, 16));
-        _connectButton->setFocusPolicy(Qt::NoFocus);
-        _connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-
-        MainWindow* mainWindow;
-        for (auto wid : QApplication::topLevelWidgets()) {
-            if (qobject_cast<MainWindow*>(wid)) {
-                mainWindow = qobject_cast<MainWindow*>(wid);
-                break;
-            }
-        }
-        VERIFY(connect(_connectButton, SIGNAL(clicked()), mainWindow, SLOT(manageConnections())));
-
-        auto connectButtonMenu = new QMenu;
-        auto action = new QAction("Clear Recent Connections", this);
-        action->setIcon(GuiRegistry::instance().deleteIconRed().pixmap(14, 14));
-
-        VERIFY(connect(action, SIGNAL(triggered()), this, SLOT(on_clearButton_clicked())));
-        connectButtonMenu->addAction(action);
-
-#if !defined(Q_OS_MAC)
-        _connectButton->setMenu(connectButtonMenu);
-        _connectButton->setPopupMode(QToolButton::MenuButtonPopup);
-#endif
-
-        // Load and add recent connections from settings
-        auto const settingsManager = AppRegistry::instance().settingsManager();
-        auto const& recentConnections = settingsManager->recentConnections();
-        if (recentConnections.size() < 1) 
-            action->setDisabled(true);
-        else {
-            for (auto const& rconn : recentConnections) 
-                // check nullptr for settingsManager->getConnectionSettingsByUuid()
-                addRecentConnectionItem(settingsManager->getConnectionSettingsByUuid(rconn.uuid), false);
-        }
-
-        auto connectButtonLay = new QHBoxLayout;
-        connectButtonLay->addWidget(_connectButton);
-        connectButtonLay->addStretch();
-        */
-        
 #ifdef __APPLE__
         constexpr int HEADER_POINT_SIZE = 10;
 #else 
@@ -272,14 +200,6 @@ namespace Robomongo
         rightLayout->addStretch();
 
         auto leftLayout = new QVBoxLayout;
-        /* Temporarily disabling Recent Connections feature
-        leftLayout->addWidget(recentConnHeader, 0, Qt::AlignTop);
-        leftLayout->addLayout(_recentConnsLay);
-        leftLayout->addSpacing(10);
-        leftLayout->addLayout(connectButtonLay);
-        //leftLayout->addStretch();
-        leftLayout->addSpacing(20);
-        */
         leftLayout->addWidget(_whatsNewHeader, 0, Qt::AlignTop);
         leftLayout->addWidget(_pic1, 0, Qt::AlignTop);
         leftLayout->addWidget(_whatsNewText, 0, Qt::AlignTop);
@@ -509,204 +429,6 @@ namespace Robomongo
         adjustSize();
     }
     
-/* Temporarily disabling Recent Connections feature
-    void WelcomeTab::on_clearButton_clicked()
-    {
-        // Ask user
-        int const answer = QMessageBox::question(this,
-            "Clear Recent Connections", "This will delete all recent connections, are you sure?",
-            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        if (answer != QMessageBox::Yes)
-            return;
-
-        // Delete all recent connection entries
-        while (auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->takeAt(0))) {
-            while (auto item = hlay->takeAt(0))
-                delete item->widget();
-
-            delete hlay;
-        }
-        
-        // todo: disable clear all action
-        _parent->verticalScrollBar()->setValue(0);  
-
-        // Clear recent connections in config. file
-        AppRegistry::instance().settingsManager()->clearRecentConnections();
-        AppRegistry::instance().settingsManager()->save();
-    }
-
-    void WelcomeTab::on_deleteButton_clicked()
-    {
-        //// Ask user
-        //int const answer = QMessageBox::question(this,
-        //    "Delete Recent Connection", "This will delete this recent connection link, are you sure?",
-        //    QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        //if (answer != QMessageBox::Yes)
-        //    return;
-
-        auto button = dynamic_cast<CustomDeleteButton*>(sender());
-        if (!button)
-            return;
-
-        // Remove label and button from UI
-        _recentConnsLay->removeItem(button->parentLayout);
-        delete button->label;
-        delete button;
-
-        // todo: Refactor for clear all action
-        //// Disable "clear all" button conditionally
-        //if (_recentConnsLay->count() == 0) {
-        //    _clearButton->setDisabled(true);
-        //    _clearButton->setFocus();
-        //    _clearButton->setStyleSheet("");
-        //    _parent->verticalScrollBar()->setValue(0);
-        //}
-
-        // todo: Clear and rebuild recent connections vector and save into config. file
-        auto const settingsManager = AppRegistry::instance().settingsManager();
-        _recentConnections.clear();
-        for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
-            for (int i = 0; i < hlay->count(); ++i) {
-                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
-                if (label) {
-                    // todo: "href='uuid'>%2</a></p>");
-                    auto const uuid = label->text().split("href='")[1].split("'")[0];
-                    // check nullptr for settingsManager->getConnectionSettingsByUuid()
-                    _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
-                }
-            }
-        }
-        settingsManager->setRecentConnections(_recentConnections);
-        settingsManager->save();
-    }
-
-    void WelcomeTab::on_recentConnectionLinkClicked(QString const& link)
-    {
-        for (auto const conn : AppRegistry::instance().settingsManager()->connections()) {
-            if (conn->uuid() == link) {
-                AppRegistry::instance().app()->openServer(conn, ConnectionPrimary);
-                return;
-            }
-        }
-    }
-
-    void WelcomeTab::handle(ConnectionEstablishedEvent *event)
-    {
-        // Do not make UI changes for non PRIMARY connections
-        if (event->connectionType != ConnectionPrimary)
-            return;
-
-        auto const settingsManager = AppRegistry::instance().settingsManager();
-        // check nullptr for settingsManager->getConnectionSettingsByUuid()
-        auto conn = settingsManager->getConnectionSettingsByUuid(event->connInfo._uuid);
-
-        if (!conn)
-            return;
-
-        // Remove duplicate label and it's button
-        for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
-            for (int i = 0; i < hlay->count(); ++i) {
-                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
-                if (label) {
-                    // todo: "href='uuid'>%2</a></p>");
-                    auto const uuid = label->text().split("href='")[1].split("'")[0];
-                    if (uuid == conn->uuid()) {
-                        while (auto item = hlay->takeAt(0)) // delete label and button
-                            delete item->widget();
-
-                        _recentConnsLay->removeItem(hlay);
-                    }
-                }
-            }
-        }
-
-        addRecentConnectionItem(conn, true);
-
-        // todo: Clear and rebuild recent connections vector and save into config. file
-        _recentConnections.clear();
-        for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
-            for (int i = 0; i < hlay->count(); ++i) {
-                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
-                if (label) {
-                    // todo: "href='uuid'>%2</a></p>");
-                    auto const uuid = label->text().split("href='")[1].split("'")[0];
-                    // check nullptr for settingsManager->getConnectionSettingsByUuid()
-                    _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
-                }
-            }
-        }
-        settingsManager->setRecentConnections(_recentConnections);
-        settingsManager->save();
-    }
-
-    void WelcomeTab::addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop)
-    {
-        if (!conn)
-            return;
-
-        auto connLabel = new QLabel(connLabelTemplate.arg(conn->uuid(),
-            QString::fromStdString(conn->connectionName() + " (" + conn->hostAndPort().toString() + ')')));
-
-        connLabel->setMouseTracking(true);
-        connLabel->setAttribute(Qt::WA_Hover);
-        connLabel->installEventFilter(this);
-        VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_recentConnectionLinkClicked(QString))));
-
-        auto button = new CustomDeleteButton;
-        std::call_once(onceFlag1, [&]{ CustomButtonHeight = button->iconSize().height()*0.7; });
-        button->setStyleSheet("border: none;");
-        button->installEventFilter(this);
-        VERIFY(connect(button, SIGNAL(clicked()), this, SLOT(on_deleteButton_clicked())));
-        
-        connLabel->setBuddy(button);
-        button->setLabelOnLeft(connLabel);
-
-        auto hlay = new QHBoxLayout;
-        hlay->addWidget(connLabel);
-        hlay->addWidget(button);
-        hlay->setAlignment(Qt::AlignLeft);
-        hlay->setSpacing(0);
-
-        button->setParentLayout(hlay);
-
-        if (insertTop)
-            _recentConnsLay->insertLayout(0, hlay);
-        else
-            _recentConnsLay->addLayout(hlay);
-
-        // todo: refactor for clear all action
-        //_clearButton->setEnabled(true);
-        //_clearButton->setStyleSheet("color: #106CD6");
-    }
-
-    void WelcomeTab::removeRecentConnectionItem(ConnectionSettings const* conn)
-    {
-        // todo: to func.
-        for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
-            for (int i = 0; i < hlay->count(); ++i) {
-                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
-                if (label) {
-                    // todo: "href='uuid'>%2</a></p>");
-                    auto const uuid = label->text().split("href='")[1].split("'")[0];
-                    if (uuid == conn->uuid()) {
-                        // Remove label & button and their hlayout from UI
-                        while (auto item = hlay->takeAt(0)) // delete label and button
-                            delete item->widget();
-
-                        _recentConnsLay->removeItem(hlay);
-                    }
-                }
-            }
-        }
-    }
-*/
-
     void WelcomeTab::resize()
     {
         auto const tabWidth = _parent->width();
@@ -731,30 +453,7 @@ namespace Robomongo
 
     bool WelcomeTab::eventFilter(QObject *target, QEvent *event)
     {
-        /* Temporarily disabling Recent Connections feature
-        auto label = qobject_cast<QLabel*>(target);     // todo: recentConnLabel
-        */
         auto blogLinkLabel = dynamic_cast<BlogLinkLabel*>(target);
-        
-        /* Temporarily disabling Recent Connections feature
-        if (label && !blogLinkLabel) {
-            auto but = qobject_cast<QPushButton*>(label->buddy());
-            if (event->type() == QEvent::HoverEnter) {
-                label->setText(label->text().replace("text-decoration: none;", "text-decoration: ;"));
-                setCursor(Qt::PointingHandCursor);
-                but->setIcon(GuiRegistry::instance().deleteIcon());
-                but->setIconSize(QSize(but->iconSize().width(), CustomButtonHeight));
-                return true;
-            }
-            else  if (event->type() == QEvent::HoverLeave) {
-                label->setText(label->text().replace("text-decoration: ;", "text-decoration: none;"));
-                setCursor(Qt::ArrowCursor);
-                but->setIcon(QIcon(""));
-                return true;
-            }
-        }
-        */
-
         // Make blog link underlined on mouse hover
         if (blogLinkLabel) {
             if (event->type() == QEvent::HoverEnter) {
@@ -768,25 +467,6 @@ namespace Robomongo
                 return true;
             }
         }
-
-        /* Temporarily disabling Recent Connections feature
-        // todo: refactor to delete recent conn button
-        auto but = qobject_cast<QPushButton*>(target);
-        if (but) {
-            if (event->type() == QEvent::HoverEnter) {
-                but->setIcon(GuiRegistry::instance().deleteIconMouseHovered());
-                but->setIconSize(QSize(but->iconSize().width(), CustomButtonHeight));
-                setCursor(Qt::PointingHandCursor);
-                return true;
-            }
-            else  if (event->type() == QEvent::HoverLeave) {
-                but->setIcon(QIcon(""));
-                setCursor(Qt::ArrowCursor);
-                return true;
-            }
-        }
-        */
-
         return QWidget::eventFilter(target, event);
     }
 

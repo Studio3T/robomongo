@@ -35,10 +35,6 @@ namespace Robomongo
         VERIFY(connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), 
                        this, SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int))));
 
-        // Temporarily disabling export/import feature
-        //VERIFY(connect(_treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
-        //               parentMainWindow, SLOT(onExplorerItemSelected(QTreeWidgetItem *))));
-
         setLayout(vlaout);
 
         QMovie *movie = new QMovie(":robomongo/icons/loading.gif", QByteArray(), this);

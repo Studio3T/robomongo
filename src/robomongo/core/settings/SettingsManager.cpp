@@ -92,9 +92,6 @@ namespace Robomongo
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;
     
-    // Temporarily disabling Recent Connections feature
-    // std::vector<RecentConnection> SettingsManager::_recentConnections;
-
     /**
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
@@ -295,16 +292,6 @@ namespace Robomongo
             addConnection(connSettings);
         }
 
-        /* Temporarily disabling Recent Connections feature
-        // Load recent connections
-        _recentConnections.clear();
-        QVariantList const& rlist = map.value("recentConnections").toList();
-        for (auto const& rconn : rlist) {
-            _recentConnections.push_back(RecentConnection(rconn.toMap().value("uuid").toString(),
-                                                          rconn.toMap().value("name").toString().toStdString()));
-        }
-        */
-
         _toolbars = map.value("toolbars").toMap();
         ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
         if (_toolbars.end() == it)
@@ -395,19 +382,6 @@ namespace Robomongo
             list.append(conn->toVariant().toMap());
 
         map.insert("connections", list);
-
-        /* Temporarily disabling Recent Connections feature
-        // 13. Save recent connections
-        QVariantList recentConnsList;
-        QVariantMap recentConnMap;
-        for (auto const& rconn : _recentConnections) {
-            recentConnMap.insert("uuid", rconn.uuid);
-            recentConnMap.insert("name", QString::fromStdString(rconn.name));
-            recentConnsList.append(recentConnMap);
-        }
-        map.insert("recentConnections", recentConnsList);
-        */
-
         map.insert("autoExec", _autoExec);
         map.insert("minimizeToTray", _minimizeToTray);
         map.insert("toolbars", _toolbars);
@@ -510,34 +484,6 @@ namespace Robomongo
             delete connection;
         }
     }
-
-/* Temporarily disabling Recent Connections feature
-    void SettingsManager::addRecentConnection(ConnectionSettings *connection)
-    {
-        _recentConnections.push_back(RecentConnection(connection->uuid(), connection->connectionName()));
-    }
-
-    void SettingsManager::deleteRecentConnection(ConnectionSettings *conn)
-    {
-        for (int i = 0; i < _recentConnections.size(); ++i) {
-            if (_recentConnections[i].uuid == conn->uuid())
-                _recentConnections.erase(_recentConnections.begin() + i);
-        }
-    }
-
-    void SettingsManager::setRecentConnections(std::vector<ConnectionSettings const*> const& recentConns)
-    {
-        _recentConnections.clear();
-
-        for(auto rconn : recentConns)
-            _recentConnections.push_back(RecentConnection(rconn->uuid(), rconn->connectionName()));
-    }
-
-    void SettingsManager::clearRecentConnections()
-    {
-        _recentConnections.clear();
-    }
-*/
 
     ConnectionSettings* SettingsManager::getConnectionSettingsByUuid(QString const& uuid) const
     {

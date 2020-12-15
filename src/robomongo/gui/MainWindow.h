@@ -97,17 +97,10 @@ namespace Robomongo
         void openPreferences();
         void openWelcomeTab();
 
-        // Temporarily disabling export/import feature
-        //void openExportDialog();
-
         void onConnectToolbarVisibilityChanged(bool isVisisble);
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
-
-        // Temporarily disabling export/import feature
-        //void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
-
         void on_tabChange();
 
         void toggleMinimize();
@@ -161,13 +154,6 @@ namespace Robomongo
         QPushButton* _closeButton;
 
         QNetworkAccessManager *_networkAccessManager;
-
-        // Temporarily disabling export/import feature
-        /*
-        // Export/import tool bar
-        QAction *_exportAction;
-        QAction *_importAction;
-        */
 
 #if defined(Q_OS_WIN)
         QSystemTrayIcon *_trayIcon;

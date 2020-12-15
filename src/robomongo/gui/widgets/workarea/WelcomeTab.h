@@ -53,8 +53,6 @@ namespace Robomongo
     public:
         WelcomeTab(QScrollArea *parent = nullptr);
         ~WelcomeTab();
-        // Temporarily disabling Recent Connections feature
-        // void removeRecentConnectionItem(ConnectionSettings const* conn);
         QScrollArea* getParent() const { return _parent; }
         void resize();
 
@@ -66,17 +64,8 @@ namespace Robomongo
         void on_downloadPictureReply(QNetworkReply* reply);
         void on_downloadRssReply(QNetworkReply* reply);
         void on_allBlogsButton_clicked();
-        /* Temporarily disabling Recent Connections feature
-        void on_clearButton_clicked();
-        void on_deleteButton_clicked();
-        void on_recentConnectionLinkClicked(QString const& link);
-        void handle(ConnectionEstablishedEvent *event);
-        */
 
     private:
-        // Temporarily disabling Recent Connections feature
-        // void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
-
         void setWhatsNewHeaderAndText(QString const& str);
 
         QLabel* _pic1 = nullptr;
@@ -84,8 +73,6 @@ namespace Robomongo
         QLabel* _blogsHeader;
         QPushButton* _allBlogsButton = nullptr;
         QVBoxLayout* _blogLinksLay;
-        // Temporarily disabling Recent Connections feature
-        // QVBoxLayout* _recentConnsLay;
         QLabel* _whatsNewHeader;
         QLabel* _whatsNewText;
         QPushButton* _clearButton;
@@ -95,9 +82,6 @@ namespace Robomongo
         QUrl _pic1_URL;
         QUrl _text1_URL;
         QUrl _rss_URL;
-
-        // Temporarily disabling Recent Connections feature
-        // std::vector<ConnectionSettings const*> _recentConnections;
     };
 
 }

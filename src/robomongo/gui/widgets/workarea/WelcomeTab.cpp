@@ -15,6 +15,7 @@ namespace Robomongo {
         };
         webView->load(url);
         webView->show();
+        webView->setContextMenuPolicy(Qt::NoContextMenu);
 
         auto mainLayout = new QHBoxLayout;
         mainLayout->setContentsMargins(-10, -10, -1, -1);

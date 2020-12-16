@@ -17,8 +17,7 @@
 namespace Robomongo
 {
     OutputWidget::OutputWidget(QWidget *parent) :
-        QTabWidget(parent),
-        _splitter(new QSplitter)
+        QTabWidget(parent), _splitter(new QSplitter), _tabbedResults(false)
     {
         _splitter->setOrientation(Qt::Vertical);
         _splitter->setHandleWidth(1);
@@ -51,8 +50,8 @@ namespace Robomongo
         
         int const RESULTS_SIZE = _prevResultsCount = results.size();
         bool const multipleResults = (RESULTS_SIZE > 1);
-        bool const tabbedResults = (RESULTS_SIZE > 2);
-        _splitter->setHidden(tabbedResults ? true : false);
+        _tabbedResults = (RESULTS_SIZE > 2);
+        _splitter->setHidden(_tabbedResults ? true : false);
         _outputItemContentWidgets.clear();        
 
         while (count() > 0)
@@ -74,17 +73,17 @@ namespace Robomongo
             if (shellResult.documents().size() > 0) {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.type()),
                                                    shellResult.documents(), shellResult.queryInfo(), secs, 
-                                                   multipleResults, tabbedResults, firstItem, lastItem,
+                                                   multipleResults, _tabbedResults, firstItem, lastItem,
                                                    shellResult.aggrInfo(), this);
             } else {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), 
-                                                   secs, multipleResults, tabbedResults, firstItem, lastItem,
+                                                   secs, multipleResults, _tabbedResults, firstItem, lastItem,
                                                    shellResult.aggrInfo(), this);
             }
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
 
-            if (tabbedResults) {
+            if (_tabbedResults) {
                 addTab(item, QString::fromStdString(shellResult.statementShort()));
                 setTabToolTip(i, QString::fromStdString(shellResult.statement()));
             }
@@ -100,10 +99,15 @@ namespace Robomongo
     void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, 
                                   const std::vector<MongoDocumentPtr> &documents)
     {
-        if (partIndex >= _splitter->count())
+        if (!_tabbedResults && partIndex >= _splitter->count())
             return;
 
-        auto outputItemContentWidget = qobject_cast<OutputItemContentWidget*>(_splitter->widget(partIndex));
+        OutputItemContentWidget* outputItemContentWidget = nullptr;
+        if(_tabbedResults)
+            outputItemContentWidget = qobject_cast<OutputItemContentWidget*>(currentWidget());
+        else
+            outputItemContentWidget = qobject_cast<OutputItemContentWidget*>(_splitter->widget(partIndex));
+        
         outputItemContentWidget->updateWithInfo(queryInfo, documents);
         outputItemContentWidget->refreshOutputItem();
     }

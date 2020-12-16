@@ -46,11 +46,14 @@ namespace Robomongo
         void restoreSize();
         void maximizePart();
         void tabCloseRequested(int);
+
     private:
         void mouseReleaseEvent(QMouseEvent *event);
         void clearAllParts();
         QString buildStyleSheet();
         void tryToMakeAllPartsEqualInSize();
+
+        bool _tabbedResults;
         std::vector<ViewMode> _prevViewModes;
         int _prevResultsCount;
         QSplitter *_splitter;

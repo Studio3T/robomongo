@@ -259,7 +259,8 @@ namespace Robomongo
             return;
         }
 
-        _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed to ScriptExecutedEvent
+        // this should be in viewer, subscribed to ScriptExecutedEvent
+        _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); 
     }
 
     void QueryWidget::handle(ScriptExecutedEvent *event)

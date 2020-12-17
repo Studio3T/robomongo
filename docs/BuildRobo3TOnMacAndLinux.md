@@ -106,7 +106,12 @@ otool -L libcrypto.1.1.dylib
 libcrypto.dylib:
 	@rpath/lib/libcrypto.1.1.dylib (compatibility version 1.1.0, current version 1.1.0)
 	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1281.100.1)
+	
+// For robo-unit-test dependency:
+mkdir lib/
+cp lib*.dylib/lib/	
 ```
+
 
 **Linux:**
 

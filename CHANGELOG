@@ -2,6 +2,15 @@
 Download latest version: 
 https://robomongo.org/download
 
+Robo 3T 1.4.3 (Dec, 2020)
+  New Features:
+  - macOS Big Sur support 
+  - New Welcome Tab - embeds Chromium using QtWebEngine (Windows, macOS only)
+
+  Fixes:
+  - Fix previously broken IPv6 support from command line: robo3t --ipv6
+  - Fix a crash when paging used in tabbed result window (#1661)
+
 Robo 3T 1.4.2 (Oct, 2020)
   Fixes:
   - Fix broken paging in DocumentDB (#1694)

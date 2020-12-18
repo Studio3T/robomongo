@@ -78,6 +78,7 @@ See all docs here: https://github.com/Studio3T/robomongo/wiki
 
 **Some important docs:**  
 - [Build Diagram](https://github.com/Studio3T/robomongo/tree/master/schematics/build_diagram.png)
+- [Static Code Analysis](https://github.com/Studio3T/robomongo/wiki/Static-Code-Analysis)
 - [Robo 3T Feature Specisification](https://github.com/Studio3T/robomongo/wiki/Feature-Spec)
 - [Debugging](https://github.com/Studio3T/robomongo/blob/master/docs/Debug.md)
 - [Schematics](https://github.com/Studio3T/robomongo/tree/master/schematics)

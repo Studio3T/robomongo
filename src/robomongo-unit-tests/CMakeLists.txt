@@ -4,8 +4,8 @@
 
 ### --- Important Note
 if (SYSTEM_LINUX)        
-    message("\n *Note: Currently unit testing is disabled for Linux 
-                 due to MongoDB linking problems")
+    message("\n *Note: Currently unit testing is disabled for Linux " 
+                "due to MongoDB linking problems")
     return()
 endif()
 

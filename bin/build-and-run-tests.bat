@@ -11,5 +11,5 @@ call "%BIN_DIR%\build.bat" %*
 if %ERRORLEVEL% neq 0 (exit /b 1)
 
 rem Run tests
-call "%BIN_DIR%\run_tests.bat" %*
+call "%BIN_DIR%\run-tests.bat" %*
 if %ERRORLEVEL% neq 0 (exit /b 1)

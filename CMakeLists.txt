@@ -65,8 +65,7 @@ add_subdirectory(${QJSON_DIR})
 add_subdirectory(${QSCINTILLA_DIR})
 add_subdirectory(${GOOGLE_TEST_DIR})
 add_subdirectory(src/robomongo)
-# todo: Enable unit tests
-# add_subdirectory(src/robomongo-unit-tests) # Disabled in Robo 1.4 due to too many link errors
+add_subdirectory(src/robomongo-unit-tests)
 
 # Show configuration summary
 include(RobomongoConfigurationSummary)

@@ -3,9 +3,11 @@
 #ifndef __linux__  // --------------------- Windows, macOS impl --------------------------// 
 
 #include <QtWebEngineWidgets>
+#include <QDesktopServices>
 
 namespace Robomongo {
 
+    // ------------------ WelcomeTab
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
@@ -13,8 +15,8 @@ namespace Robomongo {
         QUrl url{
             "http://files.studio3t.com/rm-feed_3t_io/1.4.3/index.html"
         };
-        webView->load(url);
-        webView->show();
+        webView->setPage(new MyWebPage(this));
+        webView->page()->setUrl(URL);
         webView->setContextMenuPolicy(Qt::NoContextMenu);
 
         auto mainLayout = new QHBoxLayout;
@@ -22,6 +24,17 @@ namespace Robomongo {
         mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
         mainLayout->addWidget(webView);
         setLayout(mainLayout);
+    }
+
+    // ------------------ MyWebPage
+    bool MyWebPage::acceptNavigationRequest(
+        QUrl const& url, NavigationType type, bool /*isMainFrame*/)
+    {
+        if (NavigationTypeLinkClicked == type) {
+            QDesktopServices::openUrl(url);
+            return false;
+        }
+        return true;
     }
 
 }

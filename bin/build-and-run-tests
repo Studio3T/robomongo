@@ -4,4 +4,4 @@ BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get director
 PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
 
 source $BIN_DIR/build || exit $?
-source $BIN_DIR/run_tests $1
+source $BIN_DIR/run-tests $1

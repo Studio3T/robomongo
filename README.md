@@ -25,9 +25,10 @@ What's new in latest Robo 3T 1.4?
 
 New Features:   
   - Mongo shell 4.2 upgrade  
-  - Support for Ubuntu 20.04 and macOS 10.15 (Catalina)   
+  - Support for Ubuntu 20.04, macOS Big Sur and  macOS 10.15 (Catalina)   
   - SSH: ECDSA and Ed25519 keys support on Windows & macOS (issues #1719, #1530, #1590)  
   - Manually specify visible databases (issues #1696, #1368, #389)  
+  - New Welcome Tab - embeds Chromium using QtWebEngine (Windows, macOS only)  
    
 Improvements:  
   - Qt Upgrade (v5.12.8 - Apr/2020, Windows & macOS only)  
@@ -35,6 +36,9 @@ Improvements:
   - libssh2 upgrade (v1.9.0 - Jun/2019, Windows & macOS only)  
 
 Fixes:  
+  - Fix previously broken IPv6 support from command line: robo3t --ipv6
+  - Fix a crash when paging used in tabbed result window (#1661)
+  - Fix broken paging in DocumentDB (#1694)
   - Authentication database option isn't used properly (#1696)  
   - Add/Edit index ops fixed (re-written) (#1692)   
   - Crash when expanding admin users (#1728)   
@@ -55,9 +59,9 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 
 | Windows                |   Mac                            | Linux                       |        
 |:---------------------- | :--------------------------------| :---------------------------|
-| Windows 64-bit 10      |  Mac OS X 10.15 (Catalina)     	  | Linux Ubuntu 20.04 64-bit*  |
-  Windows 64-bit 8.1     |  Mac OS X 10.14 (Mojave)           | Linux Ubuntu 18.04 64-bit*  |
-| Windows 64-bit 7       |  Mac OS X 10.13 (High Sierra)      | Linux CentOS 7 64-bit* **   |
+| Windows 64-bit 10      |  Mac OS X 11    (Big Sur)     	  | Linux Ubuntu 20.04 64-bit*  |
+  Windows 64-bit 8.1     |  Mac OS X 10.15 (Catalina)           | Linux Ubuntu 18.04 64-bit*  |
+| Windows 64-bit 7       |  Mac OS X 10.14 (Mojave)      | Linux CentOS 7 64-bit* **   |
 |                        |                                    | Linux CentOS 6 64-bit*  **  |
 
 \* Latest stable build  

@@ -68,21 +68,15 @@ https://github.com/Studio3T/robomongo/wiki/Unit-Tests
 Contribute!
 ===========
 
-### Suggest Features
-
-New feature suggestions or UI improvements are always welcome.
-[Create a new feature request on github](https://github.com/paralect/robomongo/issues/new)
-
-This project is powered by open source volunteers, so we have a limited amount of development resource to address all requests. We will certainly make best efforts to progress (particularly for those with strong community upvotes).
-
 ### Code Contributions
 
 See all docs here: https://github.com/Studio3T/robomongo/wiki  
 
-Robo 3T Feature Specisification:  
-https://github.com/Studio3T/robomongo/wiki/Feature-Spec  
-
-
+**Some important docs:**  
+- [Build Diagram](https://github.com/Studio3T/robomongo/tree/master/schematics/build_diagram.png)
+- [Robo 3T Feature Specisification](https://github.com/Studio3T/robomongo/wiki/Feature-Spec)
+- [Debugging](https://github.com/Studio3T/robomongo/blob/master/docs/Debug.md)
+- [Schematics](https://github.com/Studio3T/robomongo/tree/master/schematics)
 
 Code contributions are always welcome! Just try to follow our pre-commit checks and coding style: 
 - [Robo 3T Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
@@ -100,7 +94,17 @@ For example:
 
 ### Testing
 
-https://github.com/Studio3T/robomongo/wiki/Unit-Tests
+- [Unit-Tests](https://github.com/Studio3T/robomongo/wiki/Unit-Tests)  
+- [Manual Tests](wiki/Tests)
+- See all docs here: https://github.com/Studio3T/robomongo/wiki  
+
+### Suggest Features
+
+New feature suggestions or UI improvements are always welcome.
+[Create a new feature request on github](https://github.com/paralect/robomongo/issues/new)
+
+This project is powered by open source volunteers, so we have a limited amount of development resource to address all requests. We will certainly make best efforts to progress (particularly for those with strong community upvotes).
+
 
 Download
 ========

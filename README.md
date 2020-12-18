@@ -63,21 +63,7 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 \* Latest stable build  
 \** Support for CentOS temporarily dropped starting from version 1.1  
 
-Download
-========
-
-You can download tested installer packages for macOS, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
-
-Support
-=======
-
-Robo 3T is an open source project driven by volunteers. We'll try to get to your questions as soon as we can, but please be patient :).
-
-You can:
-
- - [Create a new issue in the Github issue queue](https://github.com/paralect/robomongo/issues)
-
- - [Join developer discussion on Gitter](https://gitter.im/paralect/robomongo)
+https://github.com/Studio3T/robomongo/wiki/Unit-Tests
 
 Contribute!
 ===========
@@ -90,6 +76,13 @@ New feature suggestions or UI improvements are always welcome.
 This project is powered by open source volunteers, so we have a limited amount of development resource to address all requests. We will certainly make best efforts to progress (particularly for those with strong community upvotes).
 
 ### Code Contributions
+
+See all docs here: https://github.com/Studio3T/robomongo/wiki  
+
+Robo 3T Feature Specisification:  
+https://github.com/Studio3T/robomongo/wiki/Feature-Spec  
+
+
 
 Code contributions are always welcome! Just try to follow our pre-commit checks and coding style: 
 - [Robo 3T Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
@@ -105,13 +98,25 @@ A usual naming approach for feature branches is `issue-###`. Include the issue n
 For example:
 ```#248: updated QScintilla to 2.4.8 for retina display support".```
 
-### Design
-
-There are some cosmetic issues we could use help with (designing images or UI). They are marked in the issue queue with a [`Cosmetic`](https://github.com/paralect/robomongo/labels/cosmetic) label. If you see an open issue that you'd like to contribute to, please feel free to volunteer by commenting on it.
-
 ### Testing
 
-There are a number of issues we could use help with reproducing. They are marked in the issue queue with a [`Needs Repro`](https://github.com/paralect/robomongo/labels/needs%20repro) label. If you see an open issue that doesn't appear to be reproducible yet, please feel free to test and comment with your findings.
+https://github.com/Studio3T/robomongo/wiki/Unit-Tests
+
+Download
+========
+
+You can download tested installer packages for macOS, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
+
+Support
+=======
+
+Robo 3T is an open source project driven by volunteers. We'll try to get to your questions as soon as we can, but please be patient :).
+
+You can:
+
+ - [Create a new issue in the Github issue queue](https://github.com/paralect/robomongo/issues)
+
+ - [Join developer discussion on Gitter](https://gitter.im/paralect/robomongo)
 
 
 License

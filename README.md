@@ -67,8 +67,6 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 \* Latest stable build  
 \** Support for CentOS temporarily dropped starting from version 1.1  
 
-https://github.com/Studio3T/robomongo/wiki/Unit-Tests
-
 Contribute!
 ===========
 

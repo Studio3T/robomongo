@@ -604,9 +604,12 @@ namespace Robomongo
      */
     void MongoWorker::handle(ExecuteScriptRequest *event)
     {        
-        try {
-            if (!_scriptEngine) {
-                auto const error { EventError("MongoDB Shell was not initialized") };
+        try {           
+            if(!_scriptEngine ||
+               (_connSettings->isReplicaSet() && !_dbclientRepSet)) {
+                auto const error{
+                    EventError("MongoDB Shell was not initialized or connection failure")
+                };
                 reply(event->sender(), new ExecuteScriptResponse(this, error));
                 return;
             }

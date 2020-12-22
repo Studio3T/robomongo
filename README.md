@@ -62,7 +62,6 @@ Note: This sections is for Robo 3T and it directly depends on what MongoDB suppp
 | Windows 64-bit 10      |  Mac OS X 11    (Big Sur)     	  | Linux Ubuntu 20.04 64-bit  |
   Windows 64-bit 8.1     |  Mac OS X 10.15 (Catalina)           | Linux Ubuntu 18.04 64-bit  |
 | Windows 64-bit 7       |  Mac OS X 10.14 (Mojave)      |   |
-|                        |                                    |   |
 
 
 Contribute!

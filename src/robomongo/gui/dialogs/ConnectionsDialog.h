@@ -134,5 +134,13 @@ namespace Robomongo
 
     protected:
         void dropEvent(QDropEvent *event);
+
+#ifdef __APPLE__
+    // macOS: Set one re-order limit per new connections window. 
+    // Workaround for Qt bug came in Qt 5.12.8.
+    // https://github.com/Studio3T/robomongo/issues/1790
+    private:
+        int _dragDropCount = 0;    
+#endif
     };
 }

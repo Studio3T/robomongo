@@ -468,7 +468,14 @@ namespace Robomongo
 
     void ConnectionsTreeWidget::dropEvent(QDropEvent *event)
     {
+#ifdef __APPLE__
+        if(_dragDropCount > 0)
+            return;
+#endif
         QTreeWidget::dropEvent(event);
         emit layoutChanged();
+#ifdef __APPLE__
+        ++_dragDropCount;
+#endif
     }
 }

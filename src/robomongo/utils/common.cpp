@@ -1,6 +1,7 @@
 #include "robomongo/utils/common.h"
 
 #include <QFileInfo>
+#include <QSettings>
 
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/utils/Logger.h"
@@ -33,6 +34,14 @@ namespace Robomongo
     template<typename T>
     bool vectorContains(std::vector<T> const& vec, T const& value) {
         return find(vec.cbegin(), vec.cend(), value) != vec.cend();
+    }
+
+    QVariant getSetting(QString const& key) {
+        return QSettings("3T", "Robomongo").value(key).toSize();
+    }
+
+    void saveSetting(QString const& key, QVariant const& value) {
+        QSettings("3T", "Robomongo").setValue(key, value);
     }
 
 }   // end of name space Robomongo

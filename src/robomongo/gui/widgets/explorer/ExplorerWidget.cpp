@@ -8,7 +8,6 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
-
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
@@ -18,6 +17,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
+#include "robomongo/utils/common.h"
 
 namespace Robomongo
 {
@@ -42,6 +42,11 @@ namespace Robomongo
         _progressLabel->setMovie(movie);
         _progressLabel->hide();
         movie->start();        
+    }
+
+    ExplorerWidget::~ExplorerWidget()
+    {
+        saveSetting("ExplorerWidget/size", size());
     }
 
     QTreeWidgetItem* ExplorerWidget::getSelectedTreeItem() const
@@ -73,6 +78,11 @@ namespace Robomongo
         }
 
         BaseClass::keyPressEvent(event);
+    }
+
+    QSize ExplorerWidget::sizeHint() const
+    {
+        return(getSetting("ExplorerWidget/size").toSize());        
     }
 
     void ExplorerWidget::increaseProgress()

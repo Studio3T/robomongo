@@ -23,6 +23,8 @@ namespace Robomongo
     public:
         typedef QWidget BaseClass;
         ExplorerWidget(MainWindow *parent);
+        ~ExplorerWidget();
+
         QTreeWidgetItem* getSelectedTreeItem() const;
 
     protected Q_SLOTS:
@@ -37,6 +39,8 @@ namespace Robomongo
         virtual void keyPressEvent(QKeyEvent *event);   
 
     private:
+        QSize sizeHint() const override;
+
         int _progress;
         void increaseProgress();
         void decreaseProgress();

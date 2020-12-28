@@ -19,4 +19,7 @@ namespace Robomongo /* todo ::utils */
 
     template<typename T>
     bool vectorContains(std::vector<T> const& vec, T const& value);
+
+    QVariant getSetting(QString const& key);
+    void saveSetting(QString const& key, QVariant const& value);
 }

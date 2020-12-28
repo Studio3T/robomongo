@@ -136,40 +136,40 @@ namespace Robomongo
         }
     }
 
-    void OutputWidget::enterTreeMode()
+    void OutputWidget::switchMode(
+        std::function<void(OutputItemContentWidget*)> modeFunc
+    )
     {
-        int count = _splitter->count();
-        for (int i = 0; i < count; i++) {
-            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
-            widget->showTree();
+        if (_tabbedResults) {
+            QWidget* currentTab { widget(currentIndex()) };
+            modeFunc(qobject_cast<OutputItemContentWidget*>(currentTab));
+        }
+        else {
+            for (int i = 0; i < _splitter->count(); i++) {
+                QWidget* widget { _splitter->widget(i) };
+                modeFunc(qobject_cast<OutputItemContentWidget*>(widget));
+            }
         }
     }
 
-    void OutputWidget::enterTextMode()
+    void OutputWidget::enterTreeMode() 
     {
-        int count = _splitter->count();
-        for (int i = 0; i < count; i++) {
-            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
-            widget->showText();
-        }
+        switchMode(&OutputItemContentWidget::showTree);
+    }
+
+    void OutputWidget::enterTextMode() 
+    {
+        switchMode(&OutputItemContentWidget::showText);
     }
 
     void OutputWidget::enterTableMode()
     {
-        int count = _splitter->count();
-        for (int i = 0; i < count; i++) {
-            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
-            widget->showTable();
-        }
+        switchMode(&OutputItemContentWidget::showTable);
     }
 
     void OutputWidget::enterCustomMode()
     {
-        int count = _splitter->count();
-        for (int i = 0; i < count; i++) {
-            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
-            widget->showCustom();
-        }
+        switchMode(&OutputItemContentWidget::showCustom);
     }
 
     void OutputWidget::maximizePart()

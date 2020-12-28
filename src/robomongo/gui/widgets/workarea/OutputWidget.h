@@ -28,6 +28,7 @@ namespace Robomongo
                         const std::vector<MongoDocumentPtr> &documents);
         void toggleOrientation();
 
+        void switchMode(std::function<void(OutputItemContentWidget*)> modeFunc);
         void enterTreeMode();
         void enterTextMode();
         void enterTableMode();

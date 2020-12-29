@@ -688,14 +688,9 @@ namespace Robomongo
     }
 
     int SettingsManager::importedConnectionsCount() {
-        int count = 0;
-        for (std::vector<ConnectionSettings*>::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
-            ConnectionSettings *conn = *it;
-            if (conn->imported())
-                ++count;
-        }
-
-        return count;
+        return (std::count_if(_connections.cbegin(), _connections.cend(), 
+            [](auto conn) { return conn->imported(); }
+        ));
     }
 
     QString extractAnonymousIDFromZip(QString const& zipFile, QString const& propfile)

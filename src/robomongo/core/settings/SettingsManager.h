@@ -196,10 +196,10 @@ namespace Robomongo
         /**
          * Load connection settings from previous versions of Robomongo
          */
-        void importConnections();
+        void importFromOldVersion();
 
         // Imports connections from oldConfigFilePath into current config file
-        static bool importConnectionsFromOldVersion(QString const& oldConfigFilePath);
+        bool importFromFile(QString const& oldConfigFilePath);
         
         static bool importConnectionsFrom_0_8_5();
 

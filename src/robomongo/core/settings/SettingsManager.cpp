@@ -316,7 +316,7 @@ namespace Robomongo
         _cacheData = map.value("cacheData").toMap();
 
         // Load connection settings from previous versions of Robomongo
-        importConnections();
+        importFromOldVersion();
     }
 
     /**
@@ -525,17 +525,16 @@ namespace Robomongo
         _toolbars[toolbarName] = visible;
     }
 
-    void SettingsManager::importConnections()
+    void SettingsManager::importFromOldVersion()
     {
-        // Do not import if already imported
         if (_imported)
             return;
 
-        // Find and import 'only' from the latest version to current version
+        // Import only from the latest version
         for (auto const& configFile : _configFilesOfOldVersions) {
             if (QFile::exists(configFile)) {
-                importConnectionsFromOldVersion(configFile);
-                setImported(true);  // Mark as imported
+                importFromFile(configFile);
+                setImported(true);
                 return;
             }
         }
@@ -650,7 +649,7 @@ namespace Robomongo
         return true;
     }
 
-    bool SettingsManager::importConnectionsFromOldVersion(QString const& oldConfigFilePath)
+    bool SettingsManager::importFromFile(QString const& oldConfigFilePath)
     {
         if (oldConfigFilePath == CONFIG_FILE_0_8_5) {
             importConnectionsFrom_0_8_5();
@@ -670,14 +669,18 @@ namespace Robomongo
         if (!ok)
             return false;
 
-        QVariantList const& vconns = vmap.value("connections").toList();
-        for (auto const& vcon : vconns)
-        {
+        //// Import keys
+        _autoExpand      = vmap.value("autoExpand").toBool();
+        _lineNumbers     = vmap.value("lineNumbers").toBool();
+        _debugMode       = vmap.value("debugMode").toBool();
+        _shellTimeoutSec = vmap.value("shellTimeoutSec").toBool();
+        
+        //// Import connections
+        for (auto const& vcon : vmap.value("connections").toList()) {
             QVariantMap const& vconn = vcon.toMap();
             auto connSettings = new ConnectionSettings(false);
             connSettings->fromVariant(vconn);
             connSettings->setImported(true);
-
             addConnection(connSettings);
         }
 

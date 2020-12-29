@@ -14,6 +14,7 @@ namespace Robomongo {
         auto webView = new QWebEngineView(this);
         QUrl url{
             "http://files.studio3t.com/rm-feed_3t_io/1.4.3/index.html"
+        QUrl const URL {
         };
         webView->setPage(new MyWebPage(this));
         webView->page()->setUrl(URL);

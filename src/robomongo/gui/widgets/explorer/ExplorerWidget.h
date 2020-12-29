@@ -36,7 +36,7 @@ namespace Robomongo
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
     protected:
-        virtual void keyPressEvent(QKeyEvent *event);   
+        void keyPressEvent(QKeyEvent *event) override;   
 
     private:
         QSize sizeHint() const override;

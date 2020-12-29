@@ -673,7 +673,7 @@ namespace Robomongo
         _autoExpand      = vmap.value("autoExpand").toBool();
         _lineNumbers     = vmap.value("lineNumbers").toBool();
         _debugMode       = vmap.value("debugMode").toBool();
-        _shellTimeoutSec = vmap.value("shellTimeoutSec").toBool();
+        _shellTimeoutSec = vmap.value("shellTimeoutSec").toInt();
         
         //// Import connections
         for (auto const& vcon : vmap.value("connections").toList()) {

@@ -82,7 +82,11 @@ namespace Robomongo
 
     QSize ExplorerWidget::sizeHint() const
     {
-        return(getSetting("ExplorerWidget/size").toSize());        
+        auto size { getSetting("ExplorerWidget/size").toSize() };        
+        if(QSize(-1, -1) == size)
+           size = QSize(180, -1);
+
+        return(size);
     }
 
     void ExplorerWidget::increaseProgress()

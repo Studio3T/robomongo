@@ -22,15 +22,17 @@
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
-
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/widgets/workarea/WelcomeTab.h"
+#include "robomongo/utils/common.h"
 
 namespace Robomongo
 {
     
+    /* ------------------------ ConnectionListWidgetItem ------------------------ */
+
     /**
      * @brief Simple ListWidgetItem that has several convenience methods.
      */
@@ -100,6 +102,10 @@ namespace Robomongo
     private:
         ConnectionSettings *_connection;
     };
+
+
+
+    /* ------------------------ ConnectionsDialog ------------------------ */
 
     /**
      * @brief Creates dialog
@@ -215,8 +221,7 @@ namespace Robomongo
             _listWidget->setCurrentItem(_listWidget->topLevelItem(_listWidget->topLevelItemCount()-1));
 
         _listWidget->setFocus();
-
-        restoreWindowSettings();
+        resize(getSetting("ConnectionsDialog/size").toSize());
     }
 
     /**
@@ -231,21 +236,18 @@ namespace Robomongo
             return;
 
         _selectedConnection = currentItem->connection();
-        saveWindowSettings();
 
         QDialog::accept();
     }
 
     void ConnectionsDialog::reject()
     {
-        saveWindowSettings();
         QDialog::reject();
     }
 
-    void ConnectionsDialog::closeEvent(QCloseEvent *event)
+    ConnectionsDialog::~ConnectionsDialog() 
     {
-        saveWindowSettings();
-        QWidget::closeEvent(event);
+        saveSetting("ConnectionsDialog/size", size());
     }
 
     void ConnectionsDialog::linkActivated(const QString &link)
@@ -444,18 +446,6 @@ namespace Robomongo
         }
 
         QDialog::keyPressEvent(event);
-    }
-
-    void ConnectionsDialog::restoreWindowSettings()
-    {
-        QSettings settings("3T", "Robomongo");
-        resize(settings.value("ConnectionsDialog/size").toSize());
-    }
-
-    void ConnectionsDialog::saveWindowSettings() const
-    {
-        QSettings settings("3T", "Robomongo");
-        settings.setValue("ConnectionsDialog/size", size());
     }
 
     ConnectionsTreeWidget::ConnectionsTreeWidget()

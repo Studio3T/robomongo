@@ -20,10 +20,9 @@ namespace Robomongo
 
     public:
         typedef std::vector<ConnectionListWidgetItem *> ConnectionListItemContainerType; 
-        /**
-         * @brief Creates dialog
-         */
+
         ConnectionsDialog(SettingsManager *manager, bool checkForImported, QWidget *parent = 0);
+        ~ConnectionsDialog();
 
         /**
          * @brief ConnectionSettings, that was selected after pressing on
@@ -46,12 +45,6 @@ namespace Robomongo
         * @brief Add connection to the list widget
         */
         void add(ConnectionSettings *connection);
-        
-    protected:
-        /**
-        * @brief Reimplementing closeEvent in order to do some pre-close actions.
-        */
-        void closeEvent(QCloseEvent *event) override;
 
     private Q_SLOTS:
         void linkActivated(const QString &link);
@@ -87,17 +80,6 @@ namespace Robomongo
         void keyPressEvent(QKeyEvent* event) override;
 
     private:
-
-        /**
-        * @brief Restore window settings from system registry
-        */
-        void restoreWindowSettings();
-
-        /**
-        * @brief Save windows settings into system registry
-        */
-        void saveWindowSettings() const;
-
         /**
          * @brief ConnectionSettings, that was selected after pressing on
          * "Connect" button

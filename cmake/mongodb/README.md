@@ -1,3 +1,11 @@
+
+See these docs for the latest info about this topic:
+-------------
+- [Build Robo 3T - Mac OS X and Linux](https://github.com/paralect/robomongo/blob/master/docs/BuildRobo3TOnMacAndLinux.md) 
+- [Build Robo 3T - Windows](https://github.com/paralect/robomongo/blob/master/docs/BuildRobo3TOnWindows.md)
+
+------------------------------------  
+
 What is this? 
 -------------
 

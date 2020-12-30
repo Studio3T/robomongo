@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get directory of this file
+PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
+source $BIN_DIR/common/setup $1 # $1: release or debug
+
+mkdir -p ../scan-build && cd ../scan-build
+# $BUILD_TYPE: Release or Debug
+# Hint: Use "--use-analyzer /usr/local/opt/llvm/bin/clang++" after "-v"
+scan-build -v cmake -D "CMAKE_PREFIX_PATH=$PREFIX_PATH" -D "CMAKE_BUILD_TYPE=$BUILD_TYPE" -D "CMAKE_INSTALL_PREFIX=$INSTALL_PREFIX" "${@:2}" $PROJECT_DIR
+echo -e "\n------------------------------------------------"
+echo "Configured with scan-build in $BUILD_TYPE mode"
+echo -e "------------------------------------------------\n"
+scan-build cmake --build . "${@:2}" -- -j8
+echo -e "\n------------------------------------------------"
+echo "Built with scan-build in $BUILD_TYPE mode"
+echo -e "------------------------------------------------\n"

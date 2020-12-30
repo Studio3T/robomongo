@@ -7,7 +7,7 @@ The latest stable release **Robo 3T 1.4** embeds **MongoDB 4.2** shell.
 
 Blog:     http://blog.robomongo.org/robo-3t-1-4/  
 Download: https://robomongo.org/download  
-Older Releases: https://github.com/Studio3T/robomongo/releases  
+All Releases: https://github.com/Studio3T/robomongo/releases  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
 
@@ -40,7 +40,7 @@ Improvements:
 
 Fixes:  
   - Fix previously broken IPv6 support from command line: robo3t --ipv6
-  - Fix a crash when paging used in tabbed result window (#1661)
+  - Fix crash when paging used in tabbed result window (#1661)
   - Fix broken paging in DocumentDB (#1694)
   - Authentication database option isn't used properly (#1696)  
   - Add/Edit index ops fixed (re-written) (#1692)   
@@ -48,7 +48,7 @@ Fixes:
   - Unable to run query after shell timeout reached (#1529)  
   - Fix broken F2, F3, F4 shortcuts for tabbed result view
   - One time re-order limit per new connections window to prevent data loss (macOS, #1790)  
-  - Fix a crash when new shell tab executed in server unreachable case  
+  - Fix crash when new shell tab executed in server unreachable case  
 
 Supported Platforms
 ===============

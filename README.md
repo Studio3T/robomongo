@@ -29,6 +29,9 @@ New Features:
   - SSH: ECDSA and Ed25519 keys support on Windows & macOS (issues #1719, #1530, #1590)  
   - Manually specify visible databases (issues #1696, #1368, #389)  
   - New Welcome Tab - embeds Chromium using QtWebEngine (Windows, macOS only)  
+  - Database explorer section has smaller default width (#1556)
+  - Remember database explorer section size 
+  - Import keys from old version: autoExpand, lineNumbers, debugMode and shellTimeoutSec  
    
 Improvements:  
   - Qt Upgrade (v5.12.8 - Apr/2020, Windows & macOS only)  
@@ -42,8 +45,10 @@ Fixes:
   - Authentication database option isn't used properly (#1696)  
   - Add/Edit index ops fixed (re-written) (#1692)   
   - Crash when expanding admin users (#1728)   
-  - IPv6 support (previously broken) restored   
   - Unable to run query after shell timeout reached (#1529)  
+  - Fix broken F2, F3, F4 shortcuts for tabbed result view
+  - One time re-order limit per new connections window to prevent data loss (macOS, #1790)  
+  - Fix a crash when new shell tab executed in server unreachable case  
 
 Supported Platforms
 ===============

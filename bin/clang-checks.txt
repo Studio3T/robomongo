@@ -1,3 +1,10 @@
 bugprone-*
+cert-*
 clang-analyzer-*
-readability-implicit-bool-conversion
+cppcoreguidelines-*
+concurrency-*
+hicpp-*
+llvm-*
+misc-*
+performance-*
+readability-*

@@ -1,0 +1,3 @@
+bugprone-*
+clang-analyzer-*
+readability-implicit-bool-conversion

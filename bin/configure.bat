@@ -14,3 +14,8 @@ rem Run CMake configuration step
 rem BUILD_TYPE: Release or Debug
 cd "%BUILD_DIR%"
 cmake -G "Visual Studio 15 2017 Win64" -D "CMAKE_PREFIX_PATH=%PREFIX_PATH%" -D "CMAKE_BUILD_TYPE=%BUILD_TYPE%" -D "CMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%" %PROJECT_DIR%
+
+@REM echo ___________________________________________________________________
+@REM rem Enable Clang Tidy for Visual Studio 2019 IDE ...
+@REM set ROBO_PROJ_FILE=%BUILD_DIR%/src/robomongo/robomongo.vcxproj
+@REM python %BIN_DIR%\enableVisualStudioClangTidy.py %ROBO_PROJ_FILE% %BIN_DIR%

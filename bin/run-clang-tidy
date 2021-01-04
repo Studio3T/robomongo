@@ -20,6 +20,7 @@ echo -e "------------------------------------------------\n"
 ### Run clang-tidy
 FILE_OR_PATH=/opt/robo/src/robomongo/   # or MainWindow.cpp
 CHECKS=clang-analyzer-*,readability-implicit-bool-conversion
+# All Checks: https://clang.llvm.org/extra/clang-tidy/checks/list.html
 
 # e.g. $BIN_DIR/run-clang-tidy.py -checks=clang-analyzer-*,readability-implicit-bool-conversion /opt/robo/src/robomongo/
 $BIN_DIR/run-clang-tidy.py -checks=$CHECKS $FILE_OR_PATH

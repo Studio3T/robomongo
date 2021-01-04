@@ -14,16 +14,21 @@
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace
-{    
+{
+    auto const YEAR  { QString::number(QDate::currentDate().year()) };
+    auto const MONTH { QString::number(QDate::currentDate().month()) };
+
     const QString description {
-    "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION " (Build " BUILD_NUMBER ")</h3>"
+        "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION 
+            " (Build " BUILD_NUMBER + QString(" - ") + MONTH + "/" + YEAR + ")</h3>"
         "Shell-centric MongoDB management tool.<br/>"
         "<a href=\"https://" PROJECT_GITHUB_ISSUES "\">Submit</a> issues/proposals on GitHub.<br/>"
         "<br/>"
 
         "<a href=\"https://" PROJECT_DOMAIN "\">" PROJECT_DOMAIN "</a> <br/>"
-        "Copyright 2014-" + QString::number(QDate::currentDate().year()) +
-        " <a href= " PROJECT_COMPANYNAME_DOMAIN " >" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
+        "Copyright 2014-" + YEAR +
+        " <a href= " PROJECT_COMPANYNAME_DOMAIN " >" PROJECT_COMPANYNAME 
+        "</a>. All rights reserved.<br/>"
         "<br/>"
 
         "The program is provided AS IS with NO WARRANTY OF ANY KIND, "

@@ -29,14 +29,14 @@ New Features:
   - SSH: ECDSA and Ed25519 keys support on Windows & macOS (issues #1719, #1530, #1590)  
   - Manually specify visible databases (issues #1696, #1368, #389)  
   - New Welcome Tab - embeds Chromium using QtWebEngine (Windows, macOS only)  
-  - Database explorer section has smaller default width (#1556)
-  - Remember database explorer section size 
   - Import keys from old version: autoExpand, lineNumbers, debugMode and shellTimeoutSec  
    
 Improvements:  
   - Qt Upgrade (v5.12.8 - Apr/2020, Windows & macOS only)  
   - OpenSSL upgrade (v1.1.1f - Mar/2020, Windows & macOS only)  
   - libssh2 upgrade (v1.9.0 - Jun/2019, Windows & macOS only)  
+  - Database explorer section has smaller default width (#1556)
+  - Remember database explorer section size   
 
 Fixes:  
   - Fix previously broken IPv6 support from command line: robo3t --ipv6

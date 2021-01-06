@@ -20,7 +20,7 @@ namespace
 
     const QString description {
         "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION 
-            " (Build " BUILD_NUMBER + QString(", ") + MONTH + "/" + YEAR + ")</h3>"
+            " (Build " BUILD_NUMBER + QString(" - ") + MONTH + "/" + YEAR + ")</h3>"
         "Shell-centric MongoDB management tool.<br/>"
         "<a href=\"https://" PROJECT_GITHUB_ISSUES "\">Submit</a> issues/proposals on GitHub.<br/>"
         "<br/>"

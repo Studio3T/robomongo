@@ -114,14 +114,13 @@ namespace Robomongo
         _advancedTab->setDefaultDb(defaultDb);
     }
 
-    void ConnectionDialog::toggleSshSupport(bool newVal)
+    void ConnectionDialog::toggleSshSupport(bool isReplicaSet)
     {
         if (!_sshTab) 
             return;
         
-        _sshTab->setEnabled(newVal);            
-        _sshTab->setSshCheckboxToolTip(newVal ? "" :
-            "SSH is currently not supported for Replica Set connections");
+        _sshTab->setDisabled(isReplicaSet);
+        _sshTab->toggleSshCheckboxToolTip(isReplicaSet);
     }
 
     void ConnectionDialog::restoreWindowSettings()

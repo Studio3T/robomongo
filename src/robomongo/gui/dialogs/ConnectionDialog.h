@@ -29,7 +29,7 @@ namespace Robomongo
         void setAuthTab(QString const& db, QString const& username, QString const& pwd);
         void enableSslBasic();
         void setDefaultDb(QString const& defaultDb);
-        void toggleSshSupport(bool newVal);
+        void toggleSshSupport(bool isReplicaSet);
 
     public Q_SLOTS:
         /**

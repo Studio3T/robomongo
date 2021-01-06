@@ -162,6 +162,7 @@ namespace Robomongo
 #endif
 
         setDisabled(_settings->isReplicaSet());
+        toggleSshCheckboxToolTip(_settings->isReplicaSet());
     }
 
     bool SshTunnelTab::sshEnabled() const
@@ -169,9 +170,10 @@ namespace Robomongo
         return _sshSupport->isChecked();
     }
 
-    void SshTunnelTab::setSshCheckboxToolTip(QString const & text)
+    void SshTunnelTab::toggleSshCheckboxToolTip(bool isReplicaSet)
     {
-        _sshSupport->setToolTip(text);
+        _sshSupport->setToolTip(!isReplicaSet ? "" :
+            "SSH is currently not supported for Replica Set connections");
     }
 
     void SshTunnelTab::setPasswordFieldsEnabled(bool enabled)

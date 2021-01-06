@@ -229,7 +229,7 @@ namespace Robomongo
     {
         bool const isReplica = static_cast<bool>(index);
 
-        _connectionDialog->toggleSshSupport(!isReplica);
+        _connectionDialog->toggleSshSupport(isReplica);
         
         // Replica set
         _membersLabel->setVisible(isReplica);

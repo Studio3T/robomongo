@@ -30,7 +30,7 @@ namespace Robomongo
         */
         bool sshEnabled() const;
 
-        void setSshCheckboxToolTip(QString const& text);
+        void toggleSshCheckboxToolTip(bool isReplicaSet);
 
     private Q_SLOTS:
         void sshSupportStateChange(int checked);

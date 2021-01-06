@@ -114,6 +114,16 @@ namespace Robomongo
         _advancedTab->setDefaultDb(defaultDb);
     }
 
+    void ConnectionDialog::toggleSshSupport(bool newVal)
+    {
+        if (!_sshTab) 
+            return;
+        
+        _sshTab->setEnabled(newVal);            
+        _sshTab->setSshCheckboxToolTip(newVal ? "" :
+            "SSH is currently not supported for Replica Set connections");
+    }
+
     void ConnectionDialog::restoreWindowSettings()
     {
         QSettings settings("3T", "Robomongo");

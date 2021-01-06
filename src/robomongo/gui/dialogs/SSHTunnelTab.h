@@ -30,6 +30,8 @@ namespace Robomongo
         */
         bool sshEnabled() const;
 
+        void setSshCheckboxToolTip(QString const& text);
+
     private Q_SLOTS:
         void sshSupportStateChange(int checked);
         void askForPasswordStateChanged(int checked);

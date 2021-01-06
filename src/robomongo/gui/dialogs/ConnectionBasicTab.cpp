@@ -34,7 +34,9 @@ namespace Robomongo
         _connectionType->addItem(tr("Direct Connection"));
         _connectionType->addItem(tr("Replica Set")); 
         _connectionType->setCurrentIndex(static_cast<int>(_settings->isReplicaSet()));
-        VERIFY(connect(_connectionType, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ConnectionTypeChange(int))));
+        VERIFY(connect(_connectionType, SIGNAL(currentIndexChanged(int)), 
+                        this, SLOT(on_ConnectionTypeChange(int)))
+        );
         
         _nameLabel = new QLabel("Name:"); 
         _connectionName = new QLineEdit(QtUtils::toQString(_settings->connectionName()));
@@ -226,6 +228,8 @@ namespace Robomongo
     void ConnectionBasicTab::on_ConnectionTypeChange(int index)
     {
         bool const isReplica = static_cast<bool>(index);
+
+        _connectionDialog->toggleSshSupport(!isReplica);
         
         // Replica set
         _membersLabel->setVisible(isReplica);

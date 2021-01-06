@@ -161,11 +161,17 @@ namespace Robomongo
         _selectPrivateFileButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
 
+        setDisabled(_settings->isReplicaSet());
     }
 
     bool SshTunnelTab::sshEnabled() const
     {
         return _sshSupport->isChecked();
+    }
+
+    void SshTunnelTab::setSshCheckboxToolTip(QString const & text)
+    {
+        _sshSupport->setToolTip(text);
     }
 
     void SshTunnelTab::setPasswordFieldsEnabled(bool enabled)

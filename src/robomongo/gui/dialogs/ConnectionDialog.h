@@ -29,6 +29,7 @@ namespace Robomongo
         void setAuthTab(QString const& db, QString const& username, QString const& pwd);
         void enableSslBasic();
         void setDefaultDb(QString const& defaultDb);
+        void toggleSshSupport(bool newVal);
 
     public Q_SLOTS:
         /**
@@ -49,11 +50,11 @@ namespace Robomongo
         void saveWindowSettings() const;
         bool validateAndApply();
         
-        ConnectionAuthTab *_authTab;
-        ConnectionBasicTab *_basicTab;
-        ConnectionAdvancedTab *_advancedTab;
-        SshTunnelTab *_sshTab;
-        SSLTab *_sslTab;
+        ConnectionAuthTab *_authTab = nullptr;
+        ConnectionBasicTab *_basicTab = nullptr;
+        ConnectionAdvancedTab *_advancedTab = nullptr;
+        SshTunnelTab *_sshTab = nullptr;
+        SSLTab *_sslTab = nullptr;
 
 #ifdef SSH_SUPPORT_ENABLED
         SshTunnelTab *_sshTab;

@@ -16,5 +16,5 @@ cmake --build . --config %BUILD_TYPE%
 
 rem Install debug *.dll files
 if "%BUILD_TYPE%" == "Debug" (
-  call "%BIN_DIR%\install_debug_dlls.bat" %*
+  call "%BIN_DIR%\install-debug-dlls.bat" %*
 )

@@ -35,9 +35,9 @@ namespace Robomongo
         _settings(settings)
     {
         SshSettings *info = settings->sshSettings();
-        _sshSupport = new QCheckBox("Use SSH tunnel");
-        _sshSupport->setStyleSheet("margin-bottom: 7px");
-        _sshSupport->setChecked(info->enabled());
+        _useSsh = new QCheckBox("Use SSH tunnel");
+        _useSsh->setStyleSheet("margin-bottom: 7px");
+        _useSsh->setChecked(info->enabled());
 
         _askForPassword = new QCheckBox(askPasswordText);
         _askForPassword->setChecked(info->askPassword());
@@ -129,7 +129,7 @@ namespace Robomongo
         connectionLayout->addWidget(_askForPassword,               9, 1, 1, 2);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
-        mainLayout->addWidget(_sshSupport);
+        mainLayout->addWidget(_useSsh);
         mainLayout->addLayout(connectionLayout);
         setLayout(mainLayout);
 
@@ -142,8 +142,8 @@ namespace Robomongo
         securityChange(_security->currentText());
         VERIFY(connect(_selectPrivateFileButton, SIGNAL(clicked()), this, SLOT(setPrivateFile())));
 
-        sshSupportStateChange(_sshSupport->checkState());
-        VERIFY(connect(_sshSupport, SIGNAL(stateChanged(int)), this, SLOT(sshSupportStateChange(int))));
+        sshSupportStateChange(_useSsh->checkState());
+        VERIFY(connect(_useSsh, SIGNAL(stateChanged(int)), this, SLOT(sshSupportStateChange(int))));
 
         _sshHostName->setFocus();
 
@@ -165,14 +165,9 @@ namespace Robomongo
         toggleSshCheckboxToolTip(_settings->isReplicaSet());
     }
 
-    bool SshTunnelTab::sshEnabled() const
-    {
-        return _sshSupport->isChecked();
-    }
-
     void SshTunnelTab::toggleSshCheckboxToolTip(bool isReplicaSet)
     {
-        _sshSupport->setToolTip(!isReplicaSet ? "" :
+        _useSsh->setToolTip(!isReplicaSet ? "" :
             "SSH is currently not supported for Replica Set connections");
     }
 
@@ -194,7 +189,7 @@ namespace Robomongo
             _passwordBox->setText("");
         }
 
-        setPasswordFieldsEnabled(!checked && _sshSupport->isChecked());
+        setPasswordFieldsEnabled(!checked && _useSsh->isChecked());
     }
 
     void SshTunnelTab::sshSupportStateChange(int state)
@@ -269,7 +264,7 @@ namespace Robomongo
 
     bool SshTunnelTab::accept()
     {
-        bool sshEnabled = _sshSupport->isChecked();
+        bool const sshEnabled = this->isEnabled() && _useSsh->isChecked();
         QString authMethod = _security->currentText() == "Private Key" ? "publickey" : "password";
 
         // Check for existence of the private key file name

@@ -82,13 +82,15 @@ namespace Robomongo
             if (_connection->sslSettings()->sslEnabled())
                 setText(2, text(2) + (text(2).isEmpty() ? "TLS" : ", TLS"));
 
-            if (_connection->sshSettings()->enabled())
+            if (!_connection->isReplicaSet() && _connection->sshSettings()->enabled())
                 setText(2, text(2) + (text(2).isEmpty() ? "SSH" : ", SSH"));
 
             // Header "Auth. Database/User" (column[3])
             if (_connection->hasEnabledPrimaryCredential()) {
-                auto authString = QString("%1 / %2").arg(QtUtils::toQString(_connection->primaryCredential()->databaseName()))
-                                                    .arg(QtUtils::toQString(_connection->primaryCredential()->userName()));
+                auto primaryCredential { _connection->primaryCredential() };
+                auto const authString = 
+                    QString("%1 / %2").arg(QtUtils::toQString(primaryCredential->databaseName()))
+                                      .arg(QtUtils::toQString(primaryCredential->userName()));
                 setText(3, authString + "    ");
                 setIcon(3, GuiRegistry::instance().keyIcon());
             }

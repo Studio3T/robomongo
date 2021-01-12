@@ -24,12 +24,6 @@ namespace Robomongo
     public:
         SshTunnelTab(ConnectionSettings *settings);
         bool accept();
-
-        /**
-        * @return true if use SSH checkbox is checked, false otherwise
-        */
-        bool sshEnabled() const;
-
         void toggleSshCheckboxToolTip(bool isReplicaSet);
 
     private Q_SLOTS:
@@ -44,7 +38,7 @@ namespace Robomongo
         void setPasswordFieldsEnabled(bool enabled);
 
     private:        
-        QCheckBox *_sshSupport;
+        QCheckBox *_useSsh;
         QCheckBox *_askForPassword;
         QLineEdit *_sshHostName;
         QLineEdit *_userName;

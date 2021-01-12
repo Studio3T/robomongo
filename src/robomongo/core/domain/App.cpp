@@ -48,19 +48,21 @@ namespace Robomongo
     }
 
     std::unique_ptr<MongoServer>
-    App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type,
-                            int localport)
+    App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, 
+                            ConnectionType type, int localport)
     {
         ConnectionSettings* connSettingsClone = connSettings->clone();
 
         // Modify connection settings when SSH tunnel is used
         if ((type == ConnectionPrimary || type == ConnectionTest)
-            && connSettingsClone->sshSettings()->enabled()) {
+            && !connSettingsClone->isReplicaSet()
+            && connSettingsClone->sshSettings()->enabled()
+        ) {
             connSettingsClone->setServerHost("127.0.0.1");
             connSettingsClone->setServerPort(localport);
         }
 
-        auto server{ std::make_unique<MongoServer>(serverHandle, connSettingsClone, type) };
+        auto server { std::make_unique<MongoServer>(serverHandle, connSettingsClone, type) };
         server->runWorkerThread();
 
         auto replicaSetStr = QString::fromStdString(connSettings->connectionName()) + " [Replica Set]";
@@ -90,9 +92,11 @@ namespace Robomongo
         if (type == ConnectionPrimary)
             _bus->publish(new ConnectingEvent(this));
 
-        // When connection is SECONDARY or do not have
-        // ssh settings enabled, continue without SSH Tunnel
-        if (type == ConnectionSecondary || !connSettings->sshSettings()->enabled()) {
+        // When connection is SECONDARY or SSH not enabled or replica set,
+        // then continue without SSH Tunnel
+        if (type == ConnectionSecondary || !connSettings->sshSettings()->enabled() 
+            || connSettings->isReplicaSet() 
+        ) {
             return continueOpenServer(_lastServerHandle, connSettings, type);
         }
 
@@ -111,7 +115,7 @@ namespace Robomongo
     {
         SshSettings *ssh = connection->sshSettings();
 
-        if (ssh->enabled() && ssh->askPassword() &&
+        if (!connection->isReplicaSet() && ssh->enabled() && ssh->askPassword() &&
             (type == ConnectionPrimary || type == ConnectionTest)) {
             bool ok = false;
 

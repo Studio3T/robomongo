@@ -17,7 +17,6 @@ Robo 3T 1.4.3 (Jan/2021)
   - Fix broken F2, F3, F4 shortcuts for tabbed result view
   - One time re-order limit per new connections window to prevent data loss (macOS, #1790)
   - Fix previously broken IPv6 support from command line: robo3t --ipv6
-  - Disable unsopported SSH tab for replica set connections  
 
 Robo 3T 1.4.2 (Oct/2020)
   Fixes:

@@ -11,6 +11,7 @@ Robo 3T 1.4.3 (Jan/2021)
   - Import keys from old version: autoExpand, lineNumbers, debugMode and shellTimeoutSec
 
   Fixes:
+  - Disable unsupported SSH tab for replica set connections (#1285 #1340)
   - Fix crash when new shell tab executed in server unreachable case
   - Fix crash when paging used in tabbed result window (#1661)
   - Fix broken F2, F3, F4 shortcuts for tabbed result view

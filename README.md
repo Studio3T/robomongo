@@ -1,3 +1,14 @@
+<table style="border:0px; border-collapse:collapse">
+  <tr style="border:0px">
+  <td style="border:0px">
+    <img src="https://robomongo.org/static/robomongo-128x128-129df2f1.png"></img>   
+  </td><td style="border:0px">
+  Take our <a href="https://studio3t.typeform.com/to/AHVnL4Dw" target="_blank" rel="noreferrer" style="color: #43a943;text-decoration: underline;">Robo 3T Customer Survey</a> for a chance to win a pair of Sony WH-1000XM4 noise-cancelling headphones!
+</td>
+</tr>
+  </table>
+
+
 About Robo 3T
 ===============
 

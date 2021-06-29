@@ -18,6 +18,8 @@ namespace Robomongo {
         webView->setPage(new MyWebPage(this));
         webView->page()->setUrl(URL);
         webView->setContextMenuPolicy(Qt::NoContextMenu);
+        webView->page()->triggerAction(QWebEnginePage::WebAction::ReloadAndBypassCache);
+        webView->page()->profile()->setHttpCacheType(QWebEngineProfile::HttpCacheType::NoCache);
 
         auto mainLayout = new QHBoxLayout;
         mainLayout->setContentsMargins(-10, -10, -1, -1);

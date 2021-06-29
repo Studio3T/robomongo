@@ -2,6 +2,10 @@
 Download latest version: 
 https://robomongo.org/download
 
+Robo 3T 1.4.4 (Jun/2021)
+  Fixes:
+  - Fix Welcome Tab not loading the new content issue by disable/bypass HTTP cache
+
 Robo 3T 1.4.3 (Jan/2021)
   New Features:
   - macOS Big Sur support 

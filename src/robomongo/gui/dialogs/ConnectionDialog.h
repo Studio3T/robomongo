@@ -32,6 +32,14 @@ namespace Robomongo
         void toggleSshSupport(bool isReplicaSet);
         void clearConnAuthTab();
 
+        void setSslAuthMethod(
+            int index,
+            bool allowInvalidHostnames,
+            std::string_view caFile,
+            std::string_view certPemFile,
+            std::string_view certPemFilePwd
+        );
+
     public Q_SLOTS:
         /**
          * @brief Accept() is called when user agree with entered data.

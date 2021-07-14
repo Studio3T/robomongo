@@ -213,6 +213,24 @@ namespace Robomongo
         _authMethodComboBox->setCurrentIndex(0);
     }
 
+    void SSLTab::setAuthMethod(
+        int index,
+        bool allowInvalidHostnames,
+        std::string_view caFile,
+        std::string_view certPemFile,
+        std::string_view certPemFilePwd
+    ) {
+        _authMethodComboBox->setCurrentIndex(index);
+        if (allowInvalidHostnames) _useAdvancedOptionsCheckBox->setChecked(true);
+        _allowInvalidHostnamesComboBox->setCurrentIndex(allowInvalidHostnames);
+
+        _caFilePathLineEdit->setText(QString::fromStdString(std::string(caFile)));
+        if(!certPemFile.empty()) _usePemFileCheckBox->setChecked(true);
+
+        _pemFilePathLineEdit->setText(QString::fromStdString(std::string(certPemFile)));
+        _pemPassLineEdit->setText(QString::fromStdString(std::string(certPemFilePwd)));
+    }
+
     void SSLTab::useSslCheckBoxStateChange(int state)
     {
         bool isChecked = static_cast<bool>(state);
@@ -400,4 +418,3 @@ namespace Robomongo
         return QDir::toNativeSeparators(fileName);
     }
 }
-

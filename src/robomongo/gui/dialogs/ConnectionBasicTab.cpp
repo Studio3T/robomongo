@@ -328,30 +328,33 @@ namespace Robomongo
         item->setText(0, str);
     }
 
+    // .. todo: refactor, split into funcs.
     void ConnectionBasicTab::on_srvButton_clicked()
     {
         // Parse URI
         QString srvStr = _srvEdit->text().simplified();
         srvStr.replace(" ", "");
-        auto const statusWithMongoURI = mongo::MongoURI::parse(srvStr.toStdString());
-        if (!statusWithMongoURI.isOK()) {
+        auto const statusWithURI = mongo::MongoURI::parse(srvStr.toStdString());
+        if (!statusWithURI.isOK()) {
             QMessageBox errorBox;
             errorBox.critical(
-                this, "Error", ("MongoDB URI:\n" + statusWithMongoURI.getStatus().toString()).c_str()
+                this, "Error", ("MongoDB URI:\n" + statusWithURI.getStatus().toString()).c_str()
             );
             errorBox.show();
             return;
         }
-        auto const mongoUri = statusWithMongoURI.getValue();
+        auto const mongoUri = statusWithURI.getValue();
         auto const db = QString::fromStdString(mongoUri.getDatabase());
         auto const user = QString::fromStdString(mongoUri.getUser());
         auto const pwd = QString::fromStdString(mongoUri.getPassword());
-        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());        
-        auto const tlsAllowInvalidHostnames = mongoUri.getOption("tlsAllowInvalidHostnames");
+        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());   
+        // .. todo authMech
+
 
         // Clear tabs
         clearTab();
         _connectionDialog->clearConnAuthTab();
+        // .. todo clearSslTab();
 
         // Set conn settings
         auto const isReplicaSet = mongoUri.type() == mongo::ConnectionString::ConnectionType::SET;
@@ -375,7 +378,25 @@ namespace Robomongo
             _serverPort->setText(QString::number(mongoUri.getServers()[0].port()));
         }
         if(!user.isEmpty()) _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab
-        _connectionDialog->enableSslBasic();    // TLS Tab        
+        
+        if(mongoUri.getSSLMode() == mongo::transport::ConnectSSLMode::kEnableSSL) {
+            auto tlsAllowInvalidCertificates = mongoUri.getOption("tlsAllowInvalidCertificates");
+            auto tlsCAFile = mongoUri.getOption("tlsCAFile");
+            auto tlsCertificateKeyFile = mongoUri.getOption("tlsCertificateKeyFile");
+            auto tlsCertificateKeyFilePwd = mongoUri.getOption("tlsCertificateKeyFilePassword");
+            auto tlsAllowInvalidHostnames = mongoUri.getOption("tlsAllowInvalidHostnames");
+            _connectionDialog->enableSslBasic();    // TLS Tab
+            //
+            int const authMethodIndex = tlsAllowInvalidCertificates.get_value_or("") == "true" ? 0 : 1;
+            auto const caFile = tlsCAFile.get_value_or("");
+            auto const certKeyFile = tlsCertificateKeyFile.get_value_or("");
+            auto const certKeyFilePwd = tlsCertificateKeyFilePwd.get_value_or("");
+            auto const allowInvalidHostnames = tlsAllowInvalidHostnames.get_value_or("") == "true";
+            _connectionDialog->setSslAuthMethod(
+                authMethodIndex, allowInvalidHostnames, caFile, certKeyFile, certKeyFilePwd
+            );
+        }
+
         _connectionDialog->setDefaultDb(db);    // Advanced Tab
     }
 }

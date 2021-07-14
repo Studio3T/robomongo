@@ -41,6 +41,14 @@ namespace Robomongo
 
         void enableSslBasic();
 
+        void setAuthMethod(
+            int index,
+            bool allowInvalidHostnames,
+            std::string_view caFile,
+            std::string_view certPemFile,
+            std::string_view certPemFilePwd 
+         );
+
     private Q_SLOTS :
         
         /**

@@ -24,6 +24,7 @@ namespace Robomongo
     public:
         ConnectionBasicTab(ConnectionSettings *settings, ConnectionDialog *connectionDialog);
         bool accept();
+        void clearTab();
 
     private Q_SLOTS:
         void on_ConnectionTypeChange(int index);

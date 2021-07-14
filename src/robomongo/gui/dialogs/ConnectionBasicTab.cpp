@@ -112,8 +112,8 @@ namespace Robomongo
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
         _srvEdit = new QLineEdit();
-        _srvEdit->setPlaceholderText("Import connection details from MongoDB SRV connection string");
-        _srvButton = new QPushButton("From SRV");
+        _srvEdit->setPlaceholderText("Import connection details from MongoDB URI connection string");
+        _srvButton = new QPushButton("From URI");
 #ifdef _WIN32
         _srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
         _srvButton->setMinimumWidth(60);
@@ -225,6 +225,16 @@ namespace Robomongo
         return true;
     }
 
+    void ConnectionBasicTab::clearTab()
+    {
+        _connectionType->setCurrentIndex(0);
+        _connectionName->setText("New Connection");
+        _serverAddress->clear();
+        _serverPort->clear();
+        _members->clear();
+        _setNameEdit->clear();
+    }
+
     void ConnectionBasicTab::on_ConnectionTypeChange(int index)
     {
         bool const isReplica = static_cast<bool>(index);
@@ -320,35 +330,51 @@ namespace Robomongo
 
     void ConnectionBasicTab::on_srvButton_clicked()
     {
+        // Parse URI
         QString srvStr = _srvEdit->text().simplified();
         srvStr.replace(" ", "");
         auto const statusWithMongoURI = mongo::MongoURI::parse(srvStr.toStdString());
         if (!statusWithMongoURI.isOK()) {
             QMessageBox errorBox;
-            errorBox.critical(this, "Error", ("MongoDB SRV:\n" + statusWithMongoURI.getStatus().toString()).c_str());
+            errorBox.critical(
+                this, "Error", ("MongoDB URI:\n" + statusWithMongoURI.getStatus().toString()).c_str()
+            );
             errorBox.show();
             return;
         }
         auto const mongoUri = statusWithMongoURI.getValue();
-        auto const db = QString::fromStdString(mongoUri.getDatabase());        
+        auto const db = QString::fromStdString(mongoUri.getDatabase());
         auto const user = QString::fromStdString(mongoUri.getUser());
         auto const pwd = QString::fromStdString(mongoUri.getPassword());
-        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());
+        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());        
+        auto const tlsAllowInvalidHostnames = mongoUri.getOption("tlsAllowInvalidHostnames");
 
-        // Basic (this) Tab
-        _members->clear();
-        _connectionType->setCurrentIndex(1);    // Switch to Replica Set
-        for (auto const& hostAndPort : mongoUri.getServers()) {
-            auto host = QString::fromStdString(hostAndPort.host());
-            host.endsWith('.') ? host.remove(host.size()-1, 1) : "no-op";
-            auto const newHostAndPort = host + ':' + QString::number(hostAndPort.port());
-            auto item = new QTreeWidgetItem;
-            item->setText(0, newHostAndPort);
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-            _members->addTopLevelItem(item);
+        // Clear tabs
+        clearTab();
+        _connectionDialog->clearConnAuthTab();
+
+        // Set conn settings
+        auto const isReplicaSet = mongoUri.type() == mongo::ConnectionString::ConnectionType::SET;
+        if(isReplicaSet) {
+            // Basic (this) Tab
+            _connectionType->setCurrentIndex(1);    // Switch to Replica Set
+            for (auto const& hostAndPort : mongoUri.getServers()) {
+                auto host = QString::fromStdString(hostAndPort.host());
+                host.endsWith('.') ? host.remove(host.size()-1, 1) : "no-op";
+                auto const newHostAndPort = host + ':' + QString::number(hostAndPort.port());
+                auto item = new QTreeWidgetItem;
+                item->setText(0, newHostAndPort);
+                item->setFlags(item->flags() | Qt::ItemIsEditable);
+                _members->addTopLevelItem(item);
+            }
+            _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));
         }
-        _setNameEdit->setText(QString::fromStdString(mongoUri.getSetName()));        
-        _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab        
+        else {  // Standalone
+            _connectionType->setCurrentIndex(0);
+            _serverAddress->setText(QString::fromStdString(mongoUri.getServers()[0].host()));
+            _serverPort->setText(QString::number(mongoUri.getServers()[0].port()));
+        }
+        if(!user.isEmpty()) _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab
         _connectionDialog->enableSslBasic();    // TLS Tab        
         _connectionDialog->setDefaultDb(db);    // Advanced Tab
     }

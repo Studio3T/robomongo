@@ -30,6 +30,7 @@ namespace Robomongo
         void enableSslBasic();
         void setDefaultDb(QString const& defaultDb);
         void toggleSshSupport(bool isReplicaSet);
+        void clearConnAuthTab();
 
     public Q_SLOTS:
         /**

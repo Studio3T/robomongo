@@ -123,6 +123,11 @@ namespace Robomongo
         _sshTab->toggleSshCheckboxToolTip(isReplicaSet);
     }
 
+    void ConnectionDialog::clearConnAuthTab()
+    {
+        _authTab->clearTab();
+    }
+
     void ConnectionDialog::restoreWindowSettings()
     {
         QSettings settings("3T", "Robomongo");

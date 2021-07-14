@@ -149,6 +149,17 @@ namespace Robomongo
         _userPassword->setText(pwd);
     }
 
+    void ConnectionAuthTab::clearTab()
+    {
+        _useAuth->setChecked(false);
+        _databaseName->clear();
+        _userName->clear();
+        _userPassword->clear();
+        _mechanismComboBox->setCurrentIndex(0);
+        _useManuallyVisibleDbs->setChecked(false);
+        _manuallyVisibleDbs->clear();        
+    }
+
     void ConnectionAuthTab::toggleEchoMode()
     {
         bool isPassword = _userPassword->echoMode() == QLineEdit::Password;

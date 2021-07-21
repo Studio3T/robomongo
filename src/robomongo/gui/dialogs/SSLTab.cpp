@@ -207,12 +207,6 @@ namespace Robomongo
         return _useSslCheckBox->isChecked(); 
     }
 
-    void SSLTab::enableSslBasic()
-    {
-        _useSslCheckBox->setChecked(true);
-        _authMethodComboBox->setCurrentIndex(0);
-    }
-
     void SSLTab::clearTab()
     {
         _authMethodComboBox->setCurrentIndex(1);
@@ -231,6 +225,7 @@ namespace Robomongo
         std::string_view certPemFile,
         std::string_view certPemFilePwd
     ) {
+        _useSslCheckBox->setChecked(true);
         _authMethodComboBox->setCurrentIndex(index);
         _caFilePathLineEdit->setText(QString::fromStdString(std::string(caFile)));
 

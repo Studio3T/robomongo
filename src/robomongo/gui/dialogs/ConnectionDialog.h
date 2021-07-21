@@ -33,7 +33,6 @@ namespace Robomongo
             QString const& pwd, 
             AuthMechanism authMech
         );
-        void enableSslBasic();
         void setDefaultDb(QString const& defaultDb);
         void toggleSshSupport(bool isReplicaSet);
         void clearConnAuthTab();

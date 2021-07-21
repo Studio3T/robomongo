@@ -328,7 +328,6 @@ namespace Robomongo
         item->setText(0, str);
     }
 
-    // .. todo: refactor, split into funcs.
     void ConnectionBasicTab::on_srvButton_clicked()
     {
         // Parse Mongo URI
@@ -383,22 +382,17 @@ namespace Robomongo
         // Set SSL Tab
         if(mongoUri.getSSLMode() == mongo::transport::ConnectSSLMode::kEnableSSL) {
             auto tlsAllowInvalidCertificates = mongoUri.getOption("tlsAllowInvalidCertificates");
-            auto tlsCAFile = mongoUri.getOption("tlsCAFile");
-            auto tlsCertificateKeyFile = mongoUri.getOption("tlsCertificateKeyFile");
-            auto tlsCertificateKeyFilePwd = mongoUri.getOption("tlsCertificateKeyFilePassword");
-            auto tlsAllowInvalidHostnames = mongoUri.getOption("tlsAllowInvalidHostnames");
-            //            
-            _connectionDialog->enableSslBasic();
             int const authMethodIndex = tlsAllowInvalidCertificates.get_value_or("") == "true" ? 0 : 1;
-            auto const caFile = tlsCAFile.get_value_or("");
-            auto const certKeyFile = tlsCertificateKeyFile.get_value_or("");
-            auto const certKeyFilePwd = tlsCertificateKeyFilePwd.get_value_or("");
-            auto const allowInvalidHostnames = tlsAllowInvalidHostnames.get_value_or("") == "true";
+            auto const caFile = mongoUri.getOption("tlsCAFile").get_value_or("");
+            auto const certKeyFile = mongoUri.getOption("tlsCertificateKeyFile").get_value_or("");
+            auto const certKeyFilePwd = 
+                mongoUri.getOption("tlsCertificateKeyFilePassword").get_value_or("");
+            auto const allowInvalidHostnames = 
+                mongoUri.getOption("tlsAllowInvalidHostnames").get_value_or("") == "true";
+
             _connectionDialog->setSslTab(
                 authMethodIndex, allowInvalidHostnames, caFile, certKeyFile, certKeyFilePwd
             );
         }
-
-        _connectionDialog->setDefaultDb(db);    // Advanced Tab
     }
 }

@@ -108,11 +108,6 @@ namespace Robomongo
         _authTab->setAuthTab(db, username, pwd, authMech);
     }
 
-    void ConnectionDialog::enableSslBasic()
-    {
-        _sslTab->enableSslBasic();
-    }
-
     void ConnectionDialog::setDefaultDb(QString const& defaultDb)
     {
         _advancedTab->setDefaultDb(defaultDb);

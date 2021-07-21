@@ -39,8 +39,6 @@ namespace Robomongo
         */
         bool sslEnabled() const;
 
-        void enableSslBasic();
-
         void clearTab();
         void setSslOptions(
             int index,

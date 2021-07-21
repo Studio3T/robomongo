@@ -347,8 +347,8 @@ namespace Robomongo
         auto const db = QString::fromStdString(mongoUri.getDatabase());
         auto const user = QString::fromStdString(mongoUri.getUser());
         auto const pwd = QString::fromStdString(mongoUri.getPassword());
-        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());   
-        // .. todo authMech
+        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());        
+        auto const authMechanism = mongoUri.getOption("authMechanism").get_value_or("");
 
         // Clear tabs
         clearTab();
@@ -376,7 +376,9 @@ namespace Robomongo
             _serverPort->setText(QString::number(mongoUri.getServers()[0].port()));
         }
         // Set Auth Tab
-        if(!user.isEmpty()) _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab
+        if(!user.isEmpty()) _connectionDialog->setAuthTab(
+            authDb, user, pwd, authMechanismFromStr(authMechanism)
+        );
         
         // Set SSL Tab
         if(mongoUri.getSSLMode() == mongo::transport::ConnectSSLMode::kEnableSSL) {
@@ -385,14 +387,14 @@ namespace Robomongo
             auto tlsCertificateKeyFile = mongoUri.getOption("tlsCertificateKeyFile");
             auto tlsCertificateKeyFilePwd = mongoUri.getOption("tlsCertificateKeyFilePassword");
             auto tlsAllowInvalidHostnames = mongoUri.getOption("tlsAllowInvalidHostnames");
-            _connectionDialog->enableSslBasic();    // TLS Tab
-            //
+            //            
+            _connectionDialog->enableSslBasic();
             int const authMethodIndex = tlsAllowInvalidCertificates.get_value_or("") == "true" ? 0 : 1;
             auto const caFile = tlsCAFile.get_value_or("");
             auto const certKeyFile = tlsCertificateKeyFile.get_value_or("");
             auto const certKeyFilePwd = tlsCertificateKeyFilePwd.get_value_or("");
             auto const allowInvalidHostnames = tlsAllowInvalidHostnames.get_value_or("") == "true";
-            _connectionDialog->setSslTabOptions(
+            _connectionDialog->setSslTab(
                 authMethodIndex, allowInvalidHostnames, caFile, certKeyFile, certKeyFilePwd
             );
         }

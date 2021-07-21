@@ -99,9 +99,13 @@ namespace Robomongo
         QWidget::closeEvent(event);
     }
 
-    void ConnectionDialog::setAuthTab(QString const& db, QString const& username, QString const& pwd)
-    {
-        _authTab->setAuthTab(db, username, pwd);
+    void ConnectionDialog::setAuthTab(
+        QString const& db, 
+        QString const& username, 
+        QString const& pwd, 
+        AuthMechanism authMech
+    ) {
+        _authTab->setAuthTab(db, username, pwd, authMech);
     }
 
     void ConnectionDialog::enableSslBasic()
@@ -133,7 +137,7 @@ namespace Robomongo
         _sslTab->clearTab();
     }
 
-    void ConnectionDialog::setSslTabOptions(
+    void ConnectionDialog::setSslTab(
         int index,
         bool allowInvalidHostnames,
         std::string_view caFile,

@@ -12,6 +12,7 @@ QT_END_NAMESPACE
 namespace Robomongo
 {
     class ConnectionSettings;
+    enum AuthMechanism;
 
     class ConnectionAuthTab : public QWidget
     {
@@ -20,7 +21,12 @@ namespace Robomongo
     public:
         ConnectionAuthTab(ConnectionSettings *settings);
         void accept();
-        void setAuthTab(QString const db, QString const username, QString const pwd);
+        void setAuthTab(
+            QString const db, 
+            QString const username, 
+            QString const pwd, 
+            AuthMechanism authMech
+        );
         void clearTab();
 
     private Q_SLOTS:

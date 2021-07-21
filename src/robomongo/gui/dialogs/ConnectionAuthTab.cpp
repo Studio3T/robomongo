@@ -141,12 +141,17 @@ namespace Robomongo
         _settings->addCredential(credential);
     }
 
-    void ConnectionAuthTab::setAuthTab(QString const db, QString const username, QString const pwd)
-    {
+    void ConnectionAuthTab::setAuthTab(
+        QString const db, 
+        QString const username, 
+        QString const pwd, 
+        AuthMechanism authMech
+    ) {    
         _useAuth->setChecked(true);
         _databaseName->setText(db);
         _userName->setText(username);
         _userPassword->setText(pwd);
+        _mechanismComboBox->setCurrentIndex(int(authMech));
     }
 
     void ConnectionAuthTab::clearTab()

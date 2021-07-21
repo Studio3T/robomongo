@@ -331,7 +331,7 @@ namespace Robomongo
     // .. todo: refactor, split into funcs.
     void ConnectionBasicTab::on_srvButton_clicked()
     {
-        // Parse URI
+        // Parse Mongo URI
         QString srvStr = _srvEdit->text().simplified();
         srvStr.replace(" ", "");
         auto const statusWithURI = mongo::MongoURI::parse(srvStr.toStdString());
@@ -353,12 +353,11 @@ namespace Robomongo
         // Clear tabs
         clearTab();
         _connectionDialog->clearConnAuthTab();
-        // .. todo clearSslTab();
+        _connectionDialog->clearSslTab();
 
-        // Set conn settings
+        // Set Basic (this) Tab
         auto const isReplicaSet = mongoUri.type() == mongo::ConnectionString::ConnectionType::SET;
         if(isReplicaSet) {
-            // Basic (this) Tab
             _connectionType->setCurrentIndex(1);    // Switch to Replica Set
             for (auto const& hostAndPort : mongoUri.getServers()) {
                 auto host = QString::fromStdString(hostAndPort.host());
@@ -376,8 +375,10 @@ namespace Robomongo
             _serverAddress->setText(QString::fromStdString(mongoUri.getServers()[0].host()));
             _serverPort->setText(QString::number(mongoUri.getServers()[0].port()));
         }
+        // Set Auth Tab
         if(!user.isEmpty()) _connectionDialog->setAuthTab(authDb, user, pwd);   // Auth Tab
         
+        // Set SSL Tab
         if(mongoUri.getSSLMode() == mongo::transport::ConnectSSLMode::kEnableSSL) {
             auto tlsAllowInvalidCertificates = mongoUri.getOption("tlsAllowInvalidCertificates");
             auto tlsCAFile = mongoUri.getOption("tlsCAFile");

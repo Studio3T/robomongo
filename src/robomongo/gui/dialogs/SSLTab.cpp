@@ -213,6 +213,17 @@ namespace Robomongo
         _authMethodComboBox->setCurrentIndex(0);
     }
 
+    void SSLTab::clearTab()
+    {
+        _authMethodComboBox->setCurrentIndex(1);
+        _caFilePathLineEdit->clear();
+        _usePemFileCheckBox->setChecked(false);
+        _pemFilePathLineEdit->clear();
+        _pemPassLineEdit->clear();
+        _useAdvancedOptionsCheckBox->setChecked(false);
+        _allowInvalidHostnamesComboBox->setCurrentIndex(0);
+    }
+
     void SSLTab::setSslOptions(
         int index,
         bool allowInvalidHostnames,

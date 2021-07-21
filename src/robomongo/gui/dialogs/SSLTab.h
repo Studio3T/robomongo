@@ -41,6 +41,7 @@ namespace Robomongo
 
         void enableSslBasic();
 
+        void clearTab();
         void setSslOptions(
             int index,
             bool allowInvalidHostnames,

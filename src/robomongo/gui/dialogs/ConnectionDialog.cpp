@@ -128,6 +128,11 @@ namespace Robomongo
         _authTab->clearTab();
     }
 
+    void ConnectionDialog::clearSslTab()
+    {
+        _sslTab->clearTab();
+    }
+
     void ConnectionDialog::setSslTabOptions(
         int index,
         bool allowInvalidHostnames,

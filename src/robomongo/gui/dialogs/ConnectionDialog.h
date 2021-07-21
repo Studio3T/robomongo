@@ -31,7 +31,8 @@ namespace Robomongo
         void setDefaultDb(QString const& defaultDb);
         void toggleSshSupport(bool isReplicaSet);
         void clearConnAuthTab();
-
+        
+        void clearSslTab();
         void setSslTabOptions(
             int index,
             bool allowInvalidHostnames,

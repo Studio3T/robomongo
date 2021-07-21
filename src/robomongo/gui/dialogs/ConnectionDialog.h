@@ -32,7 +32,7 @@ namespace Robomongo
         void toggleSshSupport(bool isReplicaSet);
         void clearConnAuthTab();
 
-        void setSslAuthMethod(
+        void setSslTabOptions(
             int index,
             bool allowInvalidHostnames,
             std::string_view caFile,

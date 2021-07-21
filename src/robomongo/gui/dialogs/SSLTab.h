@@ -41,7 +41,7 @@ namespace Robomongo
 
         void enableSslBasic();
 
-        void setAuthMethod(
+        void setSslOptions(
             int index,
             bool allowInvalidHostnames,
             std::string_view caFile,

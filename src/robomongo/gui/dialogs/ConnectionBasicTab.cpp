@@ -350,7 +350,6 @@ namespace Robomongo
         auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());   
         // .. todo authMech
 
-
         // Clear tabs
         clearTab();
         _connectionDialog->clearConnAuthTab();
@@ -392,7 +391,7 @@ namespace Robomongo
             auto const certKeyFile = tlsCertificateKeyFile.get_value_or("");
             auto const certKeyFilePwd = tlsCertificateKeyFilePwd.get_value_or("");
             auto const allowInvalidHostnames = tlsAllowInvalidHostnames.get_value_or("") == "true";
-            _connectionDialog->setSslAuthMethod(
+            _connectionDialog->setSslTabOptions(
                 authMethodIndex, allowInvalidHostnames, caFile, certKeyFile, certKeyFilePwd
             );
         }

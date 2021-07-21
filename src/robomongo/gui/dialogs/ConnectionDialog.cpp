@@ -128,14 +128,14 @@ namespace Robomongo
         _authTab->clearTab();
     }
 
-    void ConnectionDialog::setSslAuthMethod(
+    void ConnectionDialog::setSslTabOptions(
         int index,
         bool allowInvalidHostnames,
         std::string_view caFile,
         std::string_view certPemFile,
         std::string_view certPemFilePwd
     ) {
-        _sslTab->setAuthMethod(index, allowInvalidHostnames, caFile, certPemFile, certPemFilePwd);
+        _sslTab->setSslOptions(index, allowInvalidHostnames, caFile, certPemFile, certPemFilePwd);
     }
 
     void ConnectionDialog::restoreWindowSettings()

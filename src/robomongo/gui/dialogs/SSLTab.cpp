@@ -213,7 +213,7 @@ namespace Robomongo
         _authMethodComboBox->setCurrentIndex(0);
     }
 
-    void SSLTab::setAuthMethod(
+    void SSLTab::setSslOptions(
         int index,
         bool allowInvalidHostnames,
         std::string_view caFile,
@@ -221,14 +221,14 @@ namespace Robomongo
         std::string_view certPemFilePwd
     ) {
         _authMethodComboBox->setCurrentIndex(index);
-        if (allowInvalidHostnames) _useAdvancedOptionsCheckBox->setChecked(true);
-        _allowInvalidHostnamesComboBox->setCurrentIndex(allowInvalidHostnames);
-
         _caFilePathLineEdit->setText(QString::fromStdString(std::string(caFile)));
-        if(!certPemFile.empty()) _usePemFileCheckBox->setChecked(true);
 
+        if(!certPemFile.empty()) _usePemFileCheckBox->setChecked(true);
         _pemFilePathLineEdit->setText(QString::fromStdString(std::string(certPemFile)));
         _pemPassLineEdit->setText(QString::fromStdString(std::string(certPemFilePwd)));
+
+        if (allowInvalidHostnames) _useAdvancedOptionsCheckBox->setChecked(true);
+        _allowInvalidHostnamesComboBox->setCurrentIndex(allowInvalidHostnames);
     }
 
     void SSLTab::useSslCheckBoxStateChange(int state)

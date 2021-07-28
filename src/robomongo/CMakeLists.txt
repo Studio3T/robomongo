@@ -246,17 +246,18 @@ if(SYSTEM_WINDOWS)
     target_link_libraries(robomongo PRIVATE Qt5::WinMain)
 
 elseif(SYSTEM_MACOSX)
+    string(TIMESTAMP CURRENT_YEAR "%Y")
     set_target_properties(robomongo PROPERTIES
         INSTALL_RPATH "@executable_path/../Frameworks"
         OUTPUT_NAME "Robo 3T"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
         MACOSX_BUNDLE_BUNDLE_NAME "Robo 3T"
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.3tsoftwarelabs.robo3t"
-        MACOSX_BUNDLE_INFO_STRING "Robo 3T ${PROJECT_VERSION}. Copyright 3T Software Labs Ltd, 2014 - 2017"
+        MACOSX_BUNDLE_INFO_STRING "Robo 3T ${PROJECT_VERSION}. Copyright 3T Software Labs Ltd, 2014 - ${CURRENT_YEAR}"
         MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_COPYRIGHT "Copyright 3T Software Labs Ltd, 2014 - 2017"
+        MACOSX_BUNDLE_COPYRIGHT "Copyright 3T Software Labs Ltd, 2014 - ${CURRENT_YEAR}"
         MACOSX_BUNDLE_ICON_FILE "robomongo")
 
 elseif(SYSTEM_LINUX)

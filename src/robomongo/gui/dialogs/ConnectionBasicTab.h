@@ -32,7 +32,7 @@ namespace Robomongo
         void on_addButton_clicked();
         void on_removeButton_clicked();
         void on_replicaMemberItemEdit(QTreeWidgetItem* item, int column);
-        void on_srvButton_clicked();
+        void on_uriButton_clicked();
 
     private:
         QLabel *_typeLabel;
@@ -52,8 +52,8 @@ namespace Robomongo
         QDialogButtonBox *_minusPlusButtonBox;
         QLabel *_setNameLabel;
         QLineEdit *_setNameEdit;
-        QLineEdit *_srvEdit;
-        QPushButton *_srvButton;
+        QLineEdit *_uriEdit;
+        QPushButton *_uriButton;
         QPushButton *_discoverButton;
         QLabel *_readPrefLabel;
         QComboBox *_readPreference;

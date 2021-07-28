@@ -15,10 +15,10 @@ namespace Robomongo
     };
 
     inline AuthMechanism authMechanismFromStr(std::string_view str) {
-        if (str == "SCRAM-SHA-1") return SCRAM_SHA_1;
+        if      (str == "SCRAM-SHA-1")   return SCRAM_SHA_1;
         else if (str == "SCRAM-SHA-256") return SCRAM_SHA_256;
-        else if (str == "MONGODB-CR") return MONGODB_CR;
-        else return SCRAM_SHA_1;
+        else if (str == "MONGODB-CR")    return MONGODB_CR;
+        else                             return SCRAM_SHA_1;
     }
 
 } /* end of Robomongo namespace */

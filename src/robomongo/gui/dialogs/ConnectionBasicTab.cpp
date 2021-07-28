@@ -111,17 +111,17 @@ namespace Robomongo
         auto hline = new QFrame();
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
-        _srvEdit = new QLineEdit();
-        _srvEdit->setPlaceholderText("Import connection details from MongoDB URI connection string");
-        _srvButton = new QPushButton("From URI");
+        _uriEdit = new QLineEdit();
+        _uriEdit->setPlaceholderText("Import connection details from MongoDB URI connection string");
+        _uriButton = new QPushButton("From URI");
 #ifdef _WIN32
-        _srvButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _srvButton->setMinimumWidth(60);
+        _uriButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _uriButton->setMinimumWidth(60);
 #else   // MacOS
-        _srvButton->setMaximumHeight(HighDpiConstants::MACOS_HIGH_DPI_BUTTON_HEIGHT);   
-        _srvButton->setMaximumWidth(90);
+        _uriButton->setMaximumHeight(HighDpiConstants::MACOS_HIGH_DPI_BUTTON_HEIGHT);   
+        _uriButton->setMaximumWidth(90);
 #endif        
-        VERIFY(connect(_srvButton, SIGNAL(clicked()), this, SLOT(on_srvButton_clicked())));
+        VERIFY(connect(_uriButton, SIGNAL(clicked()), this, SLOT(on_uriButton_clicked())));
 
         auto connLayout = new QGridLayout;
         connLayout->setVerticalSpacing(8);
@@ -142,8 +142,8 @@ namespace Robomongo
         connLayout->addWidget(_setNameEdit,                   9, 1, 1, 3, Qt::AlignTop);
         connLayout->addWidget(fakeSpacer,                    10, 0);
         connLayout->addWidget(hline,                         11, 0, 1, 4);
-        connLayout->addWidget(_srvButton,                    13, 0);
-        connLayout->addWidget(_srvEdit,                      13, 1, 1, 3);
+        connLayout->addWidget(_uriButton,                    13, 0);
+        connLayout->addWidget(_uriEdit,                      13, 1, 1, 3);
 
         connLayout->setRowStretch(10, 1);        
 #ifdef __APPLE__
@@ -328,12 +328,12 @@ namespace Robomongo
         item->setText(0, str);
     }
 
-    void ConnectionBasicTab::on_srvButton_clicked()
+    void ConnectionBasicTab::on_uriButton_clicked()
     {
         // Parse Mongo URI
-        QString srvStr = _srvEdit->text().simplified();
-        srvStr.replace(" ", "");
-        auto const statusWithURI = mongo::MongoURI::parse(srvStr.toStdString());
+        QString uriStr = _uriEdit->text().simplified();
+        uriStr.replace(" ", "");
+        auto const statusWithURI = mongo::MongoURI::parse(uriStr.toStdString());
         if (!statusWithURI.isOK()) {
             QMessageBox errorBox;
             errorBox.critical(
@@ -343,11 +343,6 @@ namespace Robomongo
             return;
         }
         auto const mongoUri = statusWithURI.getValue();
-        auto const db = QString::fromStdString(mongoUri.getDatabase());
-        auto const user = QString::fromStdString(mongoUri.getUser());
-        auto const pwd = QString::fromStdString(mongoUri.getPassword());
-        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());        
-        auto const authMechanism = mongoUri.getOption("authMechanism").get_value_or("");
 
         // Clear tabs
         clearTab();
@@ -375,10 +370,13 @@ namespace Robomongo
             _serverPort->setText(QString::number(mongoUri.getServers()[0].port()));
         }
         // Set Auth Tab
+        auto const user = QString::fromStdString(mongoUri.getUser());
+        auto const pwd = QString::fromStdString(mongoUri.getPassword());
+        auto const authDb = QString::fromStdString(mongoUri.getAuthenticationDatabase());
+        auto const authMechanism = mongoUri.getOption("authMechanism").get_value_or("");
         if(!user.isEmpty()) _connectionDialog->setAuthTab(
             authDb, user, pwd, authMechanismFromStr(authMechanism)
         );
-        
         // Set SSL Tab
         if(mongoUri.getSSLMode() == mongo::transport::ConnectSSLMode::kEnableSSL) {
             auto tlsAllowInvalidCertificates = mongoUri.getOption("tlsAllowInvalidCertificates");

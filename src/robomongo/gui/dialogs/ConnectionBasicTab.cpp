@@ -394,5 +394,7 @@ namespace Robomongo
                 authMethodIndex, allowInvalidHostnames, caFile, certKeyFile, certKeyFilePwd
             );
         }
+        // Advanced Tab
+        _connectionDialog->setDefaultDb(QString::fromStdString(mongoUri.getDatabase()));
     }
 }

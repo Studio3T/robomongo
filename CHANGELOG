@@ -2,7 +2,9 @@
 Download latest version: 
 https://robomongo.org/download
 
-Robo 3T 1.4.4 (Jun/2021)
+Robo 3T 1.4.4 (Aug/2021)
+  New Features:
+  - Support for Standard Connection String Format (Mongo URI)
   Fixes:
   - Fix Welcome Tab not loading the new content issue by disable/bypass HTTP cache
 

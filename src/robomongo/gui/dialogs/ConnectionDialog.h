@@ -3,6 +3,7 @@
 #include <QDialog>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/gui/utils/GuiConstants.h"
 
 namespace Robomongo
 {
@@ -12,7 +13,7 @@ namespace Robomongo
     class ConnectionAdvancedTab;
     class SSLTab;
     class SshTunnelTab;
-    enum AuthMechanism;
+
     /**
      * @brief This Dialog allows to edit single connection
      */

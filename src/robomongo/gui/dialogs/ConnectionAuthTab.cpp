@@ -11,7 +11,6 @@
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/utils/GuiConstants.h"
 
 namespace Robomongo
 {

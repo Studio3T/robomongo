@@ -1,8 +1,9 @@
 version: "3.9"
 services:
   robo3t:
-    image: njordr/robo3t:latest
+    image: robo3t
     restart: unless-stopped
+    build: .
     network_mode: host
     environment:
       - DISPLAY=${DISPLAY}

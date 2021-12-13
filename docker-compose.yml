@@ -12,3 +12,4 @@ services:
       - $HOME/.config/.3T:/root/.config/.3T
       - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
       - $HOME/.ssh/config:/root/.ssh/config
+      - $HOME/.ssh/known_hosts:/root/.ssh/known_hosts

@@ -2,10 +2,12 @@ version: "3.9"
 services:
   robo3t:
     image: robo3t
-    restart: unless-stopped
     build: .
     network_mode: host
     environment:
       - DISPLAY=${DISPLAY}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.3T:/root/.3T
+      - $HOME/.config/.3T:/root/.config/.3T
+      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa

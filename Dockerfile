@@ -18,6 +18,7 @@ RUN cd /opt/ \
 VOLUME /root/.3T
 VOLUME /root/.config/3T
 
+RUN apt update && apt upgrade -y && apt autoremove -y
 RUN apt install openssh-client -y
 
 CMD /opt/robo3t/bin/robo3t

@@ -2,7 +2,10 @@ version: "3.9"
 services:
   robo3t:
     image: robo3t
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      network: host
     network_mode: host
     environment:
       - DISPLAY=${DISPLAY}

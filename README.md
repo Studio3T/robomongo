@@ -1,3 +1,23 @@
+# End of Robo 3T Development
+
+Robo 3T is no longer being developed by Studio 3T. This repository has been set to read-only. Studio 3T recommends users looking for a MongoDB GUI client try [Studio 3T Free](https://studio3t.com/free), a free-forever edition of the Studio 3T tools.
+
+Read more about the changes on the [Robo 3T Blog](https://blog.robomongo.org/robo-3t-ending).
+
+The last release of Robo 3T is version 1.4.4, downloadable from the following links: 
+
+* [Robo 3T Windows .zip](https://download.studio3t.com/robomongo/windows/robo3t-1.4.4-windows-x86_64-e6ac9ec5.zip)
+
+* [Robo 3T Windows .exe](https://download.studio3t.com/robomongo/windows/robo3t-1.4.4-windows-x86_64-e6ac9ec5.exe)
+
+* [Robo 3T Mac](https://download.studio3t.com/robomongo/mac/robo3t-1.4.4-darwin-x86_64-e6ac9ec.dmg)
+
+* [Robo 3T Linux](https://download.studio3t.com/robomongo/linux/robo3t-1.4.4-linux-x86_64-e6ac9ec.tar.gz)
+
+And the source code from [Robo 3T repository](https://github.com/Studio3T/robomongo/latest).
+
+Studio 3T would like to thank the Robo 3T community who used and supported the application, since it was acquired in 2017. This repository, the website and blog will be left online and available to maintain a record of what was one of the most influential MongoDB clients of its time.
+
 
 About Robo 3T
 ===============

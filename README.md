@@ -1,6 +1,6 @@
 # End of Robo 3T Development
 
-Robo 3T is no longer being developed by Studio 3T. This repository has been set to read-only. Studio 3T recommends users looking for a MongoDB GUI client try [Studio 3T Free](https://studio3t.com/free), a free-forever edition of the Studio 3T tools.
+Robo 3T is no longer being developed by Studio 3T. Studio 3T recommends users looking for a MongoDB GUI client try [Studio 3T Free](https://studio3t.com/free), a free-forever edition of the Studio 3T tools.
 
 Read more about the changes on the [Robo 3T Blog](https://blog.robomongo.org/robo-3t-ending).
 

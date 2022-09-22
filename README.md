@@ -1,3 +1,7 @@
+## Important
+
+If you are using Studio 3T, please file any feedback on the [Studio 3T Feedback](https://studio3t.com/feedback/) page. If you are using Studio 3T Free, there is the [3T Community](https://community.studio3t.com/) for discussions with a [dedicated Free section](https://community.studio3t.com/c/studio-3t-free/13). Studio 3T does not monitor this repository for Studio 3T issues.
+
 # End of Robo 3T Development
 
 Robo 3T is no longer being developed by Studio 3T. Studio 3T recommends users looking for a MongoDB GUI client try [Studio 3T Free](https://studio3t.com/free), a free-forever edition of the Studio 3T tools.

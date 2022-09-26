@@ -136,6 +136,9 @@ namespace Robomongo
         _copyTimestampAction = new QAction("Copy Timestamp from ObjectId", wid);
         VERIFY(connect(_copyTimestampAction, SIGNAL(triggered()), SLOT(onCopyTimestamp())));
 
+        _copyIdentifierAction = new QAction("Copy Identifier from ObjectId", wid);
+        VERIFY(connect(_copyIdentifierAction, SIGNAL(triggered()), SLOT(onCopyIdentifier())));
+
         _copyJsonAction = new QAction("Copy JSON", wid);
         VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));        
     }
@@ -173,6 +176,7 @@ namespace Robomongo
             menu->addAction(_copyValuePathAction);
 
         if (onItem && isObjectId) menu->addAction(_copyTimestampAction);
+        if (onItem && isObjectId) menu->addAction(_copyIdentifierAction);
         if (onItem && isDocument) menu->addAction(_copyJsonAction);
         if (onItem && isEditable) menu->addSeparator();
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
@@ -493,6 +497,25 @@ namespace Robomongo
         else {
             clipboard->setText("Error extracting ISODate()");
         }
+    }
+
+    void Notifier::onCopyIdentifier()
+    {
+        QModelIndex selectedInd = _observer->selectedIndex();
+        if (!selectedInd.isValid())
+            return;
+
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if (!documentItem)
+            return;
+
+        if (!detail::isObjectIdType(documentItem))
+            return;
+
+        QString identifier = documentItem->value().mid(10, 24);
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(identifier);
     }
 
      void Notifier::onCopyJson()

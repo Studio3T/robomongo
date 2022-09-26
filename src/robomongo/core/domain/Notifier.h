@@ -57,6 +57,7 @@ namespace Robomongo
         void onInsertDocument();
         void onCopyDocument();
         void onCopyTimestamp();
+        void onCopyIdentifier();
         void onCopyJson();
         void handle(InsertDocumentResponse *event);
         void handle(RemoveDocumentResponse *event);

@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  robo3t:
+    image: robo3t
+    restart: unless-stopped
+    build: .
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix

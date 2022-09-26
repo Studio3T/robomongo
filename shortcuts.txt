@@ -92,6 +92,9 @@ Robomongo shortcut key reference
 
    Cmd+M
       Minimize Robomongo Window
+      
+   Cmd+D
+      Duplicate a line
 
    Cmd+N
       Open new connection dialog.

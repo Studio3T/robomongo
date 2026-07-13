@@ -5,15 +5,33 @@
 #include <QtWebEngineWidgets>
 #include <QDesktopServices>
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
+
 namespace Robomongo {
 
     // ------------------ WelcomeTab
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
+        auto mainLayout = new QHBoxLayout;
+        mainLayout->setContentsMargins(-10, -10, -1, -1);
+        mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
+        setLayout(mainLayout);
+
+        // Respect "disableHttpsFeatures" on Windows/macOS as well (it already
+        // gates the Welcome Tab menu action and the Linux implementation).
+        // Creating any WebEngine object starts the embedded Chromium, which
+        // intermittently crashes the whole application shortly after startup
+        // on newer Windows builds (access violation in Qt5WebEngineCore.dll).
+        // With this setting enabled the web view is never created, so the
+        // embedded Chromium never initializes.
+        if (AppRegistry::instance().settingsManager()->disableHttpsFeatures())
+            return;
+
         auto webView = new QWebEngineView(this);
         QUrl const URL {
-            "http://files.studio3t.com/rm-feed_3t_io/1.4.3/index.html"        
+            "http://files.studio3t.com/rm-feed_3t_io/1.4.3/index.html"
         };
         webView->setPage(new MyWebPage(this));
         webView->page()->setUrl(URL);
@@ -21,11 +39,7 @@ namespace Robomongo {
         webView->page()->triggerAction(QWebEnginePage::WebAction::ReloadAndBypassCache);
         webView->page()->profile()->setHttpCacheType(QWebEngineProfile::HttpCacheType::NoCache);
 
-        auto mainLayout = new QHBoxLayout;
-        mainLayout->setContentsMargins(-10, -10, -1, -1);
-        mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
         mainLayout->addWidget(webView);
-        setLayout(mainLayout);
     }
 
     // ------------------ MyWebPage
